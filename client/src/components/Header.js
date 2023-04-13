@@ -4,7 +4,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 export default function Header() {
 
   return (
-    <AppBar sx={{ flexGrow: 1 }} position="fixed" color="transparent">
+    <AppBar sx={{ flexGrow: 1 }} position="sticky" color="transparent">
       <Toolbar sx={{ justifyContent: "space-between"}}>
         <IconButton>
           <Typography variant="h5" sx={{ fontFamily: "'Permanent Marker', cursive" }}>

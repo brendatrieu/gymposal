@@ -3,7 +3,7 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import './App.css';
 import Header from './components/Header';
-
+import Launchpad from './components/Launchpad';
 
 function App() {
   const theme = createTheme({
@@ -19,7 +19,7 @@ function App() {
     typography: {
       fontFamily: 'Open Sans',
       button: {
-        fontSize: '0.05rem',
+        // fontSize: '0.05rem',
         textTransform: 'unset'
       }
     },
@@ -43,6 +43,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Header />
+      <Launchpad />
     </ThemeProvider>
     // <CssVarsProvider>
     //   <CssBaseline />
