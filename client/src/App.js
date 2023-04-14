@@ -1,30 +1,36 @@
-import { useEffect, useState } from 'react';
-import logo from './logo.svg';
+// import { useEffect, useState } from 'react';
+import { createTheme, ThemeProvider } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
 import './App.css';
+import Header from './components/Header';
+import Launchpad from './components/Launchpad';
+
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: '#ffffff'
+    },
+    secondary: {
+      main: '#151a26'
+    },
+  },
+  typography: {
+    fontFamily: 'Open Sans',
+    button: {
+      textTransform: 'unset'
+    }
+  },
+})
 
 function App() {
-  const [serverData, setServerData] = useState("");
-
-  useEffect(() => {
-    async function getServerData() {
-      const resp = await fetch('/api/hello');
-      const data = await resp.json();
-
-      console.log('Data from server:', data);
-
-      setServerData(data.message);
-    }
-
-    getServerData();
-  }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>{serverData}</h1>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Header />
+      <Launchpad />
+    </ThemeProvider>
   );
 }
 

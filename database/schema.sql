@@ -57,7 +57,8 @@ CREATE TABLE "public"."groupUsers" (
 CREATE TABLE "public"."penalties" (
 	"groupId" int NOT NULL,
 	"userId" int NOT NULL,
-	"date" DATE NOT NULL
+	"date" DATE NOT NULL,
+  "status" TEXT NOT NULL DEFAULT "OPEN"
 ) WITH (
   OIDS=FALSE
 );
