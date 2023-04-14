@@ -1,10 +1,29 @@
 import { AppBar, Toolbar, Typography, Box, IconButton, Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { styled } from '@mui/material/styles';
+
+const NavBar = styled(AppBar)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    button: {
+      fontSize: 'small',
+    },
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+  },
+  [theme.breakpoints.up('md')]: {
+    button: {
+      fontSize: 'medium',
+    },
+    paddingLeft: theme.spacing(10),
+    paddingRight: theme.spacing(10),
+  },
+}));
+
 
 export default function Header() {
 
   return (
-    <AppBar sx={{ flexGrow: 1 }} position="sticky" color="transparent">
+    <NavBar sx={{ flexGrow: 1}} position="sticky" color="transparent">
       <Toolbar sx={{ justifyContent: "space-between"}}>
         <IconButton>
           <Typography variant="h5" sx={{ fontFamily: "'Permanent Marker', cursive" }}>
@@ -12,11 +31,11 @@ export default function Header() {
           </Typography>
         </IconButton>
         <Box sx={{ display: 'flex' }}>
-          <Button size="small">Log Exercise</Button>
-          <Button size="small">Create Group</Button>
-          <IconButton><LogoutIcon /></IconButton>
+          <Button >Log Exercise</Button>
+          <Button >Create Group</Button>
+          <IconButton sx={{ pr: 0 }} ><LogoutIcon /></IconButton>
         </Box>
       </Toolbar>
-    </AppBar>
+    </NavBar>
   );
 }
