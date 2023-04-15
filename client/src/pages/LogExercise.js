@@ -8,6 +8,7 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import FormBox from '../lib/FormBox';
 import { useForm} from "react-hook-form";
+import { Link } from 'react-router-dom';
 
 export default function LogExercise() {
   const { register, handleSubmit } = useForm();
@@ -71,14 +72,16 @@ export default function LogExercise() {
                 sx={{ ml: 2, mt: 2 }}
                 variant="contained"
               >
-                  Submit
+                Submit
               </Button>
-              <Button
-                sx={{ml: 2, mt: 2}}
-                variant="outlined"
-              >
+              <Link to="/">
+                <Button
+                  sx={{ml: 2, mt: 2}}
+                  variant="outlined"
+                >
                   Cancel
-              </Button>
+                </Button>
+              </Link>
             </Box>
         </FormControl>
       </form>
