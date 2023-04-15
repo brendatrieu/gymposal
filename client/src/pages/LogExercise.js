@@ -7,9 +7,7 @@ import dayjs from 'dayjs';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import FormBox from '../lib/FormBox';
-import { useForm, Controller } from "react-hook-form";
-
-// onChange={(newValue) => setValue(newValue)}
+import { useForm} from "react-hook-form";
 
 export default function LogExercise() {
   const { register, handleSubmit } = useForm();
@@ -17,26 +15,35 @@ export default function LogExercise() {
 
   return (
     <FormBox my={4} sx={{ flexGrow: 1 }}>
-      <FormControl direction="column"
-        justifyContent="center"
-        alignItems="center"
-        fullWidth
-        onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FormControl direction="column" fullWidth >
           <Typography variant="h4">Log Exercise</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs} >
-            <DatePicker required defaultValue={dayjs()} sx={{ marginY: 3 }} />
+             <DatePicker
+              required
+              defaultValue={dayjs()}
+              sx={{ marginY: 3 }}
+              {...register("date")}
+              />
           </LocalizationProvider>
           <TextField
-          required
-          type="number"
-          label="Total Minutes"
-          inputProps={{min:0}} />
+            required
+            type="number"
+            label="Total Minutes"
+            inputProps={{min:0}}
+            {...register("totalMinutes")}
+          />
             <Autocomplete
               id="highlights-demo"
               options={top100Films}
               getOptionLabel={(option) => option.title}
               renderInput={(params) => (
-                <TextField {...params} required label="Exercise Type" sx={{ marginY: 3 }} />
+                <TextField {...params}
+                  required
+                  label="Exercise Type"
+                  sx={{ marginY: 3 }}
+                  {...register("exerciseType")}
+                />
               )}
               renderOption={(props, option, { inputValue }) => {
                 const matches = match(option.title, inputValue, { insideWords: true });
@@ -60,9 +67,21 @@ export default function LogExercise() {
               }}
             />
             <Box display="flex" flexWrap="wrap" justifyContent="flex-end">
-              <Button sx={{ ml: 2, mt: 2 }} variant="contained">Submit</Button><Button sx={{ml: 2, mt: 2}} variant="outlined">Cancel</Button>
+              <Button type="submit"
+                sx={{ ml: 2, mt: 2 }}
+                variant="contained"
+              >
+                  Submit
+              </Button>
+              <Button
+                sx={{ml: 2, mt: 2}}
+                variant="outlined"
+              >
+                  Cancel
+              </Button>
             </Box>
-      </FormControl>
+        </FormControl>
+      </form>
     </FormBox>
   )
 }
