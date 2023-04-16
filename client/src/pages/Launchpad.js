@@ -1,7 +1,6 @@
 import { styled } from '@mui/material/styles';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Grid, Paper } from '@mui/material';
+import AlertBanner from '../components/AlertBanner';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -19,26 +18,32 @@ const GridBox = styled(Box)(({ theme }) => ({
   },
 }));
 
+
+
 export default function Launchpad() {
+
   return (
-    <GridBox my={4} sx={{ flexGrow: 1 }}>
-      <Grid container justifyContent="center" spacing={2}>
-        <Grid item xs={12} md={10}>
-          <Typography variant="h4">Hello!</Typography>
+    <div>
+      <AlertBanner />
+      <GridBox my={4} sx={{ flexGrow: 1 }}>
+        <Grid container justifyContent="center" spacing={2}>
+          <Grid item xs={12} md={10}>
+            <Typography variant="h4">Hello!</Typography>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Item>Graph</Item>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Item>Exercise Log</Item>
+          </Grid>
+          <Grid item xs={12} md={5}>
+            <Item>Groups</Item>
+          </Grid>
+          <Grid item xs={12} md={5}>
+            <Item>Penalties</Item>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Item>Graph</Item>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Item>Exercise Log</Item>
-        </Grid>
-        <Grid item xs={12} md={5}>
-          <Item>Groups</Item>
-        </Grid>
-        <Grid item xs={12} md={5}>
-          <Item>Penalties</Item>
-        </Grid>
-      </Grid>
-    </GridBox>
+      </GridBox>
+    </div>
   );
 }

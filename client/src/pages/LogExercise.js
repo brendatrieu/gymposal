@@ -1,6 +1,7 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
-import { FormControl, TextField, Autocomplete, Typography, Button, Box } from '@mui/material';
+import { useState, useEffect, useContext } from 'react';
+import AppContext from '../context/AppContext';
+import { FormControl, TextField, Autocomplete, Typography, Button, Box, CircularProgress } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -9,25 +10,33 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import FormBox from '../components/FormBox';
 import { useForm } from "react-hook-form";
-import { Link } from 'react-router-dom';
-import { fetchExerciseTypes } from '../lib/api';
+import { Link, useNavigate } from 'react-router-dom';
+import { fetchExerciseTypes, PostNewLog } from '../lib/api';
 
 export default function LogExercise() {
   const { register, handleSubmit } = useForm();
-  const onSubmit = data => console.log(data);
-
-  const exerciseTypes=[{type: 'bike'}, {type: 'run'}];
-
-  const [type, setType] = useState();
+  const [exerciseTypes, setExerciseTypes] = useState();
+  const { userId, setAlert } = useContext(AppContext);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
 
+  async function OnSubmit(newLog, id){
+    try {
+      await PostNewLog(newLog, userId);
+      setAlert('ExerciseSaved');
+      navigate('/');
+    } catch(err) {
+      setAlert('ErrorOccurred');
+      navigate('/');
+    }
+  }
+
     useEffect(() => {
-    async function loadCatalog() {
+    async function loadTypes() {
       try {
-        const type = await fetchExerciseTypes();
-        console.log('TYPE', type);
-        setType(type);
+        const res = await fetchExerciseTypes();
+        setExerciseTypes(res);
       } catch (err) {
         setError(err);
       } finally {
@@ -35,15 +44,16 @@ export default function LogExercise() {
       }
     }
     setIsLoading(true);
-    loadCatalog();
+    loadTypes();
   }, []);
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error Loading Catalog: {error.message}</div>;
+
+  if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
+  if (error) return <div>Error Loading Form: {error.message}</div>;
 
   return (
     <div>
       <FormBox my={4} sx={{ flexGrow: 1 }}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(OnSubmit)}>
           <FormControl direction="column" fullWidth >
             <Typography variant="h4">Log Exercise</Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs} >

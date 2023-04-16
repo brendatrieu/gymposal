@@ -6,13 +6,14 @@ import Header from './components/Header';
 import Launchpad from './pages/Launchpad';
 import LogExercise from './pages/LogExercise';
 import AppContext from './context/AppContext';
+import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-
 export default function App() {
+  const [alert, setAlert] = useState(false);
 
   return (
-    <AppContext.Provider value={{ user: 1 }}>
+    <AppContext.Provider value={{ userId: 1, alert, setAlert }}>
       <ThemeProvider theme={Theme}>
         <CssBaseline />
         <Routes>
