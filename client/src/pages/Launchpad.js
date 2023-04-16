@@ -26,10 +26,10 @@ export default function Launchpad() {
         <Grid item xs={12} md={10}>
           <Typography variant="h4">Hello!</Typography>
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={6}>
           <Item>Graph</Item>
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
           <Item>Exercise Log</Item>
         </Grid>
         <Grid item xs={12} md={5}>
