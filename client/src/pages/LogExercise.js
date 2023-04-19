@@ -68,7 +68,7 @@ export default function LogExercise() {
               required
               type="number"
               label="Total Minutes"
-              inputProps={{ min: 0 }}
+              inputProps={{ min: 1 }}
               {...register("totalMinutes")}
             />
             <Autocomplete

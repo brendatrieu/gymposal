@@ -1,6 +1,3 @@
-import { useContext } from 'react';
-import AppContext from '../context/AppContext';
-
 const url = (path) => `${process.env.REACT_APP_BASE_URL}${path}`;
 
 /**
@@ -22,7 +19,7 @@ export async function fetchExerciseTypes() {
 export async function PostNewLog(newLog, id) {
 
   newLog.userId = id;
-  const response = await fetch(url('/api/exercises1'), {
+  const response = await fetch(url('/api/exercises'), {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newLog)
   });
 

@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles';
 import { Typography, Box, Grid, Paper } from '@mui/material';
-import AlertBanner from '../components/AlertBanner';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -24,7 +23,6 @@ export default function Launchpad() {
 
   return (
     <div>
-      <AlertBanner />
       <GridBox my={4} sx={{ flexGrow: 1 }}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12} md={10}>

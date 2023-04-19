@@ -4,6 +4,7 @@ import AppContext from '../context/AppContext';
 import { AppBar, Toolbar, Typography, Box, IconButton, Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
+import AlertBanner from './AlertBanner';
 
 const NavBar = styled(AppBar)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
@@ -47,6 +48,7 @@ export default function Header() {
             </Box>)}
         </Toolbar>
       </NavBar>
+      <AlertBanner />
       <Outlet />
     </div>
   );

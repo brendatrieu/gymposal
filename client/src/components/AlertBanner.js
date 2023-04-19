@@ -1,21 +1,22 @@
 import { styled } from '@mui/material/styles';
-import { Alert, IconButton } from '@mui/material';
+import { Alert, IconButton, Snackbar, Slide, SlideProps } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useContext } from 'react';
+import { useContext} from 'react';
 import AppContext from '../context/AppContext';
 
 const PaddedAlert = styled(Alert)(({ theme }) => ({
+  margin: 'auto',
   [theme.breakpoints.down('md')]: {
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(4),
+    width: '75vw',
   },
   [theme.breakpoints.up('md')]: {
-    paddingLeft: theme.spacing(10),
-    paddingRight: theme.spacing(10),
+    width: '50vw',
   },
 }));
 
-
+function SlideTransition(props: SlideProps) {
+  return <Slide {...props} direction="down" />;
+}
 
 export default function AlertBanner() {
   const { alert, setAlert } = useContext(AppContext);
@@ -29,7 +30,7 @@ export default function AlertBanner() {
         break;
       case 'ErrorOccurred':
         alertType.severity = 'error';
-        alertType.msg = 'An unexpected error occurred.';
+        alertType.msg = 'An unexpected error occurred. Please try again.';
         break;
       default:
         return false;
@@ -38,27 +39,38 @@ export default function AlertBanner() {
 
   alertSeverity();
 
+  function handleClose(Transition){
+    setAlert(false);
+  }
+
+
   return (
     <>
       { alert &&
-        (<PaddedAlert
-          variant="outlined"
-          severity={alertType.severity}
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                setAlert(false);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-        >
-          {alertType.msg}
-        </PaddedAlert>)
+        (<Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          open={Boolean(alert)}
+          autoHideDuration={3000}
+          direction="down"
+          TransitionComponent={SlideTransition}
+          onClose={handleClose}>
+          <PaddedAlert
+            severity={alertType.severity}
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={handleClose}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            {alertType.msg}
+          </PaddedAlert>
+        </Snackbar>
+        )
         }
     </>
   )
