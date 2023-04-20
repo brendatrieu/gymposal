@@ -22,8 +22,34 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello World!' });
+app.get('/api/exerciseTypes', async (req, res, next) => {
+  try {
+    const sql = `
+      SELECT "type"
+        FROM "exerciseTypes"
+    `;
+    const result = await db.query(sql);
+    res.json(result.rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post('/api/exercises', async (req, res, next) => {
+  try {
+    const sql = `
+      INSERT INTO "exercises" ("userId", "date", "totalMinutes", "type", "typeId")
+        VALUES($1, $2, $3, $4, (SELECT "typeId" FROM "exerciseTypes" WHERE "type"=$4))
+      RETURNING *;
+    `;
+    const { userId, date, totalMinutes, type } = req.body;
+    const params = [userId, date, totalMinutes, type];
+    const result = await db.query(sql, params);
+    const [log] = result.rows;
+    res.status(201).json(log);
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.use(errorMiddleware);

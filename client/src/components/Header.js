@@ -1,6 +1,10 @@
+import React from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import { useUser } from '../context/AppContext';
 import { AppBar, Toolbar, Typography, Box, IconButton, Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
+import AlertBanner from './AlertBanner';
 
 const NavBar = styled(AppBar)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
@@ -21,21 +25,31 @@ const NavBar = styled(AppBar)(({ theme }) => ({
 
 
 export default function Header() {
+  const { userId } = useUser();
 
   return (
-    <NavBar sx={{ flexGrow: 1}} position="sticky" color="transparent">
-      <Toolbar sx={{ justifyContent: "space-between"}}>
-        <IconButton>
-          <Typography variant="h5" sx={{ fontFamily: "'Permanent Marker', cursive" }}>
-            GYMPOSAL
-          </Typography>
-        </IconButton>
-        <Box sx={{ display: 'flex' }}>
-          <Button >Log Exercise</Button>
-          <Button >Create Group</Button>
-          <IconButton sx={{ pr: 0 }} ><LogoutIcon /></IconButton>
-        </Box>
-      </Toolbar>
-    </NavBar>
+    <div>
+      <NavBar sx={{ flexGrow: 1}} position="sticky" color="transparent">
+        <Toolbar sx={{ justifyContent: "space-between"}}>
+          <IconButton>
+            <Link to="/" style={{textDecoration: 'none', color: 'unset' }}>
+              <Typography variant="h5" sx={{ fontFamily: "'Permanent Marker', cursive"}}>
+                GYMPOSAL
+              </Typography>
+            </Link>
+          </IconButton>
+          {userId &&
+            (<Box sx={{ display: 'flex' }}>
+              <Link to="/logExercise">
+                <Button >Log Exercise</Button>
+              </Link>
+              <Button >Create Group</Button>
+              <IconButton sx={{ pr: 0 }} ><LogoutIcon /></IconButton>
+            </Box>)}
+        </Toolbar>
+      </NavBar>
+      <AlertBanner />
+      <Outlet />
+    </div>
   );
 }

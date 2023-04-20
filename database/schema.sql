@@ -11,6 +11,7 @@ CREATE TABLE "public"."users" (
 	"username" TEXT NOT NULL UNIQUE,
 	"firstName" TEXT NOT NULL,
 	"lastName" TEXT NOT NULL,
+  "fullName" TEXT GENERATED ALWAYS AS ("firstName" || ' ' || "lastName") STORED,
 	"email" TEXT NOT NULL UNIQUE,
 	"password" TEXT NOT NULL,
 	CONSTRAINT "users_pk" PRIMARY KEY ("userId")
@@ -21,11 +22,11 @@ CREATE TABLE "public"."users" (
 CREATE TABLE "public"."groups" (
 	"groupId" serial NOT NULL,
 	"groupName" TEXT NOT NULL,
-	"betAmount" int NOT NULL,
+	"betAmount" DECIMAL,
 	"frequencyReq" int NOT NULL,
 	"intervalReq" int NOT NULL,
 	"durationReq" int NOT NULL,
-	"passQty" int NOT NULL,
+	"passQty" int,
 	"createdAt" timestamptz NOT NULL DEFAULT now(),
 	CONSTRAINT "groups_pk" PRIMARY KEY ("groupId")
 ) WITH (
@@ -47,8 +48,8 @@ CREATE TABLE "public"."exercises" (
 CREATE TABLE "public"."groupUsers" (
 	"groupId" int NOT NULL,
 	"userId" int NOT NULL,
-	"passQty" int NOT NULL,
-	"remainingPasses" int NOT NULL,
+	"passQty" int,
+	"remainingPasses" int,
 	CONSTRAINT "groupUsers_pk" PRIMARY KEY ("groupId","userId")
 ) WITH (
   OIDS=FALSE
@@ -58,7 +59,7 @@ CREATE TABLE "public"."penalties" (
 	"groupId" int NOT NULL,
 	"userId" int NOT NULL,
 	"date" DATE NOT NULL,
-  "status" TEXT NOT NULL DEFAULT "OPEN"
+  "status" TEXT NOT NULL DEFAULT 'Open'
 ) WITH (
   OIDS=FALSE
 );
