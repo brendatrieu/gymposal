@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import {AppContext} from '../context/AppContext';
+import {useUser} from '../context/AppContext';
 import { AppBar, Toolbar, Typography, Box, IconButton, Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
@@ -25,7 +25,7 @@ const NavBar = styled(AppBar)(({ theme }) => ({
 
 
 export default function Header() {
-  const {userId} = useContext(AppContext);
+  const {userId} = useUser();
 
   return (
     <div>
