@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { Typography, Box, Grid, Paper } from '@mui/material';
+import EnhancedTable from '../components/PersonalLog';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -32,7 +33,7 @@ export default function Launchpad() {
             <Item>Graph</Item>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Item>Exercise Log</Item>
+            <EnhancedTable />
           </Grid>
           <Grid item xs={12} md={5}>
             <Item>Groups</Item>
