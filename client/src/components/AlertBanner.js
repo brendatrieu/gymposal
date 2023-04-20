@@ -22,22 +22,18 @@ export default function AlertBanner() {
   const { alert, setAlert } = useContext(AppContext);
   const alertType = {};
 
-  function alertSeverity() {
-    switch (alert){
-      case 'ExerciseSaved':
-        alertType.severity = 'success';
-        alertType.msg = 'Exercise successfully saved.';
-        break;
-      case 'ErrorOccurred':
-        alertType.severity = 'error';
-        alertType.msg = 'An unexpected error occurred. Please try again.';
-        break;
-      default:
-        return false;
-    }
+  switch (alert){
+    case 'ExerciseSaved':
+      alertType.severity = 'success';
+      alertType.msg = 'Exercise successfully saved.';
+      break;
+    case 'ErrorOccurred':
+      alertType.severity = 'error';
+      alertType.msg = 'An unexpected error occurred. Please try again.';
+      break;
+    default:
+      return false;
   }
-
-  alertSeverity();
 
   function handleClose(Transition){
     setAlert(false);
@@ -49,7 +45,7 @@ export default function AlertBanner() {
       { alert &&
         (<Snackbar
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={Boolean(alert)}
+          open={!!alert}
           autoHideDuration={3000}
           direction="down"
           TransitionComponent={SlideTransition}

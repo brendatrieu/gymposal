@@ -9,12 +9,12 @@ import dayjs from 'dayjs';
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import FormBox from '../components/FormBox';
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
-import { fetchExerciseTypes, PostNewLog } from '../lib/api';
+import { fetchExerciseTypes, postNewLog } from '../lib/api';
 
 export default function LogExercise() {
-  const { register, handleSubmit } = useForm();
+  const { control, register, handleSubmit } = useForm();
   const [exerciseTypes, setExerciseTypes] = useState();
   const { userId, setAlert } = useContext(AppContext);
   const navigate = useNavigate();
@@ -23,12 +23,12 @@ export default function LogExercise() {
 
   async function OnSubmit(newLog, id){
     try {
-      await PostNewLog(newLog, userId);
+      console.log(newLog);
+      await postNewLog(newLog, userId);
       setAlert('ExerciseSaved');
       navigate('/');
     } catch(err) {
-      setAlert('ErrorOccurred');
-      navigate('/');
+      setAlert('ErrorOccurred', err);
     }
   }
 
@@ -39,6 +39,7 @@ export default function LogExercise() {
         setExerciseTypes(res);
       } catch (err) {
         setError(err);
+        console.error(err);
       } finally {
         setIsLoading(false);
       }
@@ -57,11 +58,19 @@ export default function LogExercise() {
           <FormControl direction="column" fullWidth >
             <Typography variant="h4">Log Exercise</Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs} >
-              <DatePicker
-                required
+              <Controller
+                name="date"
+                control={control}
                 defaultValue={dayjs()}
-                sx={{ marginY: 3 }}
-                {...register("date")}
+                render={({ field }) => (
+                  <DatePicker
+                    {...field}
+                    required
+                    inputRef={field.ref}
+                    defaultValue={dayjs()}
+                    sx={{ marginY: 3 }} />
+                  )
+                }
               />
             </LocalizationProvider>
             <TextField
