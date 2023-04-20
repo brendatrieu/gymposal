@@ -5,15 +5,13 @@ import './App.css';
 import Header from './components/Header';
 import Launchpad from './pages/Launchpad';
 import LogExercise from './pages/LogExercise';
-import { AppContext } from './context/AppContext';
-import { useState } from 'react';
+import Provider from './context/AppContext';
 import { Routes, Route } from 'react-router-dom';
 
 export default function App() {
-  const [alert, setAlert] = useState(false);
 
   return (
-    <AppContext.Provider value={{ userId: 1, alert, setAlert }}>
+    <Provider>
       <ThemeProvider theme={Theme}>
         <CssBaseline />
         <Routes>
@@ -23,6 +21,6 @@ export default function App() {
           </Route>
         </Routes>
       </ThemeProvider>
-    </AppContext.Provider>
+    </Provider>
   );
 }

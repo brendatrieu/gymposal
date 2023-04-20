@@ -13,7 +13,7 @@ const PaddedAlert = styled(Alert)(({ theme }) => ({
   },
 }));
 
-function SlideTransition(props: SlideProps) {
+const SlideTransition = (props: SlideProps) => {
   return <Slide {...props} direction="down" />;
 }
 
@@ -21,7 +21,9 @@ export default function AlertBanner() {
   const { alert, setAlert } = useAlert();
   const alertType = {};
 
-  switch (alert){
+  if (!alert) return null;
+
+  switch (alert) {
     case 'ExerciseSaved':
       alertType.severity = 'success';
       alertType.msg = 'Exercise successfully saved.';
@@ -31,42 +33,37 @@ export default function AlertBanner() {
       alertType.msg = 'An unexpected error occurred. Please try again.';
       break;
     default:
-      return false;
+      // By default, there will not be an alert displayed.
   }
 
   function handleClose(Transition){
     setAlert(false);
   }
 
-
   return (
-    <>
-      { alert &&
-        (<Snackbar
+      <Snackbar
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
           open={!!alert}
           autoHideDuration={3000}
           direction="down"
           TransitionComponent={SlideTransition}
-          onClose={handleClose}>
-          <PaddedAlert
-            severity={alertType.severity}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={handleClose}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            {alertType.msg}
-          </PaddedAlert>
-        </Snackbar>
-        )
-        }
-    </>
+          onClose={handleClose}
+        >
+        <PaddedAlert
+          severity={alertType.severity}
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={handleClose}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+        >
+          {alertType.msg}
+        </PaddedAlert>
+    </Snackbar>
   )
 }
