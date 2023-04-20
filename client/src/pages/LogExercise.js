@@ -15,16 +15,15 @@ import { fetchExerciseTypes, postNewLog } from '../lib/api';
 
 export default function LogExercise() {
   const { control, register, handleSubmit } = useForm();
-  const [exerciseTypes, setExerciseTypes] = useState();
+  const [ exerciseTypes, setExerciseTypes ] = useState();
   const { userId } = useUser();
-  const {setAlert} = useAlert();
+  const { setAlert } = useAlert();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState();
+  const [ isLoading, setIsLoading ] = useState(true);
+  const [ error, setError ] = useState();
 
   async function OnSubmit(newLog, id){
     try {
-      console.log(newLog);
       await postNewLog(newLog, userId);
       setAlert('ExerciseSaved');
       navigate('/');

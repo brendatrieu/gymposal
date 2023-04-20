@@ -10,11 +10,11 @@ export function useAlert() {
 
 export function useUser() {
   const { userId } = useContext(AppContext);
-  return  userId;
+  return { userId };
 }
 
 export default function Provider({children}){
-  const [alert, setAlert] = useState(false);
+  const [ alert, setAlert ] = useState(false);
 
   return (
     <AppContext.Provider value={{ userId: 1, alert, setAlert }}>
