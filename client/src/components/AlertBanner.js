@@ -1,8 +1,7 @@
 import { styled } from '@mui/material/styles';
 import { Alert, IconButton, Snackbar, Slide, SlideProps } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { useContext} from 'react';
-import AppContext from '../context/AppContext';
+import { useAlert } from '../context/AppContext';
 
 const PaddedAlert = styled(Alert)(({ theme }) => ({
   margin: 'auto',
@@ -19,7 +18,7 @@ function SlideTransition(props: SlideProps) {
 }
 
 export default function AlertBanner() {
-  const { alert, setAlert } = useContext(AppContext);
+  const { alert, setAlert } = useAlert();
   const alertType = {};
 
   switch (alert){

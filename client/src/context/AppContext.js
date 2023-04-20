@@ -1,4 +1,14 @@
-import { createContext } from 'react';
+import { createContext, useContext } from 'react';
 
 const AppContext = createContext();
-export default AppContext;
+export { AppContext };
+
+export function useAlert() {
+  const { alert, setAlert } = useContext(AppContext);
+  return { alert, setAlert };
+}
+
+export function useUser() {
+  const { userId } = useContext(AppContext);
+  return { userId };
+}

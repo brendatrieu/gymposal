@@ -1,6 +1,6 @@
 import React from 'react';
-import { useState, useEffect, useContext } from 'react';
-import AppContext from '../context/AppContext';
+import { useState, useEffect } from 'react';
+import {useUser, useAlert} from '../context/AppContext';
 import { FormControl, TextField, Autocomplete, Typography, Button, Box, CircularProgress } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers-pro';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -16,7 +16,8 @@ import { fetchExerciseTypes, postNewLog } from '../lib/api';
 export default function LogExercise() {
   const { control, register, handleSubmit } = useForm();
   const [exerciseTypes, setExerciseTypes] = useState();
-  const { userId, setAlert } = useContext(AppContext);
+  const { userId } = useUser();
+  const {setAlert} = useAlert();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();

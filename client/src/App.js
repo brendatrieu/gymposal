@@ -5,7 +5,7 @@ import './App.css';
 import Header from './components/Header';
 import Launchpad from './pages/Launchpad';
 import LogExercise from './pages/LogExercise';
-import AppContext from './context/AppContext';
+import { AppContext } from './context/AppContext';
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 

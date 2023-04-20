@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import AppContext from '../context/AppContext';
+import {AppContext} from '../context/AppContext';
 import { AppBar, Toolbar, Typography, Box, IconButton, Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
