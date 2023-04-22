@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@mui/material';
-import Theme from './lib/Theme';
+import theme from './lib/Theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import './App.css';
 import Header from './components/Header';
@@ -12,7 +12,7 @@ export default function App() {
 
   return (
     <Provider>
-      <ThemeProvider theme={Theme}>
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
           <Route path="/" element={<Header />} >

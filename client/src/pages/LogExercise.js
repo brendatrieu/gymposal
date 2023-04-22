@@ -35,6 +35,7 @@ export default function LogExercise() {
     useEffect(() => {
     async function loadTypes() {
       try {
+        setIsLoading(true);
         const res = await fetchExerciseTypes();
         setExerciseTypes(res);
       } catch (err) {
@@ -44,7 +45,6 @@ export default function LogExercise() {
         setIsLoading(false);
       }
     }
-    setIsLoading(true);
     loadTypes();
   }, []);
 
@@ -68,7 +68,8 @@ export default function LogExercise() {
                     required
                     inputRef={field.ref}
                     defaultValue={dayjs()}
-                    sx={{ marginY: 3 }} />
+                    sx={{ marginY: 3 }}
+                  />
                   )
                 }
               />

@@ -29,9 +29,9 @@ export default function Header() {
 
   return (
     <div>
-      <NavBar sx={{ flexGrow: 1}} position="sticky" color="transparent">
+      <NavBar sx={{ flexGrow: 1, bgcolor: 'secondary.main' }} position="sticky">
         <Toolbar sx={{ justifyContent: "space-between"}}>
-          <IconButton>
+          <IconButton sx={{ pl: 0 }}>
             <Link to="/" style={{textDecoration: 'none', color: 'unset' }}>
               <Typography variant="h5" sx={{ fontFamily: "'Permanent Marker', cursive"}}>
                 GYMPOSAL
@@ -41,10 +41,10 @@ export default function Header() {
           {userId &&
             (<Box sx={{ display: 'flex' }}>
               <Link to="/logExercise">
-                <Button >Log Exercise</Button>
+                <Button>Log Exercise</Button>
               </Link>
               <Button >Create Group</Button>
-              <IconButton sx={{ pr: 0 }} ><LogoutIcon /></IconButton>
+            <IconButton sx={{ pr: 0 }} ><LogoutIcon /></IconButton>
             </Box>)}
         </Toolbar>
       </NavBar>

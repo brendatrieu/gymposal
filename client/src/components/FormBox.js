@@ -18,6 +18,9 @@ const FormBox = styled(Box)(({ theme }) => ({
     paddingLeft: theme.spacing(14),
     paddingRight: theme.spacing(14),
   },
+  palette: {
+    mode: 'dark'
+  }
 }));
 
 export default FormBox;

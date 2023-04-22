@@ -3,9 +3,9 @@
  * @returns Promise that resolves to an array of exercise types.
  */
 export async function fetchExerciseTypes() {
-  const res = await fetch('/api/exerciseTypes');
-  if (!res.ok) throw new Error(`fetch Error ${res.status}`);
-  return await res.json();
+  const response = await fetch('/api/exerciseTypes');
+  if (!response.ok) throw new Error(`fetch Error ${response.status}`);
+  return await response.json();
 }
 
 /**
@@ -23,4 +23,13 @@ export async function postNewLog(newLog, id) {
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
   }
+}
+
+export async function fetchPersonalLogs(id) {
+  const response = await fetch(`/api/exercises/${id}`);
+
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
 }
