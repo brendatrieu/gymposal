@@ -5,22 +5,22 @@ import FormBox from '../components/FormBox';
 import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
 import { postNewLog } from '../lib/api';
-import { handleLoading, handleError } from '../lib/ErrorHandling';
 
 export default function CreateGroup() {
-  const { control, register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm();
   const { userId } = useUser();
   const { setAlert } = useAlert();
   const navigate = useNavigate();
 
   async function OnSubmit(newLog, id) {
-    try {
-      await postNewLog(newLog, userId);
-      setAlert('ExerciseSaved');
-      navigate('/');
-    } catch (err) {
-      setAlert('ErrorOccurred', err);
-    }
+    console.log(newLog);
+    // try {
+    //   await postNewLog(newLog, userId);
+    //   setAlert('ExerciseSaved');
+    //   navigate('/');
+    // } catch (err) {
+    //   setAlert('ErrorOccurred', err);
+    // }
   }
 
   return (
@@ -46,7 +46,7 @@ export default function CreateGroup() {
               required
               select
               label="Exercise Interval"
-              defaultValue="Weekly"
+              defaultValue="weekly"
               sx={{ marginY: 3 }}
               {...register("intervalReq")}
             >
