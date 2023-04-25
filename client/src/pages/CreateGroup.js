@@ -13,7 +13,6 @@ export default function CreateGroup() {
 
   async function OnSubmit(group) {
     group.userId = userId;
-    console.log(group);
     try {
       await postNewGroup(group);
       setAlert('GroupSaved');
