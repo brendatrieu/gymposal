@@ -72,16 +72,25 @@ app.post('/api/exercises', async (req, res, next) => {
 
 app.post('/api/new-group', async (req, res, next) => {
   try {
-    const sql = `
+    const sqlGroup = `
       INSERT INTO "groups" ("groupName", "betAmount", "frequencyReq", "intervalReq", "durationReq", "passQty")
-        VALUES($1, $2, $3, $4, $5, $6)
+        VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
     `;
-    const { groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty } = req.body;
-    const params = [groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty];
-    const result = await db.query(sql, params);
-    const [log] = result.rows;
-    res.status(201).json(log);
+    const { groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty, userId } = req.body;
+    const paramsGroup = [groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty];
+    const newGroup = await db.query(sqlGroup, paramsGroup);
+    const [log] = newGroup.rows;
+    if (log) {
+      const sqlGroupUsers = `
+      INSERT INTO "groupUsers" ("userId", "passQty", "remainingPasses", "groupId")
+        VALUES ($1, $2, $2, (SELECT "groupId" FROM "groups" WHERE "groupName" = $3))
+      RETURNING *;
+    `; const paramsGroupUser = [userId, passQty, groupName];
+      const newGroupUser = await db.query(sqlGroupUsers, paramsGroupUser);
+      const [logUser] = newGroupUser.rows;
+      res.status(201).json(logUser);
+    }
   } catch (err) {
     next(err);
   }

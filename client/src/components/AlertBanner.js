@@ -28,6 +28,10 @@ export default function AlertBanner() {
       alertType.severity = 'success';
       alertType.msg = 'Exercise successfully saved.';
       break;
+    case 'GroupSaved':
+      alertType.severity = 'success';
+      alertType.msg = 'Group successfully saved.';
+      break;
     case 'ErrorOccurred':
       alertType.severity = 'error';
       alertType.msg = 'An unexpected error occurred. Please try again.';

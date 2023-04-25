@@ -16,7 +16,7 @@ export default function CreateGroup() {
     console.log(group);
     try {
       await postNewGroup(group);
-      setAlert('ExerciseSaved');
+      setAlert('GroupSaved');
       navigate('/');
     } catch (err) {
       setAlert('ErrorOccurred', err);
