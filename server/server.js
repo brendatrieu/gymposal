@@ -70,6 +70,23 @@ app.post('/api/exercises', async (req, res, next) => {
   }
 });
 
+app.post('/api/groups', async (req, res, next) => {
+  try {
+    const sql = `
+      INSERT INTO "groups" ("groupName", "betAmount", "frequencyReq", "intervalReq", "durationReq", "passQty")
+        VALUES($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+    `;
+    const { groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty } = req.body;
+    const params = [groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty];
+    const result = await db.query(sql, params);
+    const [log] = result.rows;
+    res.status(201).json(log);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
