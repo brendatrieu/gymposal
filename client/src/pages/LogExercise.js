@@ -13,6 +13,8 @@ import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchExerciseTypes, postNewLog } from '../lib/api';
 
+
+
 export default function LogExercise() {
   const { control, register, handleSubmit } = useForm();
   const [ exerciseTypes, setExerciseTypes ] = useState();
@@ -35,6 +37,7 @@ export default function LogExercise() {
     useEffect(() => {
     async function loadTypes() {
       try {
+        setIsLoading(true);
         const res = await fetchExerciseTypes();
         setExerciseTypes(res);
       } catch (err) {
@@ -44,7 +47,6 @@ export default function LogExercise() {
         setIsLoading(false);
       }
     }
-    setIsLoading(true);
     loadTypes();
   }, []);
 
@@ -61,14 +63,15 @@ export default function LogExercise() {
               <Controller
                 name="date"
                 control={control}
-                defaultValue={dayjs()}
+                defaultValue={dayjs.utc()}
                 render={({ field }) => (
                   <DatePicker
                     {...field}
                     required
                     inputRef={field.ref}
                     defaultValue={dayjs()}
-                    sx={{ marginY: 3 }} />
+                    sx={{ marginY: 3 }}
+                  />
                   )
                 }
               />

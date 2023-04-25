@@ -35,6 +35,24 @@ app.get('/api/exerciseTypes', async (req, res, next) => {
   }
 });
 
+app.get('/api/exercises/:userId', async (req, res, next) => {
+  try {
+    const sql = `
+      SELECT "exerciseId",
+          "type",
+          "date",
+          "totalMinutes"
+        FROM "exercises"
+        WHERE "userId" = $1
+    `;
+    const params = [req.params.userId];
+    const result = await db.query(sql, params);
+    res.json(result.rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post('/api/exercises', async (req, res, next) => {
   try {
     const sql = `

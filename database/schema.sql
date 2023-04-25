@@ -38,7 +38,7 @@ CREATE TABLE "public"."exercises" (
 	"userId" int NOT NULL,
 	"typeId" int NOT NULL,
 	"type" TEXT NOT NULL,
-	"date" DATE NOT NULL,
+	"date" timestamptz NOT NULL,
 	"totalMinutes" int NOT NULL,
 	CONSTRAINT "exercises_pk" PRIMARY KEY ("exerciseId")
 ) WITH (
