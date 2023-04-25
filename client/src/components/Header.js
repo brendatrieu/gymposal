@@ -40,10 +40,10 @@ export default function Header() {
           </IconButton>
           {userId &&
             (<Box sx={{ display: 'flex' }}>
-              <Link to="/logExercise">
+              <Link to="/log-exercise">
                 <Button>Log Exercise</Button>
               </Link>
-              <Link to="/createGroup">
+              <Link to="/create-group">
                 <Button >Create Group</Button>
               </Link>
               <IconButton sx={{ pr: 0 }} ><LogoutIcon /></IconButton>

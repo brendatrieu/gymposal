@@ -18,8 +18,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Header />} >
             <Route index element={<Launchpad />} />
-            <Route path="logExercise" element={<LogExercise />} />
-            <Route path="createGroup" element={<CreateGroup />} />
+            <Route path="log-exercise" element={<LogExercise />} />
+            <Route path="create-group" element={<CreateGroup />} />
           </Route>
         </Routes>
       </ThemeProvider>

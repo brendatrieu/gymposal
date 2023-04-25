@@ -46,3 +46,16 @@ export async function postNewGroup(group) {
     throw new Error(`Status ${response.status}`);
   }
 }
+
+/**
+ * Fetches user's groups from the groups table in the database.
+ * @param {Number} 'id' - an integer representing the userId.
+ * @returns Promise that resolves to an array of groups.
+ */
+export async function fetchGroups(id) {
+  const response = await fetch(`/api/groups/${id}`);
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
