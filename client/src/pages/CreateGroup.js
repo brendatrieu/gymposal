@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { useUser, useAlert } from '../context/AppContext';
 import { FormControl, TextField, MenuItem, Typography, Button, Box } from '@mui/material';
 import FormBox from '../components/FormBox';
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
-import { postNewLog } from '../lib/api';
+import { postNewGroup } from '../lib/api';
 
 export default function CreateGroup() {
   const { register, handleSubmit } = useForm();
@@ -12,15 +11,16 @@ export default function CreateGroup() {
   const { setAlert } = useAlert();
   const navigate = useNavigate();
 
-  async function OnSubmit(newLog, id) {
-    console.log(newLog);
-    // try {
-    //   await postNewLog(newLog, userId);
-    //   setAlert('ExerciseSaved');
-    //   navigate('/'); test
-    // } catch (err) {
-    //   setAlert('ErrorOccurred', err);
-    // }
+  async function OnSubmit(group) {
+    group.userId = userId;
+    console.log(group);
+    try {
+      await postNewGroup(group);
+      setAlert('ExerciseSaved');
+      navigate('/');
+    } catch (err) {
+      setAlert('ErrorOccurred', err);
+    }
   }
 
   return (

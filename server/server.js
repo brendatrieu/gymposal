@@ -22,7 +22,7 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
-app.get('/api/exerciseTypes', async (req, res, next) => {
+app.get('/api/exercise-types', async (req, res, next) => {
   try {
     const sql = `
       SELECT "type"
@@ -70,7 +70,7 @@ app.post('/api/exercises', async (req, res, next) => {
   }
 });
 
-app.post('/api/groups', async (req, res, next) => {
+app.post('/api/new-group', async (req, res, next) => {
   try {
     const sql = `
       INSERT INTO "groups" ("groupName", "betAmount", "frequencyReq", "intervalReq", "durationReq", "passQty")
