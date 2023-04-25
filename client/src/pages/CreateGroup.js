@@ -17,7 +17,7 @@ export default function CreateGroup() {
     // try {
     //   await postNewLog(newLog, userId);
     //   setAlert('ExerciseSaved');
-    //   navigate('/');
+    //   navigate('/'); test
     // } catch (err) {
     //   setAlert('ErrorOccurred', err);
     // }
