@@ -39,7 +39,7 @@ function stableSort(array, comparator) {
     if (order !== 0) {
       return order;
     }
-    return a[1] - b[1];
+    return b[1] - a[1];
   });
   return stabilizedThis.map((el) => el[0]);
   }
@@ -90,7 +90,7 @@ EnhancedTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired,
 };
 
-function EnhancedTableToolbar() {
+function EnhancedTableToolbar({tableName}) {
 
   return (
     <Toolbar
@@ -107,13 +107,21 @@ function EnhancedTableToolbar() {
           component="div"
           color="secondary.main"
         >
-          Exercise Log
+          {tableName}
         </Typography>
     </Toolbar>
   );
 }
 
-export default function EnhancedTable({rows, headers, rowKey}) {
+/**
+ * Enhanced Table creates a table component with given data.
+ * @param {Object} 'rows' is an object where keys represent column headers and values represent data.
+ * @param {String} 'tableName' is a string used for the table label.
+ * @param {Array} 'headers' is an array of objects containing configuration data for each header/column.
+ * @param {String} 'rowKey' is the key/property of the 'rows' object that should be used as a key.
+ * @returns
+ */
+export default function EnhancedTable({rows, tableName, headers, rowKey}) {
   const [order, setOrder] = useState(DEFAULT_ORDER);
   const [orderBy, setOrderBy] = useState(DEFAULT_ORDER_BY);
   const [page, setPage] = useState(0);
@@ -186,7 +194,7 @@ export default function EnhancedTable({rows, headers, rowKey}) {
           bgcolor: 'primary.main'
           }}
       >
-        <EnhancedTableToolbar />
+        <EnhancedTableToolbar tableName={tableName}/>
         <TableContainer sx={{ paddingX: 1.5 }} >
           <Table aria-labelledby="tableTitle" >
             <EnhancedTableHead
@@ -203,7 +211,8 @@ export default function EnhancedTable({rows, headers, rowKey}) {
                     <TableRow key={row[rowKey]} >
                       {headers.map((header) => (
                         <TableCell
-                          align={header.numeric ? 'right' : 'left'} sx={{ color: 'secondary.main' }}
+                          align={header.numeric ? 'right' : 'left'}
+                          sx={{ color: 'secondary.main' }}
                           key={`${row[rowKey]}${row[header.id]}`}
                         >
                           {row[header.id]}

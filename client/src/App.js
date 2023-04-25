@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Launchpad from './pages/Launchpad';
 import LogExercise from './pages/LogExercise';
 import CreateGroup from './pages/CreateGroup';
+import GroupHome from './pages/GroupHome';
 import Provider from './context/AppContext';
 import { Routes, Route } from 'react-router-dom';
 
@@ -20,6 +21,7 @@ export default function App() {
             <Route index element={<Launchpad />} />
             <Route path="log-exercise" element={<LogExercise />} />
             <Route path="create-group" element={<CreateGroup />} />
+            <Route path="group-home/:groupId" element={<GroupHome />} />
           </Route>
         </Routes>
       </ThemeProvider>

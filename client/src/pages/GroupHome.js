@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Typography, Box, Grid, Paper, CircularProgress, Button } from '@mui/material';
+import { Typography, Box, Grid, Paper, CircularProgress, IconButton, Button } from '@mui/material';
+import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
 import { useUser } from '../context/AppContext';
-import { fetchPersonalLogs} from '../lib/api';
-import { personalLogHeaders } from '../lib/tables-config';
+import { fetchGroupLogs } from '../lib/api';
+import { groupLogHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc'
 
@@ -27,23 +28,25 @@ const GridBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-async function loadPersonalLogs(userId, setPersonalLogRows) {
-  const response = await fetchPersonalLogs(userId);
+async function loadGroupLogs(groupId, setGroupLogRows) {
+  const response = await fetchGroupLogs(groupId);
   response.forEach((row) => row.date = dayjs.utc(row.date).local().format('MM/DD/YY'));
-  setPersonalLogRows(response);
+  setGroupLogRows(response);
+  console.log(response);
 }
 
-export default function Launchpad() {
+export default function GroupHome() {
+  const { groupId } = useParams();
   const { userId } = useUser();
-  const [personalLogRows, setPersonalLogRows] = useState();
+  const [groupLogRows, setGroupLogRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
 
   useEffect(() => {
-    Promise.all([loadPersonalLogs(userId, setPersonalLogRows)])
+    Promise.all([loadGroupLogs(groupId, setGroupLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
-  }, [userId]);
+  }, [groupId]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;
@@ -52,36 +55,37 @@ export default function Launchpad() {
     <div>
       <GridBox my={4} sx={{ flexGrow: 1, height: '100%' }}>
         <Grid container justifyContent="center" spacing={2}>
-          <Grid item xs={12} md={10}>
-            <Typography variant="h4" >Hello!</Typography>
+          <Grid container item xs={12} md={10} justifyContent="space-between">
+            <Typography variant="h4">{groupLogRows[0].groupName}</Typography>
+            <IconButton><SettingsIcon /></IconButton>
           </Grid>
           <Grid item xs={12} md={6}>
             <Item>Graph</Item>
           </Grid>
           <Grid item xs={12} md={4}>
-            {personalLogRows.length ?
+            {groupLogRows.length ?
               <EnhancedTable
-              rows={personalLogRows}
-              tableName={'Exercise Log'}
-              headers={personalLogHeaders}
-              rowKey={'exerciseId'}
+                rows={groupLogRows}
+                tableName={'Exercise Log'}
+                headers={groupLogHeaders}
+                rowKey={'exerciseId'}
               /> :
-              <Paper align="center" sx={{bgcolor: 'primary.main'}}>
+              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
                 <Link to="/log-exercise">
-                  <Button sx={{ color: 'secondary.main'}}>Log Exercise</Button>
-              </Link>
+                  <Button sx={{ color: 'secondary.main' }}>Log Exercise</Button>
+                </Link>
               </Paper>
             }
           </Grid>
           <Grid item xs={12} md={5}>
-            {personalLogRows.length ?
+            {/* {groupLogRows.length ?
               <Item>Groups</Item> :
               <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
                 <Link to="/create-group">
                   <Button sx={{ color: 'secondary.main' }}>Create Group</Button>
                 </Link>
               </Paper>
-            }
+            } */}
           </Grid>
           <Grid item xs={12} md={5}>
             <Item>Penalties</Item>

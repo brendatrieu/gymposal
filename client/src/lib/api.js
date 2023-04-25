@@ -59,3 +59,16 @@ export async function fetchGroups(id) {
   }
   return await response.json();
 }
+
+/**
+ * Fetches group exercises from the database.
+ * @param {Number} 'id' - an integer representing the groupId.
+ * @returns Promise that resolves to an array of exercise logs for all group members.
+ */
+export async function fetchGroupLogs(id) {
+  const response = await fetch(`/api/group-logs/${id}`);
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}

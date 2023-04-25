@@ -71,6 +71,29 @@ app.get('/api/groups/:userId', async (req, res, next) => {
   }
 });
 
+app.get('/api/group-logs/:groupId', async (req, res, next) => {
+  try {
+    const sql = `
+      SELECT "groupName",
+        "firstName",
+        "exercises"."exerciseId",
+        "exercises"."type",
+        "exercises"."date",
+        "exercises"."totalMinutes"
+      FROM "groups"
+      JOIN "groupUsers" USING ("groupId")
+      JOIN "exercises" USING ("userId")
+      JOIN "users" USING ("userId")
+      WHERE "groups"."groupId" = $1
+    `;
+    const params = [req.params.groupId];
+    const result = await db.query(sql, params);
+    res.json(result.rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post('/api/exercises', async (req, res, next) => {
   try {
     const sql = `

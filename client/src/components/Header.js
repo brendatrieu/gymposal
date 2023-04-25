@@ -29,7 +29,7 @@ export default function Header() {
 
   return (
     <div>
-      <NavBar sx={{ flexGrow: 1, bgcolor: 'secondary.main' }} position="sticky">
+      <NavBar sx={{ flexGrow: 1, backgroundImage: 'unset', bgcolor: 'secondary.main' }} position="sticky">
         <Toolbar sx={{ justifyContent: "space-between"}}>
           <IconButton sx={{ pl: 0 }}>
             <Link to="/" style={{textDecoration: 'none', color: 'unset' }}>
