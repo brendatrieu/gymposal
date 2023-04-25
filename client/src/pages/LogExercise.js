@@ -13,8 +13,6 @@ import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchExerciseTypes, postNewLog } from '../lib/api';
 
-
-
 export default function LogExercise() {
   const { control, register, handleSubmit } = useForm();
   const [ exerciseTypes, setExerciseTypes ] = useState();
@@ -24,9 +22,10 @@ export default function LogExercise() {
   const [ isLoading, setIsLoading ] = useState(true);
   const [ error, setError ] = useState();
 
-  async function OnSubmit(newLog, id){
+  async function OnSubmit(newLog){
     try {
-      await postNewLog(newLog, userId);
+      newLog.userId = userId;
+      await postNewLog(newLog);
       setAlert('ExerciseSaved');
       navigate('/');
     } catch(err) {

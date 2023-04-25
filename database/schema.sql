@@ -24,7 +24,7 @@ CREATE TABLE "public"."groups" (
 	"groupName" TEXT NOT NULL,
 	"betAmount" DECIMAL,
 	"frequencyReq" int NOT NULL,
-	"intervalReq" int NOT NULL,
+	"intervalReq" TEXT NOT NULL,
 	"durationReq" int NOT NULL,
 	"passQty" int,
 	"createdAt" timestamptz NOT NULL DEFAULT now(),

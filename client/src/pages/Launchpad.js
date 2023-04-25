@@ -65,14 +65,21 @@ export default function Launchpad() {
               rowKey={'exerciseId'}
               /> :
               <Paper align="center" sx={{bgcolor: 'primary.main'}}>
-                <Link to="/logExercise">
+                <Link to="/log-exercise">
                   <Button sx={{ color: 'secondary.main'}}>Log Exercise</Button>
               </Link>
               </Paper>
             }
           </Grid>
           <Grid item xs={12} md={5}>
-            <Item>Groups</Item>
+            {personalLogRows.length ?
+              <Item>Groups</Item> :
+              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
+                <Link to="/create-group">
+                  <Button sx={{ color: 'secondary.main' }}>Create Group</Button>
+                </Link>
+              </Paper>
+            }
           </Grid>
           <Grid item xs={12} md={5}>
             <Item>Penalties</Item>
