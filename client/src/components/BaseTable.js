@@ -10,12 +10,10 @@ import { Box,
         TableRow,
         TableSortLabel,
         Typography,
-        Toolbar
+        Toolbar,
        } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import { useUser, useAlert } from '../context/AppContext';
-import { fetchPersonalLogs } from '../lib/api';
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -34,8 +32,9 @@ function getComparator(order, orderBy) {
 }
 
 function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
+  const stabilizedThis = array?.map((el, index) => [el, index]);
+  if (stabilizedThis?.length) {
+    stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) {
       return order;
@@ -43,32 +42,14 @@ function stableSort(array, comparator) {
     return a[1] - b[1];
   });
   return stabilizedThis.map((el) => el[0]);
+  }
 }
 
-const headCells = [
-  {
-    id: 'date',
-    numeric: false,
-    label: 'Date',
-  },
-  {
-    id: 'type',
-    numeric: false,
-    label: 'Type',
-  },
-  {
-    id: 'minutes',
-    numeric: true,
-    label: 'Total Minutes',
-  },
-];
-
-const DEFAULT_ORDER = 'asc';
+const DEFAULT_ORDER = 'desc';
 const DEFAULT_ORDER_BY = 'date';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
-function EnhancedTableHead(props) {
-  const { order, orderBy, onRequestSort } = props;
+function EnhancedTableHead({ order, orderBy, onRequestSort, headers }) {
   const handleSort = (newOrderBy) => (event) => {
     onRequestSort(event, newOrderBy);
   };
@@ -76,7 +57,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        {headCells.map((headCell) => (
+        {headers.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
@@ -132,42 +113,26 @@ function EnhancedTableToolbar() {
   );
 }
 
-export default function EnhancedTable() {
+export default function EnhancedTable({rows, headers, rowKey}) {
   const [order, setOrder] = useState(DEFAULT_ORDER);
   const [orderBy, setOrderBy] = useState(DEFAULT_ORDER_BY);
   const [page, setPage] = useState(0);
   const [visibleRows, setVisibleRows] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
-  const { setAlert } = useAlert();
-  const { userId } = useUser();
-  const [isLoading, setIsLoading] = useState(true);
-  const [rows, setRows] = useState();
 
   useEffect(() => {
-    async function loadPersonalLogs() {
-      try {
-        setIsLoading(true);
-        const response = await fetchPersonalLogs(userId);
-        console.log('RESPONSE', response);
-        setRows(response);
-      } catch(err) {
-        setAlert('ErrorOccurred', err);
-      } finally {
-        setIsLoading(false);
-      }
+    if (rows?.length) {
+      let rowsOnMount = stableSort(
+        rows,
+        getComparator(DEFAULT_ORDER, DEFAULT_ORDER_BY),
+      );
+      rowsOnMount = rowsOnMount.slice(
+        0 * DEFAULT_ROWS_PER_PAGE,
+        0 * DEFAULT_ROWS_PER_PAGE + DEFAULT_ROWS_PER_PAGE,
+      );
+      setVisibleRows(rowsOnMount);
     }
-    loadPersonalLogs();
-    let rowsOnMount = stableSort(
-      rows,
-      getComparator(DEFAULT_ORDER, DEFAULT_ORDER_BY),
-    );
-    rowsOnMount = rowsOnMount.slice(
-      0 * DEFAULT_ROWS_PER_PAGE,
-      0 * DEFAULT_ROWS_PER_PAGE + DEFAULT_ROWS_PER_PAGE,
-    );
-    setVisibleRows(rowsOnMount);
-  }, [rows, userId, setAlert]);
-  console.log(rows);
+  }, [rows]);
 
   const handleRequestSort = useCallback(
     (event, newOrderBy) => {
@@ -223,40 +188,27 @@ export default function EnhancedTable() {
       >
         <EnhancedTableToolbar />
         <TableContainer sx={{ paddingX: 1.5 }} >
-          <Table
-            aria-labelledby="tableTitle"
-          >
+          <Table aria-labelledby="tableTitle" >
             <EnhancedTableHead
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
+              headers={headers}
             />
             <TableBody>
               {visibleRows
                 ? visibleRows.map((row, index) => {
                   return (
-                    <TableRow
-                      key={row.id}
-                    >
-                      <TableCell
-                        align="left"
-                        sx={{ color: 'secondary.main'}}
-                      >
-                        {row.date}
-                      </TableCell>
-                      <TableCell
-                        align="left"
-                        sx={{color: 'secondary.main'}}
-                      >
-                        {row.type}
-                      </TableCell>
-                      <TableCell
-                        align="right"
-                        sx={{color: 'secondary.main'}}
-                      >
-                        {row.minutes}
-                      </TableCell>
+                    <TableRow key={row[rowKey]} >
+                      {headers.map((header) => (
+                        <TableCell
+                          align={header.numeric ? 'right' : 'left'} sx={{ color: 'secondary.main' }}
+                          key={`${row[rowKey]}${row[header.id]}`}
+                        >
+                          {row[header.id]}
+                        </TableCell>)
+                        )}
                     </TableRow>
                   );
                 })

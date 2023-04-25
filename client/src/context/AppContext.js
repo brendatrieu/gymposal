@@ -13,12 +13,6 @@ export function useUser() {
   return { userId };
 }
 
-// export function useLoading() {
-//   const { isLoading, setIsLoading } = useContext(AppContext);
-
-
-// }
-
 export default function Provider({children}){
   const [ alert, setAlert ] = useState(false);
 

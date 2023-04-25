@@ -40,7 +40,7 @@ app.get('/api/exercises/:userId', async (req, res, next) => {
     const sql = `
       SELECT "exerciseId",
           "type",
-          TO_CHAR("date", 'MM/DD/YYYY HH:MM') AS "date",
+          "date",
           "totalMinutes"
         FROM "exercises"
         WHERE "userId" = $1

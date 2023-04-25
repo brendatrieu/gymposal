@@ -13,6 +13,8 @@ import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchExerciseTypes, postNewLog } from '../lib/api';
 
+
+
 export default function LogExercise() {
   const { control, register, handleSubmit } = useForm();
   const [ exerciseTypes, setExerciseTypes ] = useState();
@@ -61,7 +63,7 @@ export default function LogExercise() {
               <Controller
                 name="date"
                 control={control}
-                defaultValue={dayjs()}
+                defaultValue={dayjs.utc()}
                 render={({ field }) => (
                   <DatePicker
                     {...field}

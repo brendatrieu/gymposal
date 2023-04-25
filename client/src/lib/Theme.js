@@ -38,6 +38,14 @@ const theme = createTheme({
           color: "#214C67"
         }
       }
+    },
+
+      MuiSelect: {
+      styleOverrides: {
+        icon: {
+        color: "#214C67"
+        }
+      }
     }
   }
 

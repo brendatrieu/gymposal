@@ -1,6 +1,14 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Typography, Box, Grid, Paper } from '@mui/material';
-import EnhancedTable from '../components/PersonalLog';
+import { Typography, Box, Grid, Paper, CircularProgress, Button } from '@mui/material';
+import EnhancedTable from '../components/BaseTable';
+import { useUser } from '../context/AppContext';
+import { fetchPersonalLogs} from '../lib/api';
+import { personalLogHeaders } from '../lib/tablesConfig';
+import dayjs from 'dayjs';
+import dayjsPluginUTC from 'dayjs-plugin-utc'
+dayjs.extend(dayjsPluginUTC);
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -18,9 +26,26 @@ const GridBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-
+async function loadPersonalLogs(userId, setPersonalLogRows) {
+  const response = await fetchPersonalLogs(userId);
+  response.forEach((row) => row.date = dayjs.utc(row.date).local().format('MM/DD/YY h:mm A'));
+  setPersonalLogRows(response);
+}
 
 export default function Launchpad() {
+  const { userId } = useUser();
+  const [personalLogRows, setPersonalLogRows] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState();
+
+  useEffect(() => {
+    Promise.all([loadPersonalLogs(userId, setPersonalLogRows)])
+      .then(() => setIsLoading(false))
+      .catch((error) => setError(error));
+  }, [userId]);
+
+  if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
+  if (error) return <div>Error Loading Form: {error.message}</div>;
 
   return (
     <div>
@@ -33,7 +58,18 @@ export default function Launchpad() {
             <Item>Graph</Item>
           </Grid>
           <Grid item xs={12} md={4}>
-            <EnhancedTable />
+            {personalLogRows.length ?
+              <EnhancedTable
+              rows={personalLogRows}
+              headers={personalLogHeaders}
+              rowKey={'exerciseId'}
+              /> :
+              <Paper align="center" sx={{bgcolor: 'primary.main'}}>
+                <Link to="/logExercise">
+                  <Button sx={{ color: 'secondary.main'}}>Log Exercise</Button>
+              </Link>
+              </Paper>
+            }
           </Grid>
           <Grid item xs={12} md={5}>
             <Item>Groups</Item>
