@@ -41,8 +41,10 @@ app.get('/api/exercises/:userId', async (req, res, next) => {
       SELECT "exerciseId",
           "type",
           "date",
-          "totalMinutes"
+          "totalMinutes",
+          "users"."firstName" AS "firstName"
         FROM "exercises"
+        JOIN "users" USING ("userId")
         WHERE "userId" = $1
     `;
     const params = [req.params.userId];
