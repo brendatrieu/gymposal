@@ -43,8 +43,8 @@ export default function Header() {
               <Link to="/log-exercise">
                 <Button>Log Exercise</Button>
               </Link>
-              <Link to="/create-group">
-                <Button >Create Group</Button>
+              <Link to="/group-form">
+                <Button>Create Group</Button>
               </Link>
               <IconButton sx={{ pr: 0 }} ><LogoutIcon /></IconButton>
             </Box>)}

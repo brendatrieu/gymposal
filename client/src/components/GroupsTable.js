@@ -112,7 +112,7 @@ function EnhancedTableToolbar({ tableName, tableCaption }) {
       >
         {tableName}
       </Typography>
-      <Link to="/create-group">
+      <Link to="/group-form">
         <Button
           sx={{
             bgcolor: 'tertiary.main',

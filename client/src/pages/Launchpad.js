@@ -81,7 +81,7 @@ export default function Launchpad() {
                 rowKey={'groupId'}
               /> :
               <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
-                <Link to="/create-group">
+                <Link to="/group-form">
                   <Button sx={{ color: 'secondary.main' }}>Create Group</Button>
                 </Link>
               </Paper>

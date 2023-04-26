@@ -3,6 +3,8 @@ import express from 'express';
 import errorMiddleware from './lib/error-middleware.js';
 import pg from 'pg';
 
+pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseFloat);
+
 // eslint-disable-next-line no-unused-vars -- Remove when used
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -109,12 +111,15 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
         "intervalReq",
         "durationReq",
         "passQty",
-        "groupId"
+        "groupId",
+        "betAmount",
+        "groupName"
       FROM "groups"
       WHERE "groupId" = $1
     `;
     const params = [req.params.groupId];
     const result = await db.query(sql, params);
+    console.log('server get request', result.rows);
     res.json(result.rows);
   } catch (err) {
     next(err);
@@ -159,6 +164,37 @@ app.post('/api/new-group', async (req, res, next) => {
       const [logUser] = newGroupUser.rows;
       res.status(201).json(logUser);
     }
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.patch('/api/group-settings/:groupId', async (req, res, next) => {
+  try {
+    const sql = `
+      UPDATE "groups"
+        SET "groupName" = $2,
+          "betAmount" = $3,
+          "frequencyReq" = $4,
+          "intervalReq" = $5,
+          "durationReq" = $6,
+          "passQty" = $7
+      WHERE "groupId" = $1
+      RETURNING *;
+    `;
+    const { groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty } = req.body;
+    const params = [
+      req.params.groupId,
+      groupName,
+      betAmount,
+      frequencyReq,
+      intervalReq,
+      durationReq,
+      passQty
+    ];
+    console.log('params', params);
+    const result = await db.query(sql, params);
+    res.json(result.rows);
   } catch (err) {
     next(err);
   }
