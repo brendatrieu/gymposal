@@ -5,7 +5,7 @@ import { Typography, Grid, Paper, CircularProgress, IconButton, Button } from '@
 import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
-import { useUser } from '../context/AppContext';
+// import { useUser } from '../context/AppContext';
 import { fetchGroupLogs, fetchGroupSettings } from '../lib/api';
 import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
@@ -32,7 +32,7 @@ async function loadGroupSettings(groupId, setGroupSettingsRows) {
 
 export default function GroupHome() {
   const { groupId } = useParams();
-  const { userId } = useUser();
+  // const { userId } = useUser();
   const [groupLogRows, setGroupLogRows] = useState();
   const [groupSettingsRows, setGroupSettingsRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -53,7 +53,9 @@ export default function GroupHome() {
         <Grid container justifyContent="center" spacing={2}>
           <Grid container item xs={12} md={10} justifyContent="space-between">
             <Typography variant="h4">{groupLogRows[0].groupName}</Typography>
-            <IconButton><SettingsIcon /></IconButton>
+            <Link to={`/group-form/${groupId}`} state={groupSettingsRows}>
+              <IconButton><SettingsIcon /></IconButton>
+            </Link>
           </Grid>
           <Grid item xs={12} md={6}>
             <Item>Graph</Item>

@@ -87,3 +87,18 @@ export async function fetchGroupSettings(id) {
   }
   return await response.json();
 }
+
+/**
+ * Updates group data in the API.
+ * @param {Number} 'id' - an integer representing the groupId.
+ * @param {Object} 'group' - an object with data collected from the group settings form.
+ */
+export async function patchGroupSettings(id, group) {
+  const response = await fetch(`/api/group-settings/${id}`, {
+    method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(group)
+  });
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
