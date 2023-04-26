@@ -45,11 +45,11 @@ export default function CreateGroup() {
               required
               select
               label="Exercise Interval"
-              defaultValue="weekly"
+              defaultValue="Weekly"
               sx={{ marginY: 3 }}
               {...register("intervalReq")}
             >
-              <MenuItem key="weekly" value="weekly">
+              <MenuItem key="weekly" value="Weekly">
                 Weekly
               </MenuItem>
               <MenuItem key="monthly" value="monthly">

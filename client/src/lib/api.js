@@ -9,7 +9,7 @@ export async function fetchExerciseTypes() {
 }
 
 /**
- * Posts new exercise entry into the exercises table in the database.
+ * Posts new exercise entry into the exercises table in the API.
  * @param {Object} 'newLog' - an object with data collected from the form.
  */
 export async function postNewLog(newLog) {
@@ -22,7 +22,7 @@ export async function postNewLog(newLog) {
 }
 
 /**
- * Fetches user's logs from the exercises table in the database.
+ * Fetches user's logs from the exercises table in the API.
  * @param {Number} 'id' - an integer representing the userId.
  * @returns Promise that resolves to an array of exercise logs.
  */
@@ -35,7 +35,7 @@ export async function fetchPersonalLogs(id) {
 }
 
 /**
- * Posts new group information into the groups table in the database.
+ * Posts new group information into the groups table in the API.
  * @param {Object} 'group' - an object with data collected from the new group form.
  */
 export async function postNewGroup(group) {
@@ -48,7 +48,7 @@ export async function postNewGroup(group) {
 }
 
 /**
- * Fetches user's groups from the groups table in the database.
+ * Fetches user's groups from the groups table in the API.
  * @param {Number} 'id' - an integer representing the userId.
  * @returns Promise that resolves to an array of groups.
  */
@@ -61,7 +61,7 @@ export async function fetchGroups(id) {
 }
 
 /**
- * Fetches group exercises from the database.
+ * Fetches group exercises from the API.
  * @param {Number} 'id' - an integer representing the groupId.
  * @returns Promise that resolves to an array of exercise logs for all group members.
  */
@@ -70,5 +70,19 @@ export async function fetchGroupLogs(id) {
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
   }
+  return await response.json();
+}
+
+/**
+ * Fetches group data from the API.
+ * @param {Number} 'id' - an integer representing the groupId.
+ * @returns Promise that resolves to an array of group settings data.
+ */
+export async function fetchGroupSettings(id) {
+  const response = await fetch(`/api/group-settings/${id}`);
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  console.log('response', response);
   return await response.json();
 }

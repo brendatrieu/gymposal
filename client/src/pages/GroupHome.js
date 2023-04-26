@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Typography, Box, Grid, Paper, CircularProgress, IconButton, Button } from '@mui/material';
+import { Typography, Grid, Paper, CircularProgress, IconButton, Button } from '@mui/material';
+import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
 import { useUser } from '../context/AppContext';
-import { fetchGroupLogs } from '../lib/api';
-import { groupLogHeaders } from '../lib/tables-config';
+import { fetchGroupLogs, fetchGroupSettings } from '../lib/api';
+import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc'
 
@@ -18,32 +19,27 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: 'center'
 }));
 
-const GridBox = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.down('md')]: {
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(4),
-  },
-  [theme.breakpoints.up('md')]: {
-    padding: theme.spacing(0),
-  },
-}));
-
 async function loadGroupLogs(groupId, setGroupLogRows) {
   const response = await fetchGroupLogs(groupId);
   response.forEach((row) => row.date = dayjs.utc(row.date).local().format('MM/DD/YY'));
   setGroupLogRows(response);
-  console.log(response);
+}
+
+async function loadGroupSettings(groupId, setGroupSettingsRows) {
+  const response = await fetchGroupSettings(groupId);
+  setGroupSettingsRows(response);
 }
 
 export default function GroupHome() {
   const { groupId } = useParams();
   const { userId } = useUser();
   const [groupLogRows, setGroupLogRows] = useState();
+  const [groupSettingsRows, setGroupSettingsRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
 
   useEffect(() => {
-    Promise.all([loadGroupLogs(groupId, setGroupLogRows)])
+    Promise.all([loadGroupLogs(groupId, setGroupLogRows), loadGroupSettings(groupId, setGroupSettingsRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
   }, [groupId]);
@@ -78,14 +74,15 @@ export default function GroupHome() {
             }
           </Grid>
           <Grid item xs={12} md={5}>
-            {/* {groupLogRows.length ?
-              <Item>Groups</Item> :
-              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
-                <Link to="/create-group">
-                  <Button sx={{ color: 'secondary.main' }}>Create Group</Button>
-                </Link>
-              </Paper>
-            } */}
+            <Paper>
+              <EnhancedTable
+              rows={groupSettingsRows}
+              tableName={'Overview'}
+              tableCaption={`Each member must meet the following requirements by each Sunday:`}
+              headers={groupSettingsHeaders}
+              rowKey={'groupId'}
+            />
+            </Paper>
           </Grid>
           <Grid item xs={12} md={5}>
             <Item>Penalties</Item>

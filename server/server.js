@@ -56,12 +56,18 @@ app.get('/api/exercises/:userId', async (req, res, next) => {
 app.get('/api/groups/:userId', async (req, res, next) => {
   try {
     const sql = `
-      SELECT "groupName",
-          "type",
-          "date",
-          "totalMinutes"
-        FROM "exercises"
-        WHERE "userId" = $1
+      SELECT "groups"."groupName",
+        SUM("exercises"."totalMinutes") AS "totalMinutes",
+        "groups"."groupId"
+      FROM "groups"
+      JOIN "groupUsers" USING ("groupId")
+      JOIN "exercises" USING ("userId")
+      JOIN "users" USING ("userId")
+      WHERE "groups"."groupId" IN
+        (SELECT "groupId"
+        FROM "groupUsers"
+        WHERE "userId" = $1)
+      GROUP BY "groups"."groupId"
     `;
     const params = [req.params.userId];
     const result = await db.query(sql, params);
@@ -74,7 +80,7 @@ app.get('/api/groups/:userId', async (req, res, next) => {
 app.get('/api/group-logs/:groupId', async (req, res, next) => {
   try {
     const sql = `
-      SELECT "groupName",
+      SELECT "groups"."groupName",
         "firstName",
         "exercises"."exerciseId",
         "exercises"."type",
@@ -85,6 +91,25 @@ app.get('/api/group-logs/:groupId', async (req, res, next) => {
       JOIN "exercises" USING ("userId")
       JOIN "users" USING ("userId")
       WHERE "groups"."groupId" = $1
+    `;
+    const params = [req.params.groupId];
+    const result = await db.query(sql, params);
+    res.json(result.rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/group-settings/:groupId', async (req, res, next) => {
+  try {
+    const sql = `
+      SELECT "frequencyReq",
+        "intervalReq",
+        "durationReq",
+        "passQty",
+        "groupId"
+      FROM "groups"
+      WHERE "groupId" = $1
     `;
     const params = [req.params.groupId];
     const result = await db.query(sql, params);

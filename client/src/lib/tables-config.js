@@ -1,3 +1,6 @@
+/**
+ * @returns {Array} An array of objects containing headers to be used on the personal exercise log table within the launchpad.
+ */
 export const personalLogHeaders = [
   {
     id: 'date',
@@ -16,6 +19,9 @@ export const personalLogHeaders = [
   },
 ];
 
+/**
+ * @returns {Array} An array of objects containing headers to be used on the group exercise log table within the group home page.
+ */
 export const groupLogHeaders = [
   {
     id: 'firstName',
@@ -31,6 +37,49 @@ export const groupLogHeaders = [
     id: 'type',
     numeric: false,
     label: 'Type',
+  },
+  {
+    id: 'totalMinutes',
+    numeric: true,
+    label: 'Total Minutes',
+  },
+];
+
+/**
+ * @returns {Array} An array of objects containing headers to be used on the group overview table within the group home page.
+ */
+export const groupSettingsHeaders = [
+  {
+    id: 'intervalReq',
+    numeric: false,
+    label: 'Interval',
+  },
+  {
+    id: 'frequencyReq',
+    numeric: true,
+    label: 'Frequency',
+  },
+  {
+    id: 'durationReq',
+    numeric: true,
+    label: 'Duration',
+  },
+  {
+    id: 'passQty',
+    numeric: true,
+    label: 'Passes per Year',
+  },
+];
+
+/**
+ * @returns {Array} An array of objects containing headers to be used on the group overview table within the launchpad.
+ */
+export const groupsHeaders = [
+  {
+    id: 'groupName',
+    numeric: false,
+    label: 'Name',
+    route: '/group-home/'
   },
   {
     id: 'totalMinutes',
