@@ -52,7 +52,7 @@ export default function Launchpad() {
       <GridBox my={4} sx={{ flexGrow: 1, height: '100%' }}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12} md={10}>
-            <Typography variant="h4" >Hello!</Typography>
+            <Typography variant="h4" >Hello, {personalLogRows[0].firstName}!</Typography>
           </Grid>
           <Grid item xs={12} md={6}>
             <Item>Graph</Item>
