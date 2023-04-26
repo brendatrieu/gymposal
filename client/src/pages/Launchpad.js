@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Typography, Box, Grid, Paper, CircularProgress, Button } from '@mui/material';
+import { Typography, Grid, Paper, CircularProgress, Button } from '@mui/material';
 import EnhancedTable from '../components/BaseTable';
+import EnhancedGroupsTable from '../components/GroupsTable';
+import { GridBox } from '../components/GridBox';
 import { useUser } from '../context/AppContext';
-import { fetchPersonalLogs} from '../lib/api';
-import { personalLogHeaders } from '../lib/tablesConfig';
+import { fetchPersonalLogs, fetchGroups } from '../lib/api';
+import { personalLogHeaders, groupsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc'
+
 dayjs.extend(dayjsPluginUTC);
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -16,30 +19,27 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: 'center'
 }));
 
-const GridBox = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.down('md')]: {
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(4),
-  },
-  [theme.breakpoints.up('md')]: {
-    padding: theme.spacing(0),
-  },
-}));
-
 async function loadPersonalLogs(userId, setPersonalLogRows) {
   const response = await fetchPersonalLogs(userId);
-  response.forEach((row) => row.date = dayjs.utc(row.date).local().format('MM/DD/YY h:mm A'));
+  response.forEach((row) => row.date = dayjs.utc(row.date).local().format('MM/DD/YY'));
   setPersonalLogRows(response);
+}
+
+async function loadGroups(userId, setGroupsRows) {
+  const response = await fetchGroups(userId);
+  setGroupsRows(response);
 }
 
 export default function Launchpad() {
   const { userId } = useUser();
   const [personalLogRows, setPersonalLogRows] = useState();
+  const [groupsRows, setGroupsRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
 
   useEffect(() => {
-    Promise.all([loadPersonalLogs(userId, setPersonalLogRows)])
+    Promise.all([loadPersonalLogs(userId, setPersonalLogRows),
+                  loadGroups(userId, setGroupsRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
   }, [userId]);
@@ -61,6 +61,7 @@ export default function Launchpad() {
             {personalLogRows.length ?
               <EnhancedTable
               rows={personalLogRows}
+              tableName={'Exercise Log'}
               headers={personalLogHeaders}
               rowKey={'exerciseId'}
               /> :
@@ -72,8 +73,13 @@ export default function Launchpad() {
             }
           </Grid>
           <Grid item xs={12} md={5}>
-            {personalLogRows.length ?
-              <Item>Groups</Item> :
+            {groupsRows.length ?
+              <EnhancedGroupsTable
+                rows={groupsRows}
+                tableName={'Groups'}
+                headers={groupsHeaders}
+                rowKey={'groupId'}
+              /> :
               <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
                 <Link to="/create-group">
                   <Button sx={{ color: 'secondary.main' }}>Create Group</Button>

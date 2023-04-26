@@ -1,17 +1,19 @@
 import { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Box,
-        Table,
-        TableBody,
-        TableCell,
-        TableContainer,
-        TableHead,
-        TablePagination,
-        TableRow,
-        TableSortLabel,
-        Typography,
-        Toolbar,
-       } from '@mui/material';
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  Typography,
+  Toolbar,
+  Button
+} from '@mui/material';
 import { Link } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
@@ -36,13 +38,13 @@ function stableSort(array, comparator) {
   const stabilizedThis = array?.map((el, index) => [el, index]);
   if (stabilizedThis?.length) {
     stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return b[1] - a[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) {
+        return order;
+      }
+      return b[1] - a[1];
+    });
+    return stabilizedThis.map((el) => el[0]);
   }
 }
 
@@ -63,7 +65,7 @@ function EnhancedTableHead({ order, orderBy, onRequestSort, headers }) {
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ color: 'secondary.main'}}
+            sx={{ color: 'secondary.main' }}
           >
             <TableSortLabel
               active={orderBy === headCell.id}
@@ -91,7 +93,7 @@ EnhancedTableHead.propTypes = {
   orderBy: PropTypes.string.isRequired,
 };
 
-function EnhancedTableToolbar({tableName, tableCaption}) {
+function EnhancedTableToolbar({ tableName, tableCaption }) {
 
   return (
     <Toolbar
@@ -99,28 +101,30 @@ function EnhancedTableToolbar({tableName, tableCaption}) {
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         pt: { sm: 2 },
-        flexDirection: 'column',
-        alignItems: 'flex-start',
+        justifyContent: 'space-between',
         borderRadius: '4px 4px 0 0'
       }}
     >
-        <Typography
-          sx={{ fontWeight: 700, flexBasis: '100%' }}
-          variant="h6"
-          color="secondary.main"
+      <Typography
+        sx={{ fontWeight: 700, flexBasis: '100%' }}
+        variant="h6"
+        color="secondary.main"
+      >
+        {tableName}
+      </Typography>
+      <Link to="/create-group">
+        <Button
+          sx={{
+            bgcolor: 'tertiary.main',
+            color: 'primary.main',
+            '&:hover': { backgroundColor: 'tertiary.main', opacity: 0.9}
+          }}
+          color="tertiary.main"
+          variant="filled"
         >
-          {tableName}
-        </Typography>
-        {tableCaption && (
-          <Typography
-            sx={{ fontWeight: 500 }}
-            variant="body2"
-            color="secondary.main"
-          >
-            {`${tableCaption}`}
-          </Typography>
-          )
-        }
+          New
+        </Button>
+      </Link>
     </Toolbar>
   );
 }
@@ -133,7 +137,7 @@ function EnhancedTableToolbar({tableName, tableCaption}) {
  * @param {String} 'rowKey' is the key/property of the 'rows' object that should be used as a key.
  * @returns
  */
-export default function EnhancedTable({rows, tableName, tableCaption, headers, rowKey}) {
+export default function EnhancedGroupsTable({ rows, tableName, tableCaption, headers, rowKey }) {
   const [order, setOrder] = useState(DEFAULT_ORDER);
   const [orderBy, setOrderBy] = useState(DEFAULT_ORDER_BY);
   const [page, setPage] = useState(0);
@@ -199,14 +203,15 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
   );
 
   return (
-    <Box sx={{ width: '100%'}}>
+    <Box sx={{ width: '100%' }}>
       <Paper
-        sx={{ width: '100%', mb: 2,
+        sx={{
+          width: '100%', mb: 2,
           paddingX: 2,
           bgcolor: 'primary.main'
-          }}
+        }}
       >
-        <EnhancedTableToolbar tableName={tableName} tableCaption={tableCaption}/>
+        <EnhancedTableToolbar tableName={tableName} tableCaption={tableCaption} />
         <TableContainer sx={{ paddingX: 1.5 }} >
           <Table aria-labelledby="tableTitle" >
             <EnhancedTableHead
@@ -227,9 +232,21 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
                           sx={{ color: 'secondary.main' }}
                           key={`${row[rowKey]}${header.label}${row[header.id]}`}
                         >
-                          {row[header.id]}
+                          {header.route ?
+                            <Link
+                              key={`${header.route}${row[rowKey]}`}
+                              to={`${header.route}${row[rowKey]}`}
+                              style={{
+                                textDecoration: 'none',
+                                color: '#214C67',
+                                fontWeight: 600
+                              }} >
+                              {row[header.id]}
+                            </Link> :
+                            row[header.id]
+                          }
                         </TableCell>)
-                        )}
+                      )}
                     </TableRow>
                   );
                 })
@@ -246,7 +263,7 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           align="left"
-          sx={{color: 'secondary.main', width: '100%', paddingLeft: '0'}}
+          sx={{ color: 'secondary.main', width: '100%', paddingLeft: '0' }}
         />
       </Paper>
     </Box>

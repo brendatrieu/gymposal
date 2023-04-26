@@ -14,9 +14,9 @@ export default function CreateGroup() {
   async function OnSubmit(group) {
     group.userId = userId;
     try {
-      await postNewGroup(group);
+      const response = await postNewGroup(group);
       setAlert('GroupSaved');
-      navigate('/');
+      navigate(`/group-home/${response.groupId}`);
     } catch (err) {
       setAlert('ErrorOccurred', err);
     }
@@ -45,11 +45,11 @@ export default function CreateGroup() {
               required
               select
               label="Exercise Interval"
-              defaultValue="weekly"
+              defaultValue="Weekly"
               sx={{ marginY: 3 }}
               {...register("intervalReq")}
             >
-              <MenuItem key="weekly" value="weekly">
+              <MenuItem key="weekly" value="Weekly">
                 Weekly
               </MenuItem>
               <MenuItem key="monthly" value="monthly">

@@ -8,6 +8,9 @@ const theme = createTheme({
     secondary: {
       main: '#151a26'
     },
+    tertiary: {
+      main: "#214C67"
+    },
     mode: 'dark'
   },
   typography: {
@@ -39,14 +42,14 @@ const theme = createTheme({
         }
       }
     },
-
-      MuiSelect: {
+    MuiSelect: {
       styleOverrides: {
         icon: {
         color: "#214C67"
         }
       }
-    }
+    },
+
   }
 
 });
