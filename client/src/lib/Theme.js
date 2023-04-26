@@ -25,31 +25,33 @@ const theme = createTheme({
         root: {
           color: "secondary.main",
           "&:hover": {
-            color: "tertiary.main"
+            color: "#214C67"
           },
           "&.Mui-active": {
             "&&": {
-              color: "tertiary.main",
+              color: "#214C67",
               fontWeight: 700,
               "& * ": {
-                color: "tertiary.main"
+                color: "#214C67"
               }
             }
           }
         },
         icon: {
-          color: "tertiary.main"
+          color: "#214C67"
         }
       }
     },
     MuiSelect: {
       styleOverrides: {
         icon: {
-        color: "tertiary.main"
+        color: "#214C67"
         }
       }
     },
+
   }
+
 });
 
 export default theme;

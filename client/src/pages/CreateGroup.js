@@ -14,9 +14,9 @@ export default function CreateGroup() {
   async function OnSubmit(group) {
     group.userId = userId;
     try {
-      await postNewGroup(group);
+      const response = await postNewGroup(group);
       setAlert('GroupSaved');
-      navigate('/');
+      navigate(`/group-home/${response.groupId}`);
     } catch (err) {
       setAlert('ErrorOccurred', err);
     }

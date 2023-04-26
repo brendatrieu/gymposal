@@ -37,6 +37,7 @@ export async function fetchPersonalLogs(id) {
 /**
  * Posts new group information into the groups table in the API.
  * @param {Object} 'group' - an object with data collected from the new group form.
+ * @returns {Object} Data for the new group record.
  */
 export async function postNewGroup(group) {
   const response = await fetch('/api/new-group', {
@@ -45,6 +46,7 @@ export async function postNewGroup(group) {
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
   }
+  return await response.json();
 }
 
 /**
@@ -83,6 +85,5 @@ export async function fetchGroupSettings(id) {
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
   }
-  console.log('response', response);
   return await response.json();
 }
