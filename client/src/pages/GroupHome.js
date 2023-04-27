@@ -9,9 +9,12 @@ import EnhancedTable from '../components/BaseTable';
 import { fetchGroupLogs, fetchGroupSettings } from '../lib/api';
 import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
-import dayjsPluginUTC from 'dayjs-plugin-utc'
+import dayjsPluginUTC from 'dayjs-plugin-utc';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+dayjs.extend(weekOfYear);
 
 dayjs.extend(dayjsPluginUTC);
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -21,7 +24,10 @@ const Item = styled(Paper)(({ theme }) => ({
 
 async function loadGroupLogs(groupId, setGroupLogRows) {
   const response = await fetchGroupLogs(groupId);
-  response.forEach((row) => row.date = dayjs.utc(row.date).local().format('MM/DD/YY'));
+  response.forEach((row) => {
+    row.date = dayjs.utc(row.date).local().format('MM/DD/YY')
+    row.week = dayjs(row.date).week()
+  });
   setGroupLogRows(response);
 }
 
@@ -52,7 +58,7 @@ export default function GroupHome() {
       <GridBox my={4} sx={{ flexGrow: 1, height: '100%' }}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid container item xs={12} md={10} justifyContent="space-between">
-            <Typography variant="h4">{groupLogRows[0].groupName}</Typography>
+            <Typography variant="h4">{groupSettingsRows[0].groupName}</Typography>
             <Link to={`/group-form/${groupId}`} state={groupSettingsRows}>
               <IconButton><SettingsIcon /></IconButton>
             </Link>
@@ -80,7 +86,7 @@ export default function GroupHome() {
               <EnhancedTable
               rows={groupSettingsRows}
               tableName={'Overview'}
-              tableCaption={`Each member must meet the following requirements by each Sunday:`}
+              tableCaption={`Each member must meet the following requirements by each Monday:`}
               headers={groupSettingsHeaders}
               rowKey={'groupId'}
             />

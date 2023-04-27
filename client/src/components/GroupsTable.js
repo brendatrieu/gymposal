@@ -48,8 +48,8 @@ function stableSort(array, comparator) {
   }
 }
 
-const DEFAULT_ORDER = 'desc';
-const DEFAULT_ORDER_BY = 'date';
+const DEFAULT_ORDER = 'asc';
+const DEFAULT_ORDER_BY = 'groupName';
 const DEFAULT_ROWS_PER_PAGE = 5;
 
 function EnhancedTableHead({ order, orderBy, onRequestSort, headers }) {

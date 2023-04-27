@@ -1,10 +1,10 @@
-insert into "users" (
+INSERT INTO "users" (
   "username",
   "firstName",
   "lastName",
   "email",
   "password"
-) values (
+) VALUES (
   'johndoe',
   'John',
   'Doe',
@@ -18,9 +18,9 @@ insert into "users" (
   'password'
 );
 
-insert into "exerciseTypes" (
+INSERT INTO "exerciseTypes" (
   "type"
-) values
+) VALUES
   ('Bike'),
   ('Crossfit'),
   ('H.I.I.T'),
@@ -32,18 +32,35 @@ insert into "exerciseTypes" (
   ('Walk'),
   ('Yoga');
 
-insert into "groups" (
+INSERT INTO "groups" (
   "groupName",
   "betAmount",
   "frequencyReq",
   "intervalReq",
   "durationReq",
   "passQty"
-) values (
+) VALUES (
   'Hogwarts',
   5,
   2,
-  7,
+  'Weekly',
   30,
+  2
+);
+
+INSERT INTO "groupUsers" (
+  "groupId",
+  "userId",
+  "passQty",
+  "remainingPasses"
+) VALUES (
+  1,
+  1,
+  2,
+  2
+), (
+  1,
+  2,
+  2,
   2
 );

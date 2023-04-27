@@ -27,7 +27,8 @@ CREATE TABLE "public"."groups" (
 	"intervalReq" TEXT NOT NULL,
 	"durationReq" int NOT NULL,
 	"passQty" int,
-	"createdAt" timestamptz NOT NULL DEFAULT now(),
+	"createdAt" timestamp NOT NULL DEFAULT now(),
+  "inviteLink" TEXT  GENERATED ALWAYS AS ("groupName" || '-' || "groupId"::text) STORED,
 	CONSTRAINT "groups_pk" PRIMARY KEY ("groupId")
 ) WITH (
   OIDS=FALSE
@@ -38,7 +39,9 @@ CREATE TABLE "public"."exercises" (
 	"userId" int NOT NULL,
 	"typeId" int NOT NULL,
 	"type" TEXT NOT NULL,
-	"date" timestamptz NOT NULL,
+	"date" timestamp NOT NULL,
+  "week" int NOT NULL,
+  "month" int NOT NULL,
 	"totalMinutes" int NOT NULL,
 	CONSTRAINT "exercises_pk" PRIMARY KEY ("exerciseId")
 ) WITH (
@@ -58,8 +61,10 @@ CREATE TABLE "public"."groupUsers" (
 CREATE TABLE "public"."penalties" (
 	"groupId" int NOT NULL,
 	"userId" int NOT NULL,
-	"date" DATE NOT NULL,
-  "status" TEXT NOT NULL DEFAULT 'Open'
+	"date" timestamp NOT NULL DEFAULT now(),
+  "status" TEXT NOT NULL DEFAULT 'Open',
+  "week" int NOT NULL,
+  "penaltyId" TEXT GENERATED ALWAYS AS ("groupId"::text || "userId"::text || "week"::text) STORED UNIQUE
 ) WITH (
   OIDS=FALSE
 );

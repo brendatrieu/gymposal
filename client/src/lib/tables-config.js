@@ -87,3 +87,29 @@ export const groupsHeaders = [
     label: 'Total Minutes',
   },
 ];
+
+/**
+ * @returns {Array} An array of objects containing headers to be used on the penalties table within the launchpad.
+ */
+export const userPenaltiesHeaders = [
+  {
+    id: 'groupName',
+    numeric: false,
+    label: 'Name',
+  },
+  {
+    id: 'date',
+    numeric: true,
+    label: 'Date',
+  },
+  {
+    id: 'status',
+    numeric: true,
+    label: 'Status',
+  },
+  {
+    id: 'betAmount',
+    numeric: true,
+    label: 'Amount Owed',
+  },
+];
