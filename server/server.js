@@ -2,6 +2,10 @@ import 'dotenv/config';
 import express from 'express';
 import errorMiddleware from './lib/error-middleware.js';
 import pg from 'pg';
+import dayjs from 'dayjs';
+import weekOfYear from 'dayjs/plugin/weekOfYear.js';
+
+dayjs.extend(weekOfYear);
 
 pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseFloat);
 
@@ -43,10 +47,9 @@ app.get('/api/exercises/:userId', async (req, res, next) => {
       SELECT "exerciseId",
           "type",
           "date",
-          "totalMinutes",
-          "users"."firstName" AS "firstName"
-        FROM "exercises"
-        JOIN "users" USING ("userId")
+          "totalMinutes"
+        FROM "users"
+        JOIN "exercises" USING ("userId")
         WHERE "userId" = $1
     `;
     const params = [req.params.userId];
@@ -119,8 +122,82 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
     `;
     const params = [req.params.groupId];
     const result = await db.query(sql, params);
-    console.log('server get request', result.rows);
     res.json(result.rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/personal-penalties/:userId', async (req, res, next) => {
+  try {
+    const sql = `
+      SELECT "exercises"."week" AS "week",
+        "exercises"."month" AS "month",
+        "groups"."groupName" AS "groupName",
+        "groups"."groupId" AS "groupId",
+        "groups"."intervalReq" AS "intervalReq",
+        "groups"."frequencyReq" AS "frequencyReq"
+      FROM "exercises"
+      JOIN "groupUsers" USING ("userId")
+      JOIN "groups" USING ("groupId")
+      WHERE "userId" = $1
+        AND "groups"."durationReq" <= "exercises"."totalMinutes"
+    `;
+    const lastWeek = dayjs().week() === 1 ? 51 : dayjs().week() - 1;
+    const lastMonth = dayjs().month() === 0 ? 12 : dayjs().month();
+    const params = [req.params.userId];
+    const result = await db.query(sql, params);
+    const data = result.rows;
+    const tracker = {
+      groups: [],
+      penalties: []
+    };
+    for (let d = 0; d < data.length; d++) {
+      const { week, month, groupId, groupName, frequencyReq, intervalReq } = data[d];
+      if (tracker.groups.indexOf(groupName) === -1) {
+        tracker.groups.push(groupName);
+        tracker[groupName] = { id: groupId, frequency: frequencyReq, interval: intervalReq, count: 0 };
+      }
+      if (tracker[groupName].interval === 'Weekly') {
+        if (week === lastWeek) {
+          tracker[groupName].count++;
+        }
+      } else {
+        if (month === lastMonth) {
+          tracker[groupName].count++;
+        }
+      }
+    }
+    for (let g = 0; g < tracker.groups.length; g++) {
+      const currGroup = tracker[tracker.groups[g]];
+      if (currGroup.count < currGroup.frequency) {
+        tracker.penalties.push(currGroup.id);
+      }
+    }
+    let sql2 = `
+      INSERT INTO "penalties" ("groupId", "userId")
+      VALUES
+      `;
+    for (let p = 0; p < tracker.penalties.length; p++) {
+      if (p !== tracker.penalties.length - 1) {
+        sql2 = sql2.concat(`($${p + 2}, $1), `);
+      } else {
+        sql2 = sql2.concat(`($${p + 2}, $1) `);
+      }
+    }
+    sql2 = sql2.concat('RETURNING *');
+    const params2 = [req.params.userId, ...tracker.penalties];
+    await db.query(sql2, params2);
+    const sql3 = `
+      SELECT "groups"."groupName",
+        "date",
+        "status"
+      FROM "penalties"
+      JOIN "groups" USING ("groupId")
+      WHERE "userId" = $1;
+    `;
+    const results3 = await db.query(sql3, params);
+    res.json(results3.rows);
   } catch (err) {
     next(err);
   }
@@ -129,12 +206,12 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
 app.post('/api/exercises', async (req, res, next) => {
   try {
     const sql = `
-      INSERT INTO "exercises" ("userId", "date", "totalMinutes", "type", "typeId")
-        VALUES($1, $2, $3, $4, (SELECT "typeId" FROM "exerciseTypes" WHERE "type"=$4))
+      INSERT INTO "exercises" ("userId", "date", "totalMinutes", "type", "typeId", "week", "month")
+        VALUES($1, $2, $3, $4,(SELECT "typeId" FROM "exerciseTypes" WHERE "type"=$4), $5, $6)
       RETURNING *;
     `;
-    const { userId, date, totalMinutes, type } = req.body;
-    const params = [userId, date, totalMinutes, type];
+    const { userId, date, totalMinutes, type, week, month } = req.body;
+    const params = [userId, date, totalMinutes, type, week, month];
     const result = await db.query(sql, params);
     const [log] = result.rows;
     res.status(201).json(log);
@@ -157,9 +234,9 @@ app.post('/api/new-group', async (req, res, next) => {
     if (log) {
       const sqlGroupUsers = `
       INSERT INTO "groupUsers" ("userId", "passQty", "remainingPasses", "groupId")
-        VALUES ($1, $2, $2, (SELECT "groupId" FROM "groups" WHERE "groupName" = $3))
+        VALUES ($1, $2, $2, (SELECT "groupId" FROM "groups" WHERE "groupId" = $3))
       RETURNING *;
-    `; const paramsGroupUser = [userId, passQty, groupName];
+    `; const paramsGroupUser = [userId, passQty, log.groupId];
       const newGroupUser = await db.query(sqlGroupUsers, paramsGroupUser);
       const [logUser] = newGroupUser.rows;
       res.status(201).json(logUser);
@@ -192,7 +269,6 @@ app.patch('/api/group-settings/:groupId', async (req, res, next) => {
       durationReq,
       passQty
     ];
-    console.log('params', params);
     const result = await db.query(sql, params);
     res.json(result.rows);
   } catch (err) {

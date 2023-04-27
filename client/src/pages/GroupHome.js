@@ -9,9 +9,12 @@ import EnhancedTable from '../components/BaseTable';
 import { fetchGroupLogs, fetchGroupSettings } from '../lib/api';
 import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
-import dayjsPluginUTC from 'dayjs-plugin-utc'
+import dayjsPluginUTC from 'dayjs-plugin-utc';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+dayjs.extend(weekOfYear);
 
 dayjs.extend(dayjsPluginUTC);
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -21,7 +24,10 @@ const Item = styled(Paper)(({ theme }) => ({
 
 async function loadGroupLogs(groupId, setGroupLogRows) {
   const response = await fetchGroupLogs(groupId);
-  response.forEach((row) => row.date = dayjs.utc(row.date).local().format('MM/DD/YY'));
+  response.forEach((row) => {
+    row.date = dayjs.utc(row.date).local().format('MM/DD/YY')
+    row.week = dayjs(row.date).week()
+  });
   setGroupLogRows(response);
 }
 
@@ -80,7 +86,7 @@ export default function GroupHome() {
               <EnhancedTable
               rows={groupSettingsRows}
               tableName={'Overview'}
-              tableCaption={`Each member must meet the following requirements by each Sunday:`}
+              tableCaption={`Each member must meet the following requirements by each Monday:`}
               headers={groupSettingsHeaders}
               rowKey={'groupId'}
             />

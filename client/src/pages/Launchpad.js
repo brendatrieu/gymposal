@@ -21,7 +21,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 async function loadPersonalLogs(userId, setPersonalLogRows) {
   const response = await fetchPersonalLogs(userId);
-  response.forEach((row) => row.date = dayjs.utc(row.date).local().format('MM/DD/YY'));
+  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
   setPersonalLogRows(response);
 }
 
@@ -31,7 +31,7 @@ async function loadGroups(userId, setGroupsRows) {
 }
 
 export default function Launchpad() {
-  const { userId } = useUser();
+  const { userId, firstName } = useUser();
   const [personalLogRows, setPersonalLogRows] = useState();
   const [groupsRows, setGroupsRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +52,7 @@ export default function Launchpad() {
       <GridBox my={4} sx={{ flexGrow: 1, height: '100%' }}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12} md={10}>
-            <Typography variant="h4" >Hello, {personalLogRows[0].firstName}!</Typography>
+            <Typography variant="h4" >Hello, {firstName}!</Typography>
           </Grid>
           <Grid item xs={12} md={6}>
             <Item>Graph</Item>
