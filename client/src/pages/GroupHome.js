@@ -58,7 +58,7 @@ export default function GroupHome() {
       <GridBox my={4} sx={{ flexGrow: 1, height: '100%' }}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid container item xs={12} md={10} justifyContent="space-between">
-            <Typography variant="h4">{groupLogRows[0].groupName}</Typography>
+            <Typography variant="h4">{groupSettingsRows[0].groupName}</Typography>
             <Link to={`/group-form/${groupId}`} state={groupSettingsRows}>
               <IconButton><SettingsIcon /></IconButton>
             </Link>

@@ -61,8 +61,10 @@ CREATE TABLE "public"."groupUsers" (
 CREATE TABLE "public"."penalties" (
 	"groupId" int NOT NULL,
 	"userId" int NOT NULL,
-	"date" timestamp NOT NULL,
-  "status" TEXT NOT NULL DEFAULT 'Open'
+	"date" timestamp NOT NULL DEFAULT now(),
+  "status" TEXT NOT NULL DEFAULT 'Open',
+  "week" int NOT NULL,
+  "penaltyId" TEXT GENERATED ALWAYS AS ("groupId"::text || "userId"::text || "week"::text) STORED UNIQUE
 ) WITH (
   OIDS=FALSE
 );

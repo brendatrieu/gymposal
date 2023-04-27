@@ -4,8 +4,10 @@ import errorMiddleware from './lib/error-middleware.js';
 import pg from 'pg';
 import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear.js';
+import weekday from 'dayjs/plugin/weekday.js';
 
 dayjs.extend(weekOfYear);
+dayjs.extend(weekday);
 
 pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseFloat);
 
@@ -128,26 +130,27 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
   }
 });
 
-app.get('/api/personal-penalties/:userId', async (req, res, next) => {
+app.get('/api/user-penalties/:userId', async (req, res, next) => {
   try {
     const sql = `
-      SELECT "exercises"."week" AS "week",
-        "exercises"."month" AS "month",
-        "groups"."groupName" AS "groupName",
-        "groups"."groupId" AS "groupId",
-        "groups"."intervalReq" AS "intervalReq",
-        "groups"."frequencyReq" AS "frequencyReq"
-      FROM "exercises"
-      JOIN "groupUsers" USING ("userId")
-      JOIN "groups" USING ("groupId")
-      WHERE "userId" = $1
-        AND "groups"."durationReq" <= "exercises"."totalMinutes"
+    SELECT "exercises"."week" AS "week",
+      "exercises"."month" AS "month",
+      "groups"."groupName" AS "groupName",
+      "groups"."groupId" AS "groupId",
+      "groups"."intervalReq" AS "intervalReq",
+      "groups"."frequencyReq" AS "frequencyReq",
+      "groups"."createdAt" AS "createdAt"
+    FROM "groups"
+    JOIN "groupUsers" USING ("groupId")
+    JOIN "exercises" USING ("userId")
+    WHERE "userId" = $1
+      AND "groups"."durationReq" > "exercises"."totalMinutes"
     `;
     const lastWeek = dayjs().week() === 1 ? 51 : dayjs().week() - 1;
     const lastMonth = dayjs().month() === 0 ? 12 : dayjs().month();
     const params = [req.params.userId];
-    const result = await db.query(sql, params);
-    const data = result.rows;
+    const results = await db.query(sql, params);
+    const data = results.rows;
     const tracker = {
       groups: [],
       penalties: []
@@ -174,30 +177,50 @@ app.get('/api/personal-penalties/:userId', async (req, res, next) => {
         tracker.penalties.push(currGroup.id);
       }
     }
-    let sql2 = `
-      INSERT INTO "penalties" ("groupId", "userId")
-      VALUES
-      `;
-    for (let p = 0; p < tracker.penalties.length; p++) {
-      if (p !== tracker.penalties.length - 1) {
-        sql2 = sql2.concat(`($${p + 2}, $1), `);
-      } else {
-        sql2 = sql2.concat(`($${p + 2}, $1) `);
+    const sql2 = `
+      SELECT "penaltyId"
+      FROM "penalties"
+    `;
+    const result2 = await db.query(sql2);
+    const penaltyIds = result2.rows.map(id => id.penaltyId);
+    if (penaltyIds.length) {
+      console.log('tracker.penalties before', tracker.penalties);
+      const totalPenalties = tracker.penalties.length;
+      if (totalPenalties) {
+        for (let p = 0; p < totalPenalties; p++) {
+          tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(req.params.userId, dayjs().week())) === -1);
+        }
       }
     }
-    sql2 = sql2.concat('RETURNING *');
-    const params2 = [req.params.userId, ...tracker.penalties];
-    await db.query(sql2, params2);
-    const sql3 = `
-      SELECT "groups"."groupName",
+    let sql3 = `
+      INSERT INTO "penalties" ("groupId", "userId", "week")
+      VALUES
+      `;
+    if (tracker.penalties.length) {
+      for (let p = 0; p < tracker.penalties.length; p++) {
+        if (p !== tracker.penalties.length - 1) {
+          sql3 = sql3.concat(`($${p + 3}, $1, $2), `);
+        } else {
+          sql3 = sql3.concat(`($${p + 3}, $1, $2) `);
+        }
+      }
+      sql3 = sql3.concat('RETURNING *');
+      const params3 = [req.params.userId, dayjs().week(), ...tracker.penalties];
+      await db.query(sql3, params3);
+    }
+    const sql4 = `
+      SELECT "groups"."groupName" AS "groupName",
         "date",
-        "status"
+        "status",
+        "groups"."betAmount" AS "betAmount",
+        "penaltyId"
       FROM "penalties"
       JOIN "groups" USING ("groupId")
       WHERE "userId" = $1;
     `;
-    const results3 = await db.query(sql3, params);
-    res.json(results3.rows);
+    const params4 = [req.params.userId];
+    const results4 = await db.query(sql4, params4);
+    res.json(results4.rows);
   } catch (err) {
     next(err);
   }

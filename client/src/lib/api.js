@@ -26,7 +26,7 @@ export async function postNewLog(newLog) {
  * @param {Number} 'id' - an integer representing the userId.
  * @returns Promise that resolves to an array of exercise logs.
  */
-export async function fetchPersonalLogs(id) {
+export async function fetchUserLogs(id) {
   const response = await fetch(`/api/exercises/${id}`);
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
@@ -97,6 +97,19 @@ export async function patchGroupSettings(id, group) {
   const response = await fetch(`/api/group-settings/${id}`, {
     method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(group)
   });
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
+
+/**
+ * Fetches penalties data from the API.
+ * @param {Number} 'id' - an integer representing the userId.
+ * @returns Promise that resolves to an array of the user's penalties.
+ */
+export async function fetchUserPenalties(id) {
+  const response = await fetch(`/api/user-penalties/${id}`);
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
   }
