@@ -101,6 +101,7 @@ function EnhancedTableToolbar({ tableName, tableCaption }) {
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
         pt: { sm: 2 },
+        alignItems: 'center',
         justifyContent: 'space-between',
         borderRadius: '4px 4px 0 0'
       }}

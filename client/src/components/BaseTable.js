@@ -97,9 +97,9 @@ function EnhancedTableToolbar({tableName, tableCaption}) {
       sx={{
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
-        pt: { sm: 2 },
         flexDirection: 'column',
         alignItems: 'flex-start',
+        justifyContent: 'center',
         borderRadius: '4px 4px 0 0'
       }}
     >

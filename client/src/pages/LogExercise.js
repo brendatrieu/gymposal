@@ -30,7 +30,6 @@ export default function LogExercise() {
       newLog.userId = userId;
       newLog.week = dayjs(newLog.date).week();
       newLog.month = dayjs(newLog.date).month() + 1;
-      console.log(newLog);
       await postNewLog(newLog);
       setAlert('ExerciseSaved');
       navigate('/');
@@ -68,13 +67,13 @@ export default function LogExercise() {
               <Controller
                 name="date"
                 control={control}
-                defaultValue={dayjs.utc()}
+                defaultValue={dayjs().local()}
                 render={({ field }) => (
                   <DatePicker
                     {...field}
                     required
                     inputRef={field.ref}
-                    defaultValue={dayjs.utc()}
+                    defaultValue={dayjs().local()}
                     sx={{ marginY: 3 }}
                   />
                   )
