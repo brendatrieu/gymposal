@@ -7,6 +7,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Colors,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { Typography } from '@mui/material';
@@ -18,13 +19,12 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Colors
 );
 
 export default function BaseGraph({exercises}) {
 
-  const labels = exercises.map((item) => item.date);
-  const log = exercises.map((item) => item.totalMinutes);
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -47,9 +47,22 @@ export default function BaseGraph({exercises}) {
           bottom: 10
         }
       },
+      colors: {
+        forceOverride: true
+      }
     },
   };
 
+  const labels = exercises.map((item) => item.date);
+  const log = exercises.map((item) => item.totalMinutes);
+
+  const allDatasets = exercises.map((item) => {
+    return {
+      label: 'Total Minutes',
+      data: labels.map((index) => log[labels.indexOf(index)]),
+      tension: 0.1
+    }
+  })
 
   const data = {
     labels,
@@ -57,8 +70,6 @@ export default function BaseGraph({exercises}) {
       {
         label: 'Total Minutes',
         data: labels.map((index) => log[labels.indexOf(index)]),
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
         tension: 0.1
       },
     ],

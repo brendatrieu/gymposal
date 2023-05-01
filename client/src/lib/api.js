@@ -37,6 +37,19 @@ export async function fetchUserChartLogs(id) {
 }
 
 /**
+ * Fetches group's logs from the exercises table in the API.
+ * @param {Number} 'id' - an integer representing the groupId.
+ * @returns Promise that resolves to an array of exercise logs grouped by date.
+ */
+export async function fetchGroupChartLogs(id) {
+  const response = await fetch(`/api/chart-group-exercises/${id}`);
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
+
+/**
  * Fetches user's logs from the exercises table in the API.
  * @param {Number} 'id' - an integer representing the userId.
  * @returns Promise that resolves to an array of exercise logs.

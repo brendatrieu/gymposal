@@ -6,21 +6,26 @@ import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
 // import { useUser } from '../context/AppContext';
-import { fetchGroupLogs, fetchGroupSettings } from '../lib/api';
+import { fetchGroupChartLogs, fetchGroupLogs, fetchGroupSettings } from '../lib/api';
 import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
+
 dayjs.extend(weekOfYear);
-
 dayjs.extend(dayjsPluginUTC);
-
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   color: '#000',
   textAlign: 'center'
 }));
+
+async function loadGroupChartLogs(userId, setUserChartLogRows) {
+  const response = await fetchGroupChartLogs(userId);
+  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
+  setUserChartLogRows(response);
+}
 
 async function loadGroupLogs(groupId, setGroupLogRows) {
   const response = await fetchGroupLogs(groupId);
@@ -56,16 +61,22 @@ export default function GroupHome() {
     <div>
       <GridBox my={4} sx={{ flexGrow: 1, height: '100%' }}>
         <Grid container justifyContent="center" spacing={2}>
-          <Grid container item xs={12} md={10} justifyContent="space-between">
+          <Grid
+            container
+            item
+            xs={12}
+            md={10}
+            justifyContent="space-between"
+          >
             <Typography variant="h4">{groupSettingsRows[0].groupName}</Typography>
             <Link to={`/group-form/${groupId}`} state={groupSettingsRows}>
               <IconButton><SettingsIcon /></IconButton>
             </Link>
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             <Item>Graph</Item>
           </Grid>
-          <Grid item xs={12} md={4} >
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }} >
             {groupLogRows.length ?
               <EnhancedTable
                 rows={groupLogRows}
@@ -80,7 +91,7 @@ export default function GroupHome() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             <Paper>
               <EnhancedTable
               rows={groupSettingsRows}
@@ -91,7 +102,7 @@ export default function GroupHome() {
             />
             </Paper>
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             <Item>Penalties</Item>
           </Grid>
         </Grid>

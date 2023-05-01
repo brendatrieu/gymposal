@@ -24,14 +24,14 @@ export const personalLogHeaders = [
  */
 export const groupLogHeaders = [
   {
-    id: 'firstName',
-    numeric: false,
-    label: 'Name',
-  },
-  {
     id: 'date',
     numeric: false,
     label: 'Date',
+  },
+  {
+    id: 'firstName',
+    numeric: false,
+    label: 'Name',
   },
   {
     id: 'type',
