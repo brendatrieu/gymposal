@@ -63,7 +63,7 @@ export default function GroupHome() {
 
   return (
     <div>
-      <GridBox my={4} sx={{ flexGrow: 1, height: '100%' }}>
+      <GridBox my={4} sx={{ flexGrow: 1, height: 1 }}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid
             container
@@ -77,7 +77,7 @@ export default function GroupHome() {
               <IconButton><SettingsIcon /></IconButton>
             </Link>
           </Grid>
-          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{ position: 'relative', height: '45vh' }}>
             <BaseGraph exercises={groupChartLogRows} legend={true}/>
           </Grid>
           <Grid item xs={12} md={5} sx={{ height: '45vh' }} >
@@ -96,15 +96,13 @@ export default function GroupHome() {
             }
           </Grid>
           <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
-            <Paper>
-              <EnhancedTable
+            <EnhancedTable
               rows={groupSettingsRows}
               tableName={'Overview'}
               tableCaption={`Each member must meet the following requirements by each Sunday:`}
               headers={groupSettingsHeaders}
               rowKey={'groupId'}
             />
-            </Paper>
           </Grid>
           <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             <Item>Penalties</Item>

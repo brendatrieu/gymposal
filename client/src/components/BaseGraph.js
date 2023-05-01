@@ -32,7 +32,8 @@ export default function BaseGraph({exercises, legend}) {
     borderJoinStyle: 'bevel',
     plugins: {
       legend: {
-        display: legend
+        display: legend,
+        position: 'bottom'
       },
       title: {
         display: true,
@@ -84,15 +85,16 @@ export default function BaseGraph({exercises, legend}) {
   return (
     <>
       {(!exercises.length) &&
-        <div style={{position: 'absolute',
-                    padding: '15%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'black',
-                    height: '100%',
-                    width: '100%',
-                    textAlign: 'center'}}
+        <div
+          style={{position: 'absolute',
+            padding: '15%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'black',
+            height: '100%',
+            width: '100%',
+            textAlign: 'center'}}
         >
           <Typography
             variant='h5'
@@ -104,13 +106,13 @@ export default function BaseGraph({exercises, legend}) {
           </Typography>
         </div>}
       <Line
-              style={{backgroundColor: 'white',
-                borderRadius: 4,
-                padding: 10,
-                height: '100%'}}
-              options={options}
-              data={data}
-            />
+        style={{backgroundColor: 'white',
+          borderRadius: 4,
+          padding: 10,
+          height: '100%'}}
+        options={options}
+        data={data}
+      />
     </>
 
   )
