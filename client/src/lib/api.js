@@ -14,7 +14,9 @@ export async function fetchExerciseTypes() {
  */
 export async function postNewLog(newLog) {
   const response = await fetch('/api/exercises', {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newLog)
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newLog)
   });
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);

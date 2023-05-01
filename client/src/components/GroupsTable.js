@@ -204,17 +204,19 @@ export default function EnhancedGroupsTable({ rows, tableName, tableCaption, hea
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: 1, height: 1 }}>
       <Paper
         sx={{
-          width: '100%', mb: 2,
+          width: 1,
+          height: 1,
+          mb: 2,
           paddingX: 2,
           bgcolor: 'primary.main'
         }}
       >
         <EnhancedTableToolbar tableName={tableName} tableCaption={tableCaption} />
-        <TableContainer sx={{ paddingX: 1.5 }} >
-          <Table aria-labelledby="tableTitle" >
+        <TableContainer sx={{ paddingX: 1.5, height: 0.7 }} >
+          <Table aria-labelledby="tableTitle" sx={{ height: 1 }} >
             <EnhancedTableHead
               order={order}
               orderBy={orderBy}
@@ -226,11 +228,13 @@ export default function EnhancedGroupsTable({ rows, tableName, tableCaption, hea
               {visibleRows
                 ? visibleRows.map((row, index) => {
                   return (
-                    <TableRow key={row[rowKey]} >
+                    <TableRow key={row[rowKey]}
+                      sx={{ height: (visibleRows.length >= 5) ? 0.2 : (1 / visibleRows.length) }}
+                    >
                       {headers.map((header) => (
                         <TableCell
                           align={header.numeric ? 'right' : 'left'}
-                          sx={{ color: 'secondary.main' }}
+                          sx={{ color: 'secondary.main', width: (1 / headers.length) }}
                           key={`${row[rowKey]}${header.label}${row[header.id]}`}
                         >
                           {header.route ?
@@ -264,7 +268,9 @@ export default function EnhancedGroupsTable({ rows, tableName, tableCaption, hea
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           align="left"
-          sx={{ color: 'secondary.main', width: '100%', paddingLeft: '0' }}
+          sx={{ color: 'secondary.main',
+            width: 1,
+            paddingLeft: 0 }}
         />
       </Paper>
     </Box>

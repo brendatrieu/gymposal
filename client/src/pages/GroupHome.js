@@ -26,7 +26,6 @@ async function loadGroupLogs(groupId, setGroupLogRows) {
   const response = await fetchGroupLogs(groupId);
   response.forEach((row) => {
     row.date = dayjs.utc(row.date).local().format('MM/DD/YY')
-    row.week = dayjs(row.date).week()
   });
   setGroupLogRows(response);
 }
@@ -66,7 +65,7 @@ export default function GroupHome() {
           <Grid item xs={12} md={6}>
             <Item>Graph</Item>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={4} >
             {groupLogRows.length ?
               <EnhancedTable
                 rows={groupLogRows}
@@ -86,7 +85,7 @@ export default function GroupHome() {
               <EnhancedTable
               rows={groupSettingsRows}
               tableName={'Overview'}
-              tableCaption={`Each member must meet the following requirements by each Monday:`}
+              tableCaption={`Each member must meet the following requirements by each Sunday:`}
               headers={groupSettingsHeaders}
               rowKey={'groupId'}
             />

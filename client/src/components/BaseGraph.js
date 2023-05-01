@@ -9,6 +9,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { Typography } from '@mui/material';
 
 ChartJS.register(
   CategoryScale,
@@ -20,12 +21,15 @@ ChartJS.register(
   Legend
 );
 
-
-
 export default function BaseGraph({exercises}) {
 
+  const labels = exercises.map((item) => item.date);
+  const log = exercises.map((item) => item.totalMinutes);
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
+    devicePixelRatio: 2,
+    borderJoinStyle: 'bevel',
     plugins: {
       legend: {
         display: false
@@ -46,8 +50,7 @@ export default function BaseGraph({exercises}) {
     },
   };
 
-  const labels = exercises.map((item) => item.date);
-  const log = exercises.map((item) => item.totalMinutes);
+
   const data = {
     labels,
     datasets: [
@@ -56,15 +59,42 @@ export default function BaseGraph({exercises}) {
         data: labels.map((index) => log[labels.indexOf(index)]),
         borderColor: 'rgb(53, 162, 235)',
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        tension: 0.1
       },
     ],
   };
 
-  return <Line
-            style={{backgroundColor: 'white',
-              borderRadius: 4,
-              padding: 10}}
-            options={options}
-            data={data}
-          />;
+  return (
+    <>
+      {(!exercises.length) &&
+        <div style={{position: 'absolute',
+                    padding: '15%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'black',
+                    height: '100%',
+                    width: '100%',
+                    textAlign: 'center'}}
+        >
+          <Typography
+            variant='h5'
+            sx={{ backgroundColor: 'rgba(33,76,103, 0.25)',
+              borderRadius: 1,
+              padding: '5%' }}
+          >
+            No exercises for this week yet.
+          </Typography>
+        </div>}
+      <Line
+              style={{backgroundColor: 'white',
+                borderRadius: 4,
+                padding: 10,
+                height: '100%'}}
+              options={options}
+              data={data}
+            />
+    </>
+
+  )
 }

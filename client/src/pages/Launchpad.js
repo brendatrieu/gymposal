@@ -15,15 +15,15 @@ dayjs.extend(dayjsPluginUTC);
 
 async function loadUserChartLogs(userId, setUserChartLogRows) {
   const response = await fetchUserChartLogs(userId);
-  response.forEach((row) => row.date = dayjs(row.date).local().format('MM/DD/YY'));
+  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
   setUserChartLogRows(response);
 }
 
 async function loadPersonalLogs(userId, setUserLogRows) {
   const response = await fetchUserLogs(userId);
   response.forEach((row) => row.date = dayjs(row.date).local().format('MM/DD/YY'));
-  setUserLogRows(response);
-}
+  setUserLogRows(response);}
+
 
 async function loadGroups(userId, setGroupsRows) {
   const response = await fetchGroups(userId);
@@ -32,7 +32,10 @@ async function loadGroups(userId, setGroupsRows) {
 
 async function loadPersonalPenalties(userId, setUserPenaltiesRows) {
   const response = await fetchUserPenalties(userId);
-  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
+  response.forEach((row) => {
+    row.date = dayjs(row.date).format('MM/DD/YY')
+    row.betAmount = `$${row.betAmount}`;
+  });
   setUserPenaltiesRows(response);
 }
 
@@ -64,10 +67,10 @@ export default function Launchpad() {
           <Grid item xs={12} md={10}>
             <Typography variant="h4" >Hello, {firstName}!</Typography>
           </Grid>
-          <Grid item xs={12} md={6} >
+          <Grid item xs={12} md={5} sx={{position: 'relative', height: '45vh' }}>
             <BaseGraph exercises={userChartLogRows} />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             {userLogRows.length ?
               <EnhancedTable
               rows={userLogRows}
@@ -82,7 +85,7 @@ export default function Launchpad() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             {groupsRows.length ?
               <EnhancedGroupsTable
                 rows={groupsRows}
@@ -97,7 +100,7 @@ export default function Launchpad() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             {userPenaltiesRows.length ?
               <EnhancedTable
                 rows={userPenaltiesRows}
