@@ -5,22 +5,28 @@ import { Typography, Grid, Paper, CircularProgress, IconButton, Button } from '@
 import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
+import BaseGraph from '../components/BaseGraph';
 // import { useUser } from '../context/AppContext';
-import { fetchGroupLogs, fetchGroupSettings } from '../lib/api';
+import { fetchGroupChartLogs, fetchGroupLogs, fetchGroupSettings } from '../lib/api';
 import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
+
 dayjs.extend(weekOfYear);
-
 dayjs.extend(dayjsPluginUTC);
-
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
   color: '#000',
   textAlign: 'center'
 }));
+
+async function loadGroupChartLogs(userId, setGroupChartLogRows) {
+  const response = await fetchGroupChartLogs(userId);
+  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
+  setGroupChartLogRows(response);
+}
 
 async function loadGroupLogs(groupId, setGroupLogRows) {
   const response = await fetchGroupLogs(groupId);
@@ -38,13 +44,16 @@ async function loadGroupSettings(groupId, setGroupSettingsRows) {
 export default function GroupHome() {
   const { groupId } = useParams();
   // const { userId } = useUser();
+  const [groupChartLogRows, setGroupChartLogRows] = useState();
   const [groupLogRows, setGroupLogRows] = useState();
   const [groupSettingsRows, setGroupSettingsRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
 
   useEffect(() => {
-    Promise.all([loadGroupLogs(groupId, setGroupLogRows), loadGroupSettings(groupId, setGroupSettingsRows)])
+    Promise.all([loadGroupLogs(groupId, setGroupLogRows),
+                loadGroupSettings(groupId, setGroupSettingsRows),
+                loadGroupChartLogs(groupId, setGroupChartLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
   }, [groupId]);
@@ -54,18 +63,24 @@ export default function GroupHome() {
 
   return (
     <div>
-      <GridBox my={4} sx={{ flexGrow: 1, height: '100%' }}>
+      <GridBox my={4} sx={{ flexGrow: 1, height: 1 }}>
         <Grid container justifyContent="center" spacing={2}>
-          <Grid container item xs={12} md={10} justifyContent="space-between">
+          <Grid
+            container
+            item
+            xs={12}
+            md={10}
+            justifyContent="space-between"
+          >
             <Typography variant="h4">{groupSettingsRows[0].groupName}</Typography>
             <Link to={`/group-form/${groupId}`} state={groupSettingsRows}>
               <IconButton><SettingsIcon /></IconButton>
             </Link>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Item>Graph</Item>
+          <Grid item xs={12} md={5} sx={{ position: 'relative', height: '45vh' }}>
+            <BaseGraph exercises={groupChartLogRows} legend={true}/>
           </Grid>
-          <Grid item xs={12} md={4} >
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }} >
             {groupLogRows.length ?
               <EnhancedTable
                 rows={groupLogRows}
@@ -80,18 +95,16 @@ export default function GroupHome() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5}>
-            <Paper>
-              <EnhancedTable
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
+            <EnhancedTable
               rows={groupSettingsRows}
               tableName={'Overview'}
               tableCaption={`Each member must meet the following requirements by each Sunday:`}
               headers={groupSettingsHeaders}
               rowKey={'groupId'}
             />
-            </Paper>
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             <Item>Penalties</Item>
           </Grid>
         </Grid>

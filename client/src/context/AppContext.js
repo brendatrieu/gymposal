@@ -17,7 +17,7 @@ export default function Provider({children}){
   const [ alert, setAlert ] = useState(false);
 
   return (
-    <AppContext.Provider value={{ userId: 2, firstName: 'Brenda', alert, setAlert }}>
+    <AppContext.Provider value={{ userId: 1, firstName: 'Brenda', alert, setAlert }}>
       {children}
     </AppContext.Provider>
   )

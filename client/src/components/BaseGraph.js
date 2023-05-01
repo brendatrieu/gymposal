@@ -7,6 +7,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Colors,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { Typography } from '@mui/material';
@@ -18,13 +19,12 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Colors
 );
 
-export default function BaseGraph({exercises}) {
+export default function BaseGraph({exercises, legend}) {
 
-  const labels = exercises.map((item) => item.date);
-  const log = exercises.map((item) => item.totalMinutes);
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -32,7 +32,8 @@ export default function BaseGraph({exercises}) {
     borderJoinStyle: 'bevel',
     plugins: {
       legend: {
-        display: false
+        display: legend,
+        position: 'bottom'
       },
       title: {
         display: true,
@@ -47,35 +48,53 @@ export default function BaseGraph({exercises}) {
           bottom: 10
         }
       },
+      colors: {
+        forceOverride: true
+      }
     },
   };
+  const labels = [];
+  const allDatasets = {};
 
+  for (let e = 0; e < exercises.length; e++) {
+    const current = exercises[e];
+    if (labels.indexOf(current.date) === -1) {
+      labels.push(current.date);
+    }
+    if (!allDatasets[current.firstName]) {
+      allDatasets[current.firstName] = [current];
+    } else {
+      allDatasets[current.firstName].push(current);
+    }
+  }
 
   const data = {
     labels,
-    datasets: [
-      {
-        label: 'Total Minutes',
-        data: labels.map((index) => log[labels.indexOf(index)]),
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+    datasets: Object.values(allDatasets).map((d) => {
+      return {
+        label: legend ? d[0].firstName : 'Total Minutes',
+        data: labels.map((label) =>
+        (!d.filter((entry) => entry.date === label).length) ?
+        0 :
+        d.filter((entry) => entry.date === label)[0].totalMinutes),
         tension: 0.1
-      },
-    ],
+      }
+    }),
   };
 
   return (
     <>
       {(!exercises.length) &&
-        <div style={{position: 'absolute',
-                    padding: '15%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'black',
-                    height: '100%',
-                    width: '100%',
-                    textAlign: 'center'}}
+        <div
+          style={{position: 'absolute',
+            padding: '15%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'black',
+            height: '100%',
+            width: '100%',
+            textAlign: 'center'}}
         >
           <Typography
             variant='h5'
@@ -87,13 +106,13 @@ export default function BaseGraph({exercises}) {
           </Typography>
         </div>}
       <Line
-              style={{backgroundColor: 'white',
-                borderRadius: 4,
-                padding: 10,
-                height: '100%'}}
-              options={options}
-              data={data}
-            />
+        style={{backgroundColor: 'white',
+          borderRadius: 4,
+          padding: 10,
+          height: '100%'}}
+        options={options}
+        data={data}
+      />
     </>
 
   )

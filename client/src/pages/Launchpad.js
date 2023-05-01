@@ -62,13 +62,13 @@ export default function Launchpad() {
 
   return (
     <div>
-      <GridBox my={4} sx={{ flexGrow: 1, height: '100%' }}>
+      <GridBox my={4} sx={{ flexGrow: 1, height: 1 }}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12} md={10}>
             <Typography variant="h4" >Hello, {firstName}!</Typography>
           </Grid>
           <Grid item xs={12} md={5} sx={{position: 'relative', height: '45vh' }}>
-            <BaseGraph exercises={userChartLogRows} />
+            <BaseGraph exercises={userChartLogRows} legend={false} />
           </Grid>
           <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             {userLogRows.length ?
@@ -81,7 +81,7 @@ export default function Launchpad() {
               <Paper align="center" sx={{bgcolor: 'primary.main'}}>
                 <Link to="/log-exercise">
                   <Button sx={{ color: 'secondary.main'}}>Log Exercise</Button>
-              </Link>
+                </Link>
               </Paper>
             }
           </Grid>

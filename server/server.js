@@ -28,7 +28,7 @@ app.get('/api/exercise-types', async (req, res, next) => {
   try {
     const sql = `
       SELECT "type"
-        FROM "exerciseTypes"
+      FROM "exerciseTypes"
     `;
     const result = await db.query(sql);
     res.json(result.rows);
@@ -41,12 +41,12 @@ app.get('/api/exercises/:userId', async (req, res, next) => {
   try {
     const sql = `
       SELECT "exerciseId",
-          "type",
-          "date",
-          "totalMinutes"
-        FROM "users"
-        JOIN "exercises" USING ("userId")
-        WHERE "userId" = $1
+        "type",
+        "date",
+        "totalMinutes"
+      FROM "users"
+      JOIN "exercises" USING ("userId")
+      WHERE "userId" = $1
     `;
     const params = [req.params.userId];
     const result = await db.query(sql, params);
@@ -60,12 +60,34 @@ app.get('/api/chart-exercises/:userId', async (req, res, next) => {
   try {
     const sql = `
       SELECT DATE("date") AS "date",
-          SUM("totalMinutes") AS "totalMinutes"
-        FROM "exercises"
-        WHERE "userId" = $1 AND "week" = $2
-        GROUP BY DATE("date")
+        SUM("totalMinutes") AS "totalMinutes",
+        "users"."firstName" AS "firstName"
+      FROM "exercises"
+      JOIN "users" USING ("userId")
+      WHERE "userId" = $1 AND "week" = $2
+      GROUP BY DATE("date"), "firstName"
     `;
     const params = [req.params.userId, currentWeek];
+    const result = await db.query(sql, params);
+    res.json(result.rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/chart-group-exercises/:groupId', async (req, res, next) => {
+  try {
+    const sql = `
+      SELECT DATE("date") AS "date",
+        SUM("totalMinutes") AS "totalMinutes",
+        "users"."firstName" AS "firstName"
+      FROM "exercises"
+      JOIN "users" USING ("userId")
+      JOIN "groupUsers" USING ("userId")
+      WHERE "groupId" = $1 AND "week" = $2
+      GROUP BY DATE("date"), "firstName"
+    `;
+    const params = [req.params.groupId, currentWeek];
     const result = await db.query(sql, params);
     res.json(result.rows);
   } catch (err) {
@@ -259,7 +281,7 @@ app.post('/api/new-group', async (req, res, next) => {
   try {
     const sqlGroup = `
       INSERT INTO "groups" ("groupName", "betAmount", "frequencyReq", "intervalReq", "durationReq", "passQty")
-        VALUES ($1, $2, $3, $4, $5, $6)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
     `;
     const { groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty, userId } = req.body;
@@ -269,7 +291,7 @@ app.post('/api/new-group', async (req, res, next) => {
     if (log) {
       const sqlGroupUsers = `
       INSERT INTO "groupUsers" ("userId", "passQty", "remainingPasses", "groupId")
-        VALUES ($1, $2, $2, (SELECT "groupId" FROM "groups" WHERE "groupId" = $3))
+      VALUES ($1, $2, $2, (SELECT "groupId" FROM "groups" WHERE "groupId" = $3))
       RETURNING *;
     `; const paramsGroupUser = [userId, passQty, log.groupId];
       const newGroupUser = await db.query(sqlGroupUsers, paramsGroupUser);
@@ -285,12 +307,12 @@ app.patch('/api/group-settings/:groupId', async (req, res, next) => {
   try {
     const sql = `
       UPDATE "groups"
-        SET "groupName" = $2,
-          "betAmount" = $3,
-          "frequencyReq" = $4,
-          "intervalReq" = $5,
-          "durationReq" = $6,
-          "passQty" = $7
+      SET "groupName" = $2,
+        "betAmount" = $3,
+        "frequencyReq" = $4,
+        "intervalReq" = $5,
+        "durationReq" = $6,
+        "passQty" = $7
       WHERE "groupId" = $1
       RETURNING *;
     `;
