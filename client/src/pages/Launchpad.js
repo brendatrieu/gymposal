@@ -1,29 +1,29 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
 import { Typography, Grid, Paper, CircularProgress, Button } from '@mui/material';
 import EnhancedTable from '../components/BaseTable';
 import EnhancedGroupsTable from '../components/GroupsTable';
+import BaseGraph from '../components/BaseGraph';
 import { GridBox } from '../components/GridBox';
 import { useUser } from '../context/AppContext';
-import { fetchUserLogs, fetchGroups, fetchUserPenalties } from '../lib/api';
+import { fetchUserChartLogs, fetchUserLogs, fetchGroups, fetchUserPenalties } from '../lib/api';
 import { personalLogHeaders, groupsHeaders, userPenaltiesHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc'
 
 dayjs.extend(dayjsPluginUTC);
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#fff',
-  color: '#000',
-  textAlign: 'center'
-}));
+async function loadUserChartLogs(userId, setUserChartLogRows) {
+  const response = await fetchUserChartLogs(userId);
+  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
+  setUserChartLogRows(response);
+}
 
 async function loadPersonalLogs(userId, setUserLogRows) {
   const response = await fetchUserLogs(userId);
-  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
-  setUserLogRows(response);
-}
+  response.forEach((row) => row.date = dayjs(row.date).local().format('MM/DD/YY'));
+  setUserLogRows(response);}
+
 
 async function loadGroups(userId, setGroupsRows) {
   const response = await fetchGroups(userId);
@@ -32,12 +32,16 @@ async function loadGroups(userId, setGroupsRows) {
 
 async function loadPersonalPenalties(userId, setUserPenaltiesRows) {
   const response = await fetchUserPenalties(userId);
-  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
+  response.forEach((row) => {
+    row.date = dayjs(row.date).format('MM/DD/YY')
+    row.betAmount = `$${row.betAmount}`;
+  });
   setUserPenaltiesRows(response);
 }
 
 export default function Launchpad() {
   const { userId, firstName } = useUser();
+  const [userChartLogRows, setUserChartLogRows] = useState();
   const [userLogRows, setUserLogRows] = useState();
   const [groupsRows, setGroupsRows] = useState();
   const [userPenaltiesRows, setUserPenaltiesRows] = useState();
@@ -47,7 +51,8 @@ export default function Launchpad() {
   useEffect(() => {
     Promise.all([loadPersonalLogs(userId, setUserLogRows),
                   loadGroups(userId, setGroupsRows),
-                  loadPersonalPenalties(userId, setUserPenaltiesRows)])
+                  loadPersonalPenalties(userId, setUserPenaltiesRows),
+                  loadUserChartLogs(userId, setUserChartLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
   }, [userId]);
@@ -62,10 +67,10 @@ export default function Launchpad() {
           <Grid item xs={12} md={10}>
             <Typography variant="h4" >Hello, {firstName}!</Typography>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Item>Graph</Item>
+          <Grid item xs={12} md={5} sx={{position: 'relative', height: '45vh' }}>
+            <BaseGraph exercises={userChartLogRows} />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             {userLogRows.length ?
               <EnhancedTable
               rows={userLogRows}
@@ -80,7 +85,7 @@ export default function Launchpad() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             {groupsRows.length ?
               <EnhancedGroupsTable
                 rows={groupsRows}
@@ -95,7 +100,7 @@ export default function Launchpad() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             {userPenaltiesRows.length ?
               <EnhancedTable
                 rows={userPenaltiesRows}

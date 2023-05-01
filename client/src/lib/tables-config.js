@@ -93,23 +93,23 @@ export const groupsHeaders = [
  */
 export const userPenaltiesHeaders = [
   {
+    id: 'date',
+    numeric: false,
+    label: 'Date',
+  },
+  {
     id: 'groupName',
     numeric: false,
     label: 'Name',
   },
   {
-    id: 'date',
+    id: 'betAmount',
     numeric: true,
-    label: 'Date',
+    label: 'Amount Owed',
   },
   {
     id: 'status',
     numeric: true,
     label: 'Status',
-  },
-  {
-    id: 'betAmount',
-    numeric: true,
-    label: 'Amount Owed',
   },
 ];

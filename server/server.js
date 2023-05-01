@@ -20,14 +20,8 @@ const db = new pg.Pool({
 });
 
 const app = express();
+const currentWeek = dayjs().week();
 
-// Create paths for static directories
-const reactStaticDir = new URL('../client/build', import.meta.url).pathname;
-const uploadsStaticDir = new URL('public', import.meta.url).pathname;
-
-app.use(express.static(reactStaticDir));
-// Static directory for file uploads server/public/
-app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
 app.get('/api/exercise-types', async (req, res, next) => {
@@ -55,6 +49,23 @@ app.get('/api/exercises/:userId', async (req, res, next) => {
         WHERE "userId" = $1
     `;
     const params = [req.params.userId];
+    const result = await db.query(sql, params);
+    res.json(result.rows);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get('/api/chart-exercises/:userId', async (req, res, next) => {
+  try {
+    const sql = `
+      SELECT DATE("date") AS "date",
+          SUM("totalMinutes") AS "totalMinutes"
+        FROM "exercises"
+        WHERE "userId" = $1 AND "week" = $2
+        GROUP BY DATE("date")
+    `;
+    const params = [req.params.userId, currentWeek];
     const result = await db.query(sql, params);
     res.json(result.rows);
   } catch (err) {
@@ -184,7 +195,6 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
     const result2 = await db.query(sql2);
     const penaltyIds = result2.rows.map(id => id.penaltyId);
     if (penaltyIds.length) {
-      console.log('tracker.penalties before', tracker.penalties);
       const totalPenalties = tracker.penalties.length;
       if (totalPenalties) {
         for (let p = 0; p < totalPenalties; p++) {
@@ -229,8 +239,10 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
 app.post('/api/exercises', async (req, res, next) => {
   try {
     const sql = `
-      INSERT INTO "exercises" ("userId", "date", "totalMinutes", "type", "typeId", "week", "month")
-        VALUES($1, $2, $3, $4,(SELECT "typeId" FROM "exerciseTypes" WHERE "type"=$4), $5, $6)
+      INSERT INTO "exercises"
+        ("userId", "date", "totalMinutes", "type", "typeId", "week", "month")
+      VALUES
+        ($1, $2, $3, $4,(SELECT "typeId" FROM "exerciseTypes" WHERE "type"=$4), $5, $6)
       RETURNING *;
     `;
     const { userId, date, totalMinutes, type, week, month } = req.body;

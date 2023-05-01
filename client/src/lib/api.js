@@ -14,11 +14,26 @@ export async function fetchExerciseTypes() {
  */
 export async function postNewLog(newLog) {
   const response = await fetch('/api/exercises', {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newLog)
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newLog)
   });
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
   }
+}
+
+/**
+ * Fetches user's logs from the exercises table in the API.
+ * @param {Number} 'id' - an integer representing the userId.
+ * @returns Promise that resolves to an array of exercise logs grouped by date.
+ */
+export async function fetchUserChartLogs(id) {
+  const response = await fetch(`/api/chart-exercises/${id}`);
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
 }
 
 /**
@@ -41,7 +56,9 @@ export async function fetchUserLogs(id) {
  */
 export async function postNewGroup(group) {
   const response = await fetch('/api/new-group', {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(group)
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(group)
   });
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
@@ -95,7 +112,9 @@ export async function fetchGroupSettings(id) {
  */
 export async function patchGroupSettings(id, group) {
   const response = await fetch(`/api/group-settings/${id}`, {
-    method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(group)
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(group)
   });
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
