@@ -68,7 +68,7 @@ export default function Launchpad() {
             <Typography variant="h4" >Hello, {firstName}!</Typography>
           </Grid>
           <Grid item xs={12} md={5} sx={{position: 'relative', height: '45vh' }}>
-            <BaseGraph exercises={userChartLogRows} />
+            <BaseGraph exercises={userChartLogRows} legend={false} />
           </Grid>
           <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
             {userLogRows.length ?

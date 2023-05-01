@@ -5,6 +5,7 @@ import { Typography, Grid, Paper, CircularProgress, IconButton, Button } from '@
 import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
+import BaseGraph from '../components/BaseGraph';
 // import { useUser } from '../context/AppContext';
 import { fetchGroupChartLogs, fetchGroupLogs, fetchGroupSettings } from '../lib/api';
 import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
@@ -21,10 +22,10 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: 'center'
 }));
 
-async function loadGroupChartLogs(userId, setUserChartLogRows) {
+async function loadGroupChartLogs(userId, setGroupChartLogRows) {
   const response = await fetchGroupChartLogs(userId);
   response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
-  setUserChartLogRows(response);
+  setGroupChartLogRows(response);
 }
 
 async function loadGroupLogs(groupId, setGroupLogRows) {
@@ -43,13 +44,16 @@ async function loadGroupSettings(groupId, setGroupSettingsRows) {
 export default function GroupHome() {
   const { groupId } = useParams();
   // const { userId } = useUser();
+  const [groupChartLogRows, setGroupChartLogRows] = useState();
   const [groupLogRows, setGroupLogRows] = useState();
   const [groupSettingsRows, setGroupSettingsRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
 
   useEffect(() => {
-    Promise.all([loadGroupLogs(groupId, setGroupLogRows), loadGroupSettings(groupId, setGroupSettingsRows)])
+    Promise.all([loadGroupLogs(groupId, setGroupLogRows),
+                loadGroupSettings(groupId, setGroupSettingsRows),
+                loadGroupChartLogs(groupId, setGroupChartLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
   }, [groupId]);
@@ -74,7 +78,7 @@ export default function GroupHome() {
             </Link>
           </Grid>
           <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
-            <Item>Graph</Item>
+            <BaseGraph exercises={groupChartLogRows} legend={true}/>
           </Grid>
           <Grid item xs={12} md={5} sx={{ height: '45vh' }} >
             {groupLogRows.length ?

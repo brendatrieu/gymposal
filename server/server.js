@@ -60,10 +60,12 @@ app.get('/api/chart-exercises/:userId', async (req, res, next) => {
   try {
     const sql = `
       SELECT DATE("date") AS "date",
-        SUM("totalMinutes") AS "totalMinutes"
+        SUM("totalMinutes") AS "totalMinutes",
+        "users"."firstName" AS "firstName"
       FROM "exercises"
+      JOIN "users" USING ("userId")
       WHERE "userId" = $1 AND "week" = $2
-      GROUP BY DATE("date")
+      GROUP BY DATE("date"), "firstName"
     `;
     const params = [req.params.userId, currentWeek];
     const result = await db.query(sql, params);

@@ -23,7 +23,7 @@ ChartJS.register(
   Colors
 );
 
-export default function BaseGraph({exercises}) {
+export default function BaseGraph({exercises, legend}) {
 
   const options = {
     responsive: true,
@@ -32,7 +32,7 @@ export default function BaseGraph({exercises}) {
     borderJoinStyle: 'bevel',
     plugins: {
       legend: {
-        display: false
+        display: legend
       },
       title: {
         display: true,
@@ -52,27 +52,33 @@ export default function BaseGraph({exercises}) {
       }
     },
   };
+  const labels = [];
+  const allDatasets = {};
 
-  const labels = exercises.map((item) => item.date);
-  const log = exercises.map((item) => item.totalMinutes);
-
-  const allDatasets = exercises.map((item) => {
-    return {
-      label: 'Total Minutes',
-      data: labels.map((index) => log[labels.indexOf(index)]),
-      tension: 0.1
+  for (let e = 0; e < exercises.length; e++) {
+    const current = exercises[e];
+    if (labels.indexOf(current.date) === -1) {
+      labels.push(current.date);
     }
-  })
+    if (!allDatasets[current.firstName]) {
+      allDatasets[current.firstName] = [current];
+    } else {
+      allDatasets[current.firstName].push(current);
+    }
+  }
 
   const data = {
     labels,
-    datasets: [
-      {
-        label: 'Total Minutes',
-        data: labels.map((index) => log[labels.indexOf(index)]),
+    datasets: Object.values(allDatasets).map((d) => {
+      return {
+        label: legend ? d[0].firstName : 'Total Minutes',
+        data: labels.map((label) =>
+        (!d.filter((entry) => entry.date === label).length) ?
+        0 :
+        d.filter((entry) => entry.date === label)[0].totalMinutes),
         tension: 0.1
-      },
-    ],
+      }
+    }),
   };
 
   return (
