@@ -258,6 +258,25 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
   }
 });
 
+app.post('/api/users', async (req, res, next) => {
+  try {
+    const sql = `
+      INSERT INTO "users"
+        ("firstName", "lastName", "email", "username", "password")
+      VALUES
+        ($1, $2, $3, $4, $5)
+      RETURNING *;
+    `;
+    const { userId, date, totalMinutes, type, week, month } = req.body;
+    const params = [userId, date, totalMinutes, type, week, month];
+    const result = await db.query(sql, params);
+    const [log] = result.rows;
+    res.status(201).json(log);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.post('/api/exercises', async (req, res, next) => {
   try {
     const sql = `
