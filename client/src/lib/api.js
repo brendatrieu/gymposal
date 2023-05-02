@@ -9,21 +9,6 @@ export async function fetchExerciseTypes() {
 }
 
 /**
- * Posts new exercise entry into the exercises table in the API.
- * @param {Object} 'newLog' - an object with data collected from the form.
- */
-export async function postNewLog(newLog) {
-  const response = await fetch('/api/exercises', {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newLog)
-  });
-  if (!response.ok) {
-    throw new Error(`Status ${response.status}`);
-  }
-}
-
-/**
  * Fetches user's logs from the exercises table in the API.
  * @param {Number} 'id' - an integer representing the userId.
  * @returns Promise that resolves to an array of exercise logs grouped by date.
@@ -56,23 +41,6 @@ export async function fetchGroupChartLogs(id) {
  */
 export async function fetchUserLogs(id) {
   const response = await fetch(`/api/exercises/${id}`);
-  if (!response.ok) {
-    throw new Error(`Status ${response.status}`);
-  }
-  return await response.json();
-}
-
-/**
- * Posts new group information into the groups table in the API.
- * @param {Object} 'group' - an object with data collected from the new group form.
- * @returns {Object} Data for the new group record.
- */
-export async function postNewGroup(group) {
-  const response = await fetch('/api/new-group', {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(group)
-  });
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
   }
@@ -119,13 +87,56 @@ export async function fetchGroupSettings(id) {
 }
 
 /**
- * Updates group data in the API.
- * @param {Number} 'id' - an integer representing the groupId.
- * @param {Object} 'group' - an object with data collected from the group settings form.
+ * Fetches penalties data from the API.
+ * @param {Number} 'id' - an integer representing the userId.
+ * @returns Promise that resolves to an array of the user's penalties.
  */
-export async function patchGroupSettings(id, group) {
-  const response = await fetch(`/api/group-settings/${id}`, {
-    method: "PATCH",
+export async function fetchUserPenalties(id) {
+  const response = await fetch(`/api/user-penalties/${id}`);
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
+
+/**
+ * Posts new exercise entry into the exercises table in the API.
+ * @param {Object} 'newLog' - an object with data collected from the form.
+ */
+export async function postNewAccount(account) {
+  const response = await fetch('/api/users', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(account)
+  });
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+}
+
+/**
+ * Posts new exercise entry into the exercises table in the API.
+ * @param {Object} 'newLog' - an object with data collected from the form.
+ */
+export async function postNewLog(newLog) {
+  const response = await fetch('/api/exercises', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newLog)
+  });
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+}
+
+/**
+ * Posts new group information into the groups table in the API.
+ * @param {Object} 'group' - an object with data collected from the new group form.
+ * @returns {Object} Data for the new group record.
+ */
+export async function postNewGroup(group) {
+  const response = await fetch('/api/new-group', {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(group)
   });
@@ -136,12 +147,16 @@ export async function patchGroupSettings(id, group) {
 }
 
 /**
- * Fetches penalties data from the API.
- * @param {Number} 'id' - an integer representing the userId.
- * @returns Promise that resolves to an array of the user's penalties.
+ * Updates group data in the API.
+ * @param {Number} 'id' - an integer representing the groupId.
+ * @param {Object} 'group' - an object with data collected from the group settings form.
  */
-export async function fetchUserPenalties(id) {
-  const response = await fetch(`/api/user-penalties/${id}`);
+export async function patchGroupSettings(id, group) {
+  const response = await fetch(`/api/group-settings/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(group)
+  });
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
   }

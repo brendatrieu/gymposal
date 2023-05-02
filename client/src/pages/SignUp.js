@@ -3,7 +3,7 @@ import { FormControl, TextField, Typography, Button, Box } from '@mui/material';
 import FormBox from '../components/FormBox';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
-// import { postNewAccount } from '../lib/api';
+import { postNewAccount } from '../lib/api';
 
 export default function SignUp() {
   const { register, handleSubmit } = useForm();
@@ -11,16 +11,16 @@ export default function SignUp() {
   const navigate = useNavigate();
 
   async function onSubmit(account) {
-  //   try {
-  //     let response = await postNewAccount(account);
-  //     if (response.ok) {
-  //       navigate('/');
-  //     setAlert('AccountSaved');
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     setAlert('ErrorOccurred', err);
-  //   }
+    try {
+      let response = await postNewAccount(account);
+      if (response.ok) {
+        navigate('/');
+      setAlert('AccountSaved');
+      }
+    } catch (err) {
+      console.error(err);
+      setAlert('ErrorOccurred', err);
+    }
   }
 
   return (
