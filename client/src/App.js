@@ -3,6 +3,7 @@ import theme from './lib/Theme';
 import CssBaseline from '@mui/material/CssBaseline';
 import './App.css';
 import Header from './components/Header';
+import SignUp from './pages/SignUp';
 import Launchpad from './pages/Launchpad';
 import LogExercise from './pages/LogExercise';
 import GroupForm from './pages/GroupForm';
@@ -19,6 +20,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Header />} >
             <Route index element={<Launchpad />} />
+            <Route path="sign-up" element={<SignUp />} />
             <Route path="log-exercise" element={<LogExercise />} />
             <Route path="group-form" element={<GroupForm />} />
             <Route path="group-form/:groupId" element={<GroupForm />} />

@@ -15,7 +15,7 @@ dayjs.extend(dayjsPluginUTC);
 
 async function loadUserChartLogs(userId, setUserChartLogRows) {
   const response = await fetchUserChartLogs(userId);
-  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
+  response.forEach((row) => row.date = dayjs(row.date).local().format('MM/DD/YY'));
   setUserChartLogRows(response);
 }
 

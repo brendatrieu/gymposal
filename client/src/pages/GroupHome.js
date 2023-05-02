@@ -24,7 +24,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 async function loadGroupChartLogs(userId, setGroupChartLogRows) {
   const response = await fetchGroupChartLogs(userId);
-  response.forEach((row) => row.date = dayjs(row.date).format('MM/DD/YY'));
+  response.forEach((row) => row.date = dayjs(row.date).local().format('MM/DD/YY'));
   setGroupChartLogRows(response);
 }
 
