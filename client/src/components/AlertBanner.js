@@ -24,6 +24,18 @@ export default function AlertBanner() {
   if (!alert) return null;
 
   switch (alert) {
+    case 'DupEmail':
+      alertType.severity = 'error';
+      alertType.msg = 'An account with this email already exists. Please try again.';
+      break;
+    case 'DupUsername':
+      alertType.severity = 'error';
+      alertType.msg = 'An account with this username already exists. Please try again.';
+      break;
+    case 'AccountSaved':
+      alertType.severity = 'success';
+      alertType.msg = 'Account successfully created.';
+      break;
     case 'ExerciseSaved':
       alertType.severity = 'success';
       alertType.msg = 'Exercise successfully saved.';

@@ -25,34 +25,6 @@ ChartJS.register(
 
 export default function BaseGraph({exercises, legend}) {
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    devicePixelRatio: 2,
-    borderJoinStyle: 'bevel',
-    plugins: {
-      legend: {
-        display: legend,
-        position: 'bottom'
-      },
-      title: {
-        display: true,
-        text: 'Total Minutes per Day',
-        color: '#151a26',
-        font: {
-          size: 23
-        },
-        align: 'center',
-        padding: {
-          top: 10,
-          bottom: 10
-        }
-      },
-      colors: {
-        forceOverride: true
-      }
-    },
-  };
   const labels = [];
   const allDatasets = {};
 
@@ -80,6 +52,34 @@ export default function BaseGraph({exercises, legend}) {
         tension: 0.1
       }
     }),
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    devicePixelRatio: 2,
+    plugins: {
+      legend: {
+        display: legend,
+        position: 'bottom'
+      },
+      title: {
+        display: true,
+        text: 'Total Minutes per Day',
+        color: '#151a26',
+        font: {
+          size: 23
+        },
+        align: 'center',
+        padding: {
+          top: 10,
+          bottom: 10
+        }
+      },
+      colors: {
+        forceOverride: true
+      }
+    },
   };
 
   return (
@@ -114,6 +114,5 @@ export default function BaseGraph({exercises, legend}) {
         data={data}
       />
     </>
-
   )
 }

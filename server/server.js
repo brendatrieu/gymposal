@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import argon2 from 'argon2';
 import errorMiddleware from './lib/error-middleware.js';
 import pg from 'pg';
 import dayjs from 'dayjs';
@@ -32,8 +33,8 @@ app.get('/api/exercise-types', async (req, res, next) => {
     `;
     const result = await db.query(sql);
     res.json(result.rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -51,8 +52,8 @@ app.get('/api/exercises/:userId', async (req, res, next) => {
     const params = [req.params.userId];
     const result = await db.query(sql, params);
     res.json(result.rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -70,8 +71,8 @@ app.get('/api/chart-exercises/:userId', async (req, res, next) => {
     const params = [req.params.userId, currentWeek];
     const result = await db.query(sql, params);
     res.json(result.rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -90,8 +91,8 @@ app.get('/api/chart-group-exercises/:groupId', async (req, res, next) => {
     const params = [req.params.groupId, currentWeek];
     const result = await db.query(sql, params);
     res.json(result.rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -114,8 +115,8 @@ app.get('/api/groups/:userId', async (req, res, next) => {
     const params = [req.params.userId];
     const result = await db.query(sql, params);
     res.json(result.rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -137,8 +138,8 @@ app.get('/api/group-logs/:groupId', async (req, res, next) => {
     const params = [req.params.groupId];
     const result = await db.query(sql, params);
     res.json(result.rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -158,8 +159,8 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
     const params = [req.params.groupId];
     const result = await db.query(sql, params);
     res.json(result.rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -253,8 +254,33 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
     const params4 = [req.params.userId];
     const results4 = await db.query(sql4, params4);
     res.json(results4.rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/users', async (req, res, next) => {
+  try {
+    const sql = `
+      INSERT INTO "users"
+        ("firstName", "lastName", "email", "username", "password")
+      VALUES
+        ($1, $2, $3, $4, $5)
+      RETURNING *;
+    `;
+    const { firstName, lastName, email, username, password } = req.body;
+    const hashedPassword = await argon2.hash(password);
+    const params = [firstName, lastName, email, username, hashedPassword];
+    const result = await db.query(sql, params);
+    const [user] = result.rows;
+    if (user) {
+      res.status(201).json(user);
+    }
+  } catch (error) {
+    if (error.message.includes('users_email_key') || error.message.includes('users_username_key')) {
+      res.status(400).json(error);
+    }
+    next(error);
   }
 });
 
@@ -272,8 +298,8 @@ app.post('/api/exercises', async (req, res, next) => {
     const result = await db.query(sql, params);
     const [log] = result.rows;
     res.status(201).json(log);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -298,8 +324,8 @@ app.post('/api/new-group', async (req, res, next) => {
       const [logUser] = newGroupUser.rows;
       res.status(201).json(logUser);
     }
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -328,8 +354,8 @@ app.patch('/api/group-settings/:groupId', async (req, res, next) => {
     ];
     const result = await db.query(sql, params);
     res.json(result.rows);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 

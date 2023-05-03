@@ -14,6 +14,7 @@ CREATE TABLE "public"."users" (
   "fullName" TEXT GENERATED ALWAYS AS ("firstName" || ' ' || "lastName") STORED,
 	"email" TEXT NOT NULL UNIQUE,
 	"password" TEXT NOT NULL,
+  "dateJoined" timestamp NOT NULL DEFAULT now(),
 	CONSTRAINT "users_pk" PRIMARY KEY ("userId")
 ) WITH (
   OIDS=FALSE
