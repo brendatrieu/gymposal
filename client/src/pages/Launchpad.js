@@ -67,10 +67,10 @@ export default function Launchpad() {
           <Grid item xs={12} md={10}>
             <Typography variant="h4" >Hello, {firstName}!</Typography>
           </Grid>
-          <Grid item xs={12} md={5} sx={{position: 'relative', height: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{position: 'relative', minHeight: '45vh' }}>
             <BaseGraph exercises={userChartLogRows} legend={false} />
           </Grid>
-          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }}>
             {userLogRows.length ?
               <EnhancedTable
               rows={userLogRows}
@@ -85,7 +85,7 @@ export default function Launchpad() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }}>
             {groupsRows.length ?
               <EnhancedGroupsTable
                 rows={groupsRows}
@@ -100,7 +100,7 @@ export default function Launchpad() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }}>
             {userPenaltiesRows.length ?
               <EnhancedTable
                 rows={userPenaltiesRows}

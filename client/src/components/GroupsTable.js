@@ -210,12 +210,13 @@ export default function EnhancedGroupsTable({ rows, tableName, tableCaption, hea
           width: 1,
           height: 1,
           mb: 2,
+          paddingBottom: 2,
           paddingX: 2,
           bgcolor: 'primary.main'
         }}
       >
-        <EnhancedTableToolbar tableName={tableName} tableCaption={tableCaption} />
-        <TableContainer sx={{ paddingX: 1.5, height: 0.7 }} >
+        <EnhancedTableToolbar sx={{ height: 0.1 }}  tableName={tableName} tableCaption={tableCaption} />
+        <TableContainer sx={{ paddingX: 1.5, minHeight: 0.65 }} >
           <Table aria-labelledby="tableTitle" sx={{ height: 1 }} >
             <EnhancedTableHead
               order={order}
@@ -270,6 +271,7 @@ export default function EnhancedGroupsTable({ rows, tableName, tableCaption, hea
           align="left"
           sx={{ color: 'secondary.main',
             width: 1,
+            minHeight: 0.1,
             paddingLeft: 0 }}
         />
       </Paper>

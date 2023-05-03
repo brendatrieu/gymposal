@@ -110,8 +110,16 @@ export async function postNewAccount(account) {
     body: JSON.stringify(account)
   });
   if (!response.ok) {
-    throw new Error(`Status ${response.status}`);
+    const result = await response.json();
+    if (result.detail.includes('email')) {
+      return 'DupEmail';
+    } else if (result.detail.includes('username')) {
+      return 'DupUsername';
+    } else {
+      return 'ErrorOccurred';
+    }
   }
+  return 'AccountSaved'
 }
 
 /**
