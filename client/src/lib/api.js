@@ -2,6 +2,16 @@
  * Fetches all exerciseTypes from the API.
  * @returns Promise that resolves to an array of exercise types.
  */
+export async function fetchAccount() {
+  const response = await fetch('/api/sign-in');
+  if (!response.ok) throw new Error(`fetch Error ${response.status}`);
+  return await response.json();
+}
+
+/**
+ * Fetches all exerciseTypes from the API.
+ * @returns Promise that resolves to an array of exercise types.
+ */
 export async function fetchExerciseTypes() {
   const response = await fetch('/api/exercise-types');
   if (!response.ok) throw new Error(`fetch Error ${response.status}`);
