@@ -9,11 +9,22 @@ import { postNewGroup, patchGroupSettings } from '../lib/api';
 export default function GroupForm() {
   const { register, setValue, handleSubmit, reset } = useForm();
   const { user } = useUser();
-  const { userId } = user;
   const { groupId } = useParams();
   const { state } = useLocation();
   const { setAlert } = useAlert();
   const navigate = useNavigate();
+
+  // groupId is an added dependency to reset the form if users navigate from a group settings page to a create group page.
+  useEffect(() => {
+    if (!user) return navigate('/sign-in');
+    if (state) {
+      for (const field in state[0]) {
+        setValue(field, state[0][field]);
+      }
+    } else {
+      reset();
+    }
+  }, [ user, navigate, state, groupId, setValue, reset ]);
 
   async function onSubmit(group) {
     try {
@@ -22,7 +33,7 @@ export default function GroupForm() {
         response = await patchGroupSettings(groupId, group);
         navigate(`/group-home/${groupId}`);
       } else {
-        group.userId = userId;
+        group.userId = user.userId;
         response = await postNewGroup(group);
         navigate(`/group-home/${response.groupId}`);
       }
@@ -32,18 +43,6 @@ export default function GroupForm() {
       setAlert('ErrorOccurred', err);
     }
   }
-
-  // groupId is an added dependency to reset the form if users navigate from a group settings page to a create group page.
-  useEffect(() => {
-    if (state) {
-      for (const field in state[0]) {
-        setValue(field, state[0][field]);
-      }
-    } else {
-      reset();
-    }
-  }, [ state, groupId, setValue, reset ]);
-
 
   return (
     <div>

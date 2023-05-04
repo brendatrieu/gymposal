@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../context/AppContext';
 import { styled } from '@mui/material/styles';
 import { Typography, Grid, Paper, CircularProgress, IconButton, Button } from '@mui/material';
 import { GridBox } from '../components/GridBox';
@@ -42,20 +43,22 @@ async function loadGroupSettings(groupId, setGroupSettingsRows) {
 
 export default function GroupHome() {
   const { groupId } = useParams();
-  // const { user } = useUser();
+  const { user } = useUser();
   const [groupChartLogRows, setGroupChartLogRows] = useState();
   const [groupLogRows, setGroupLogRows] = useState();
   const [groupSettingsRows, setGroupSettingsRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if(!user) return navigate('/sign-in');
     Promise.all([loadGroupLogs(groupId, setGroupLogRows),
                 loadGroupSettings(groupId, setGroupSettingsRows),
                 loadGroupChartLogs(groupId, setGroupChartLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
-  }, [groupId]);
+  }, [ user, navigate, groupId ]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;
