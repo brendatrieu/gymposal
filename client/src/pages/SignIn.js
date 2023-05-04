@@ -8,14 +8,13 @@ import { postAccount } from '../lib/api';
 export default function SignIn() {
   const { register, handleSubmit } = useForm();
   const { setAlert } = useAlert();
-  const { setUser } = useUser();
+  const { setUser, tokenKey } = useUser();
   const navigate = useNavigate();
 
   async function onSubmit(account) {
     const response = await postAccount(account);
     if (!response) return setAlert('InvalidLogin');
     const { user, token } = response;
-    const tokenKey = 'react-context-jwt';
     localStorage.setItem(tokenKey, token);
     setUser(user);
     navigate('/');
