@@ -14,17 +14,17 @@ export function useAlert() {
 }
 
 export function useUser() {
-  const { user, setUser } = useContext(AppContext);
-  return { user, setUser };
+  const { user, setUser, tokenKey } = useContext(AppContext);
+  return { user, setUser, tokenKey };
 }
 
 export default function Provider({children}){
   const [ alert, setAlert ] = useState(false);
   const [ user, setUser ] = useState();
   const [isAuthorizing, setIsAuthorizing] = useState(true);
+  const tokenKey = 'react-context-jwt';
 
   useEffect(() => {
-    const tokenKey = 'react-context-jwt';
     const token = localStorage.getItem(tokenKey);
     const user = token ? jwtDecode(token) : null;
     setUser(user);
@@ -34,7 +34,7 @@ export default function Provider({children}){
   if (isAuthorizing) return null;
 
   return (
-    <AppContext.Provider value={{ user, setUser, alert, setAlert }}>
+    <AppContext.Provider value={{ user, setUser, alert, setAlert, tokenKey }}>
       {children}
     </AppContext.Provider>
   )

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/AppContext';
 import { AppBar, Toolbar, Typography, Box, IconButton, Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -25,7 +25,14 @@ const NavBar = styled(AppBar)(({ theme }) => ({
 
 
 export default function Header() {
-  const { user } = useUser();
+  const { user, setUser, tokenKey } = useUser();
+  const navigate = useNavigate();
+
+  function handleSignOut() {
+    localStorage.removeItem(tokenKey);
+    setUser(undefined);
+    navigate('/sign-in');
+  }
 
   return (
     <div>
@@ -46,7 +53,7 @@ export default function Header() {
               <Link to="/group-form">
                 <Button>Create Group</Button>
               </Link>
-              <IconButton sx={{ pr: 0 }} ><LogoutIcon /></IconButton>
+              <IconButton sx={{ pr: 0 }} onClick={handleSignOut} ><LogoutIcon /></IconButton>
             </Box>)}
         </Toolbar>
       </NavBar>
