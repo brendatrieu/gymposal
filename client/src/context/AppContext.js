@@ -1,4 +1,9 @@
-import { createContext, useContext, useState } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect } from 'react';
+import jwtDecode from 'jwt-decode';
 
 const AppContext = createContext();
 export { AppContext };
@@ -16,6 +21,17 @@ export function useUser() {
 export default function Provider({children}){
   const [ alert, setAlert ] = useState(false);
   const [ user, setUser ] = useState();
+  const [isAuthorizing, setIsAuthorizing] = useState(true);
+
+  useEffect(() => {
+    const tokenKey = 'react-context-jwt';
+    const token = localStorage.getItem(tokenKey);
+    const user = token ? jwtDecode(token) : null;
+    setUser(user);
+    setIsAuthorizing(false);
+  }, [])
+
+  if (isAuthorizing) return null;
 
   return (
     <AppContext.Provider value={{ user, setUser, alert, setAlert }}>
