@@ -29,7 +29,7 @@ CREATE TABLE "public"."groups" (
 	"durationReq" int NOT NULL,
 	"passQty" int,
 	"createdAt" timestamp NOT NULL DEFAULT now(),
-  "inviteLink" TEXT  GENERATED ALWAYS AS ("groupName" || '-' || "groupId"::text) STORED,
+  "inviteLink" TEXT  GENERATED ALWAYS AS ("groupId"::text || '/' || REPLACE("groupName", ' ', '-')) STORED,
 	CONSTRAINT "groups_pk" PRIMARY KEY ("groupId")
 ) WITH (
   OIDS=FALSE

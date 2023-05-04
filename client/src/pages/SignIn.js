@@ -23,7 +23,7 @@ export default function SignIn() {
   return (
     <div>
       <FormBox my={4} sx={{ flexGrow: 1, height: '75vh', justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
-        <form onSubmit={handleSubmit(onSubmit)} style={{width: '50%'}}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{width: '75%'}}>
           <FormControl direction="column" fullWidth >
             <Typography variant="h4">
              Sign In
