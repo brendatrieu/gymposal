@@ -29,6 +29,15 @@ export default function SignIn() {
             <Typography variant="h4">
              Sign In
             </Typography>
+            <Typography variant="body2" sx={{paddingTop: 1}}>
+              Don't have an account? <Link to='/sign-up'
+                style={{ textDecoration: 'none',
+                  fontWeight: 700,
+                  color: '#add8e6'}}
+              >
+                Sign up for free
+              </Link>
+            </Typography>
             <TextField
               required
               label="Username"
