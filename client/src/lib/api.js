@@ -2,16 +2,6 @@
  * Fetches all exerciseTypes from the API.
  * @returns Promise that resolves to an array of exercise types.
  */
-export async function fetchAccount() {
-  const response = await fetch('/api/sign-in');
-  if (!response.ok) throw new Error(`fetch Error ${response.status}`);
-  return await response.json();
-}
-
-/**
- * Fetches all exerciseTypes from the API.
- * @returns Promise that resolves to an array of exercise types.
- */
 export async function fetchExerciseTypes() {
   const response = await fetch('/api/exercise-types');
   if (!response.ok) throw new Error(`fetch Error ${response.status}`);
@@ -105,6 +95,22 @@ export async function fetchUserPenalties(id) {
   const response = await fetch(`/api/user-penalties/${id}`);
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
+
+/**
+ * Fetches all login information and verifies account from the API.
+ * @returns Promise that resolves to an object with a token and user information.
+ */
+export async function postAccount(account) {
+  const response = await fetch('/api/sign-in', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(account)
+  });
+  if (!response.ok) {
+    return;
   }
   return await response.json();
 }

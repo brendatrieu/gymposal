@@ -6,7 +6,6 @@ import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
 import BaseGraph from '../components/BaseGraph';
-// import { useUser } from '../context/AppContext';
 import { fetchGroupChartLogs, fetchGroupLogs, fetchGroupSettings } from '../lib/api';
 import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
@@ -43,7 +42,7 @@ async function loadGroupSettings(groupId, setGroupSettingsRows) {
 
 export default function GroupHome() {
   const { groupId } = useParams();
-  // const { userId } = useUser();
+  // const { user } = useUser();
   const [groupChartLogRows, setGroupChartLogRows] = useState();
   const [groupLogRows, setGroupLogRows] = useState();
   const [groupSettingsRows, setGroupSettingsRows] = useState();

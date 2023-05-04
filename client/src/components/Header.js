@@ -25,7 +25,7 @@ const NavBar = styled(AppBar)(({ theme }) => ({
 
 
 export default function Header() {
-  const { userId } = useUser();
+  const { user } = useUser();
 
   return (
     <div>
@@ -38,7 +38,7 @@ export default function Header() {
               </Typography>
             </Link>
           </IconButton>
-          {userId &&
+          {user &&
             (<Box sx={{ display: 'flex' }}>
               <Link to="/log-exercise">
                 <Button>Log Exercise</Button>
