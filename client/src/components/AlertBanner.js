@@ -36,6 +36,10 @@ export default function AlertBanner() {
       alertType.severity = 'success';
       alertType.msg = 'Account successfully created.';
       break;
+    case 'InvalidLogin':
+      alertType.severity = 'error';
+      alertType.msg = 'Invalid username or password.';
+      break;
     case 'ExerciseSaved':
       alertType.severity = 'success';
       alertType.msg = 'Exercise successfully saved.';

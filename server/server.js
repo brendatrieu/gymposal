@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import argon2 from 'argon2';
+import jwt from 'jsonwebtoken';
+import ClientError from './lib/client-error.js';
 import errorMiddleware from './lib/error-middleware.js';
 import pg from 'pg';
 import dayjs from 'dayjs';
@@ -123,12 +125,12 @@ app.get('/api/groups/:userId', async (req, res, next) => {
 app.get('/api/group-logs/:groupId', async (req, res, next) => {
   try {
     const sql = `
-      SELECT "groups"."groupName",
+      SELECT "groups"."groupName" AS "groupName",
         "firstName",
-        "exercises"."exerciseId",
-        "exercises"."type",
-        "exercises"."date",
-        "exercises"."totalMinutes"
+        "exercises"."exerciseId" AS "exerciseId",
+        "exercises"."type" AS "type",
+        "exercises"."date" AS "date",
+        "exercises"."totalMinutes" AS "totalMinutes"
       FROM "groups"
       JOIN "groupUsers" USING ("groupId")
       JOIN "exercises" USING ("userId")
@@ -280,6 +282,30 @@ app.post('/api/users', async (req, res, next) => {
     if (error.message.includes('users_email_key') || error.message.includes('users_username_key')) {
       res.status(400).json(error);
     }
+    next(error);
+  }
+});
+
+app.post('/api/sign-in', async (req, res, next) => {
+  try {
+    const sql = `
+      SELECT "userId",
+        "firstName",
+        "password"
+      FROM "users"
+      WHERE "username" = $1;
+    `;
+    const params = [req.body.username];
+    const result = await db.query(sql, params);
+    const [user] = result.rows;
+    const { userId, firstName, password } = user;
+    if (!user || !await argon2.verify(password, req.body.password)) {
+      throw new ClientError(400, 'Invalid username or password.');
+    }
+    const payload = { userId, firstName };
+    const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+    res.json({ token, user: payload });
+  } catch (error) {
     next(error);
   }
 });

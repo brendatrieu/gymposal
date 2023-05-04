@@ -100,6 +100,22 @@ export async function fetchUserPenalties(id) {
 }
 
 /**
+ * Fetches all login information and verifies account from the API.
+ * @returns Promise that resolves to an object with a token and user information.
+ */
+export async function postAccount(account) {
+  const response = await fetch('/api/sign-in', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(account)
+  });
+  if (!response.ok) {
+    return;
+  }
+  return await response.json();
+}
+
+/**
  * Posts new exercise entry into the exercises table in the API.
  * @param {Object} 'newLog' - an object with data collected from the form.
  */

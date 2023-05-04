@@ -19,7 +19,8 @@ dayjs.extend(weekOfYear);
 export default function LogExercise() {
   const { control, register, handleSubmit } = useForm();
   const [ exerciseTypes, setExerciseTypes ] = useState();
-  const { userId } = useUser();
+  const { user } = useUser();
+  const { userId } = user;
   const { setAlert } = useAlert();
   const navigate = useNavigate();
   const [ isLoading, setIsLoading ] = useState(true);

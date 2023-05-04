@@ -6,7 +6,6 @@ import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
 import BaseGraph from '../components/BaseGraph';
-// import { useUser } from '../context/AppContext';
 import { fetchGroupChartLogs, fetchGroupLogs, fetchGroupSettings } from '../lib/api';
 import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
@@ -43,7 +42,7 @@ async function loadGroupSettings(groupId, setGroupSettingsRows) {
 
 export default function GroupHome() {
   const { groupId } = useParams();
-  // const { userId } = useUser();
+  // const { user } = useUser();
   const [groupChartLogRows, setGroupChartLogRows] = useState();
   const [groupLogRows, setGroupLogRows] = useState();
   const [groupSettingsRows, setGroupSettingsRows] = useState();
@@ -77,10 +76,10 @@ export default function GroupHome() {
               <IconButton><SettingsIcon /></IconButton>
             </Link>
           </Grid>
-          <Grid item xs={12} md={5} sx={{ position: 'relative', height: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{ position: 'relative', minHeight: '45vh' }}>
             <BaseGraph exercises={groupChartLogRows} legend={true}/>
           </Grid>
-          <Grid item xs={12} md={5} sx={{ height: '45vh' }} >
+          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }} >
             {groupLogRows.length ?
               <EnhancedTable
                 rows={groupLogRows}
@@ -95,7 +94,7 @@ export default function GroupHome() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }}>
             <EnhancedTable
               rows={groupSettingsRows}
               tableName={'Overview'}
@@ -104,7 +103,7 @@ export default function GroupHome() {
               rowKey={'groupId'}
             />
           </Grid>
-          <Grid item xs={12} md={5} sx={{ height: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }}>
             <Item>Penalties</Item>
           </Grid>
         </Grid>

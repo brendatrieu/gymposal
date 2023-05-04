@@ -8,7 +8,8 @@ import { postNewGroup, patchGroupSettings } from '../lib/api';
 
 export default function GroupForm() {
   const { register, setValue, handleSubmit, reset } = useForm();
-  const { userId } = useUser();
+  const { user } = useUser();
+  const { userId } = user;
   const { groupId } = useParams();
   const { state } = useLocation();
   const { setAlert } = useAlert();

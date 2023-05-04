@@ -209,57 +209,61 @@ export default function EnhancedGroupsTable({ rows, tableName, tableCaption, hea
         sx={{
           width: 1,
           height: 1,
-          mb: 2,
           paddingBottom: 2,
           paddingX: 2,
-          bgcolor: 'primary.main'
+          bgcolor: 'primary.main',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
         }}
       >
-        <EnhancedTableToolbar sx={{ height: 0.1 }}  tableName={tableName} tableCaption={tableCaption} />
-        <TableContainer sx={{ paddingX: 1.5, minHeight: 0.65 }} >
-          <Table aria-labelledby="tableTitle" sx={{ height: 1 }} >
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-              headers={headers}
-            />
-            <TableBody>
-              {visibleRows
-                ? visibleRows.map((row, index) => {
-                  return (
-                    <TableRow key={row[rowKey]}
-                      sx={{ height: (visibleRows.length >= 5) ? 0.2 : (1 / visibleRows.length) }}
-                    >
-                      {headers.map((header) => (
-                        <TableCell
-                          align={header.numeric ? 'right' : 'left'}
-                          sx={{ color: 'secondary.main', width: (1 / headers.length) }}
-                          key={`${row[rowKey]}${header.label}${row[header.id]}`}
-                        >
-                          {header.route ?
-                            <Link
-                              key={`${header.route}${row[rowKey]}`}
-                              to={`${header.route}${row[rowKey]}`}
-                              style={{
-                                textDecoration: 'none',
-                                color: '#214C67',
-                                fontWeight: 600
-                              }} >
-                              {row[header.id]}
-                            </Link> :
-                            row[header.id]
-                          }
-                        </TableCell>)
-                      )}
-                    </TableRow>
-                  );
-                })
-                : null}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <div>
+          <EnhancedTableToolbar tableName={tableName} tableCaption={tableCaption} />
+          <TableContainer sx={{ paddingX: 1.5 }} >
+            <Table aria-labelledby="tableTitle" sx={{ height: 1 }} >
+              <EnhancedTableHead
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+                headers={headers}
+              />
+              <TableBody>
+                {visibleRows
+                  ? visibleRows.map((row, index) => {
+                    return (
+                      <TableRow key={row[rowKey]}
+                        sx={{ height: (visibleRows.length >= 5) ? 0.2 : (1 / visibleRows.length) }}
+                      >
+                        {headers.map((header) => (
+                          <TableCell
+                            align={header.numeric ? 'right' : 'left'}
+                            sx={{ color: 'secondary.main', width: (1 / headers.length) }}
+                            key={`${row[rowKey]}${header.label}${row[header.id]}`}
+                          >
+                            {header.route ?
+                              <Link
+                                key={`${header.route}${row[rowKey]}`}
+                                to={`${header.route}${row[rowKey]}`}
+                                style={{
+                                  textDecoration: 'none',
+                                  color: '#214C67',
+                                  fontWeight: 600
+                                }} >
+                                {row[header.id]}
+                              </Link> :
+                              row[header.id]
+                            }
+                          </TableCell>)
+                        )}
+                      </TableRow>
+                    );
+                  })
+                  : null}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 30]}
           component="div"
@@ -271,7 +275,6 @@ export default function EnhancedGroupsTable({ rows, tableName, tableCaption, hea
           align="left"
           sx={{ color: 'secondary.main',
             width: 1,
-            minHeight: 0.1,
             paddingLeft: 0 }}
         />
       </Paper>

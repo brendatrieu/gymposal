@@ -96,6 +96,7 @@ function EnhancedTableToolbar({tableName, tableCaption}) {
     <Toolbar
       sx={{
         pl: { sm: 2 },
+        paddingTop: 1.5,
         flexDirection: 'column',
         alignItems: 'flex-start',
         justifyContent: 'center',
@@ -103,7 +104,7 @@ function EnhancedTableToolbar({tableName, tableCaption}) {
       }}
     >
         <Typography
-          sx={{ fontWeight: 700}}
+          sx={{ fontWeight: 700, marginBottom: 0 }}
           variant="h6"
           color="secondary.main"
         >
@@ -201,45 +202,49 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
       <Paper
         sx={{ width: 1,
           height: 1,
-          mb: 2,
           paddingX: 2,
           paddingBottom: 2,
-          bgcolor: 'primary.main'
+          bgcolor: 'primary.main',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
           }}
       >
-        <EnhancedTableToolbar sx={{ height: 0.1 }} tableName={tableName} tableCaption={tableCaption}/>
-        <TableContainer sx={{ paddingX: 1.5, minHeight: 0.65}} >
-          <Table aria-labelledby="tableTitle" sx={{ height: 1 }} >
-            <EnhancedTableHead
-              order={order}
-              orderBy={orderBy}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-              headers={headers}
-            />
-            <TableBody>
-              {visibleRows
-                ? visibleRows.map((row, index) => {
-                  return (
-                    <TableRow key={row[rowKey]}
-                      sx={{flexGrow: 1, width: 1}}
-                    >
-                      {headers.map((header) => (
-                        <TableCell
-                          align={header.numeric ? 'right' : 'left'}
-                          sx={{ color: 'secondary.main', width: (1/headers.length) }}
-                          key={`${row[rowKey]}${header.label}${row[header.id]}`}
-                        >
-                          {row[header.id]}
-                        </TableCell>)
-                        )}
-                    </TableRow>
-                  );
-                })
-                : null}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <div>
+          <EnhancedTableToolbar tableName={tableName} tableCaption={tableCaption}/>
+          <TableContainer sx={{ paddingX: 1.5 }} >
+            <Table aria-labelledby="tableTitle" sx={{ height: 1 }} >
+              <EnhancedTableHead
+                order={order}
+                orderBy={orderBy}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+                headers={headers}
+              />
+              <TableBody>
+                {visibleRows
+                  ? visibleRows.map((row, index) => {
+                    return (
+                      <TableRow key={row[rowKey]}
+                        sx={{flexGrow: 1, width: 1}}
+                      >
+                        {headers.map((header) => (
+                          <TableCell
+                            align={header.numeric ? 'right' : 'left'}
+                            sx={{ color: 'secondary.main', width: (1/headers.length) }}
+                            key={`${row[rowKey]}${header.label}${row[header.id]}`}
+                          >
+                            {row[header.id]}
+                          </TableCell>)
+                          )}
+                      </TableRow>
+                    );
+                  })
+                  : null}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 30]}
           component="div"
@@ -251,7 +256,6 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
           align="left"
           sx={{color: 'secondary.main',
             width: 1,
-            minHeight: 0.1,
             paddingLeft: 0}}
         />
       </Paper>

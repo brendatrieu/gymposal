@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Typography, Grid, Paper, CircularProgress, Button } from '@mui/material';
 import EnhancedTable from '../components/BaseTable';
 import EnhancedGroupsTable from '../components/GroupsTable';
@@ -22,8 +22,8 @@ async function loadUserChartLogs(userId, setUserChartLogRows) {
 async function loadPersonalLogs(userId, setUserLogRows) {
   const response = await fetchUserLogs(userId);
   response.forEach((row) => row.date = dayjs(row.date).local().format('MM/DD/YY'));
-  setUserLogRows(response);}
-
+  setUserLogRows(response);
+}
 
 async function loadGroups(userId, setGroupsRows) {
   const response = await fetchGroups(userId);
@@ -40,22 +40,24 @@ async function loadPersonalPenalties(userId, setUserPenaltiesRows) {
 }
 
 export default function Launchpad() {
-  const { userId, firstName } = useUser();
-  const [userChartLogRows, setUserChartLogRows] = useState();
-  const [userLogRows, setUserLogRows] = useState();
-  const [groupsRows, setGroupsRows] = useState();
-  const [userPenaltiesRows, setUserPenaltiesRows] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState();
+  const { user } = useUser();
+  const [ userChartLogRows, setUserChartLogRows ] = useState();
+  const [ userLogRows, setUserLogRows ] = useState();
+  const [ groupsRows, setGroupsRows ] = useState();
+  const [ userPenaltiesRows, setUserPenaltiesRows ] = useState();
+  const [ isLoading, setIsLoading ] = useState(true);
+  const [ error, setError ] = useState();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([loadPersonalLogs(userId, setUserLogRows),
-                  loadGroups(userId, setGroupsRows),
-                  loadPersonalPenalties(userId, setUserPenaltiesRows),
-                  loadUserChartLogs(userId, setUserChartLogRows)])
+    if(!user) return navigate('/sign-in');
+    Promise.all([loadPersonalLogs(user.userId, setUserLogRows),
+                  loadGroups(user.userId, setGroupsRows),
+                  loadPersonalPenalties(user.userId, setUserPenaltiesRows),
+                  loadUserChartLogs(user.userId, setUserChartLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
-  }, [userId]);
+  }, [user, navigate]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;
@@ -65,7 +67,7 @@ export default function Launchpad() {
       <GridBox my={4} sx={{ flexGrow: 1, height: 1 }}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12} md={10}>
-            <Typography variant="h4" >Hello, {firstName}!</Typography>
+            <Typography variant="h4" >Hello, {user.firstName}!</Typography>
           </Grid>
           <Grid item xs={12} md={5} sx={{position: 'relative', minHeight: '45vh' }}>
             <BaseGraph exercises={userChartLogRows} legend={false} />
