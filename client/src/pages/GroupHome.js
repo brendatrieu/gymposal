@@ -97,7 +97,7 @@ export default function GroupHome() {
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
             <EnhancedTable
               rows={groupSettingsRows}
               tableName={'Overview'}
@@ -107,7 +107,7 @@ export default function GroupHome() {
               link={groupSettingsRows[0].inviteLink}
             />
           </Grid>
-          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }}>
+          <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
             <Item>Penalties</Item>
           </Grid>
         </Grid>

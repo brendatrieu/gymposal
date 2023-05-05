@@ -106,7 +106,7 @@ function EnhancedTableToolbar({tableName, tableCaption}) {
       }}
     >
         <Typography
-          sx={{ fontWeight: 700, marginBottom: 0 }}
+          sx={{ fontWeight: 700, marginBottom: 1 }}
           variant="h6"
           color="secondary.main"
         >
@@ -202,7 +202,7 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
 
   const handleClick = useCallback(
     async (event) => {
-      navigator.clipboard.writeText(process.env.REACT_APP_BASE_URL + '/' + link)
+      navigator.clipboard.writeText(process.env.REACT_APP_BASE_URL + '/group-home/' + link)
       setAnchorEl(event.currentTarget);
       const copyTimeout = await setTimeout(() => {
         setAnchorEl(null);
@@ -274,9 +274,10 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
             paddingLeft: 0}}
         />
         {link &&
-        <div>
+        <div style={{alignSelf: 'flex-end'}}>
           <Button
             sx={{
+              margin: 2,
               bgcolor: 'tertiary.main',
               color: 'primary.main',
               '&:hover': { backgroundColor: 'tertiary.main', opacity: 0.9 }
