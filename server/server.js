@@ -371,6 +371,22 @@ app.post('/api/new-group', async (req, res, next) => {
   }
 });
 
+app.post('/api/new-group-member', async (req, res, next) => {
+  try {
+    const sqlGroup = `
+      INSERT INTO "groupUsers" ("groupId", "userId", "passQty", "remainingPasses")
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+    `;
+    const { groupId, userId, passQty, remainingPasses } = req.body;
+    const paramsGroup = [groupId, userId, passQty, remainingPasses];
+    const result = await db.query(sqlGroup, paramsGroup);
+    res.status(201).json(result.rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.patch('/api/group-settings/:groupId', async (req, res, next) => {
   try {
     const sql = `

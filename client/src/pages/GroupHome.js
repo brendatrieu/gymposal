@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../context/AppContext';
+import { useUser, useAlert } from '../context/AppContext';
 import { styled } from '@mui/material/styles';
 import {
   Typography,
@@ -19,7 +19,8 @@ import {
   fetchGroupUsers,
   fetchGroupChartLogs,
   fetchGroupLogs,
-  fetchGroupSettings } from '../lib/api';
+  fetchGroupSettings,
+  postNewGroupMember } from '../lib/api';
 import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
@@ -67,6 +68,7 @@ export default function GroupHome() {
   const [groupSettingsRows, setGroupSettingsRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
+  const { setAlert } = useAlert();
   const navigate = useNavigate();
   const [open, setOpen] = useState(!!inviteLink);
 
@@ -97,8 +99,12 @@ export default function GroupHome() {
     borderRadius: 1
   };
   function handleAccept() {
+    const passes = groupSettingsRows[0].passQty;
+    const member = {groupId, userId: user.userId, passQty: passes, remainingPasses: passes}
+    postNewGroupMember(member)
     setOpen(false);
     navigate(`/group-home/${groupId}`);
+    setAlert('InvitationAccepted');
   }
   function handleDecline() {
     setOpen(false);

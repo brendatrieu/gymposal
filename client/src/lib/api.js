@@ -184,6 +184,23 @@ export async function postNewGroup(group) {
 }
 
 /**
+ * Posts new group member into the groupUsers table in the API.
+ * @param {Object} 'group' - an object with the groupId, userId, passQty, and remainingPasses.
+ * @returns {Object} Data for the new group member record.
+ */
+export async function postNewGroupMember(member) {
+  const response = await fetch('/api/new-group-member', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(member)
+  });
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
+
+/**
  * Updates group data in the API.
  * @param {Number} 'id' - an integer representing the groupId.
  * @param {Object} 'group' - an object with data collected from the group settings form.
