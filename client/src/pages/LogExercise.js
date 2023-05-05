@@ -20,26 +20,13 @@ export default function LogExercise() {
   const { control, register, handleSubmit } = useForm();
   const [ exerciseTypes, setExerciseTypes ] = useState();
   const { user } = useUser();
-  const { userId } = user;
   const { setAlert } = useAlert();
   const navigate = useNavigate();
   const [ isLoading, setIsLoading ] = useState(true);
   const [ error, setError ] = useState();
 
-  async function OnSubmit(newLog){
-    try {
-      newLog.userId = userId;
-      newLog.week = dayjs(newLog.date).week();
-      newLog.month = dayjs(newLog.date).month() + 1;
-      await postNewLog(newLog);
-      setAlert('ExerciseSaved');
-      navigate('/');
-    } catch(err) {
-      setAlert('ErrorOccurred', err);
-    }
-  }
-
-    useEffect(() => {
+  useEffect(() => {
+    if (!user) return navigate('/sign-in');
     async function loadTypes() {
       try {
         setIsLoading(true);
@@ -53,7 +40,20 @@ export default function LogExercise() {
       }
     }
     loadTypes();
-  }, []);
+  }, [user, navigate]);
+
+  async function OnSubmit(newLog) {
+    try {
+      newLog.userId = user.userId;
+      newLog.week = dayjs(newLog.date).week();
+      newLog.month = dayjs(newLog.date).month() + 1;
+      await postNewLog(newLog);
+      setAlert('ExerciseSaved');
+      navigate('/');
+    } catch (err) {
+      setAlert('ErrorOccurred', err);
+    }
+  }
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;

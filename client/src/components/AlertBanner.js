@@ -48,6 +48,10 @@ export default function AlertBanner() {
       alertType.severity = 'success';
       alertType.msg = 'Group successfully saved.';
       break;
+    case 'InvitationAccepted':
+      alertType.severity = 'success';
+      alertType.msg = 'Invitation successfully accepted.';
+      break;
     case 'ErrorOccurred':
       alertType.severity = 'error';
       alertType.msg = 'An unexpected error occurred. Please try again.';

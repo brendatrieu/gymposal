@@ -24,6 +24,19 @@ export async function fetchUserChartLogs(id) {
 /**
  * Fetches group's logs from the exercises table in the API.
  * @param {Number} 'id' - an integer representing the groupId.
+ * @returns Promise that resolves to an array of group members' IDs and first names.
+ */
+export async function fetchGroupUsers(id) {
+  const response = await fetch(`/api/group-users/${id}`);
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
+
+/**
+ * Fetches group's logs from the exercises table in the API.
+ * @param {Number} 'id' - an integer representing the groupId.
  * @returns Promise that resolves to an array of exercise logs grouped by date.
  */
 export async function fetchGroupChartLogs(id) {
@@ -163,6 +176,23 @@ export async function postNewGroup(group) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(group)
+  });
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
+
+/**
+ * Posts new group member into the groupUsers table in the API.
+ * @param {Object} 'group' - an object with the groupId, userId, passQty, and remainingPasses.
+ * @returns {Object} Data for the new group member record.
+ */
+export async function postNewGroupMember(member) {
+  const response = await fetch('/api/new-group-member', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(member)
   });
   if (!response.ok) {
     throw new Error(`Status ${response.status}`);

@@ -122,6 +122,21 @@ app.get('/api/groups/:userId', async (req, res, next) => {
   }
 });
 
+app.get('/api/group-users/:groupId', async (req, res, next) => {
+  try {
+    const sql = `SELECT "userId",
+      "users"."firstName"
+      FROM "groupUsers"
+      JOIN "users" USING ("userId")
+      WHERE "groupId" = $1`;
+    const params = [req.params.groupId];
+    const result = await db.query(sql, params);
+    res.json(result.rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/api/group-logs/:groupId', async (req, res, next) => {
   try {
     const sql = `
@@ -154,7 +169,8 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
         "passQty",
         "groupId",
         "betAmount",
-        "groupName"
+        "groupName",
+        "inviteLink"
       FROM "groups"
       WHERE "groupId" = $1
     `;
@@ -350,6 +366,22 @@ app.post('/api/new-group', async (req, res, next) => {
       const [logUser] = newGroupUser.rows;
       res.status(201).json(logUser);
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/new-group-member', async (req, res, next) => {
+  try {
+    const sqlGroup = `
+      INSERT INTO "groupUsers" ("groupId", "userId", "passQty", "remainingPasses")
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+    `;
+    const { groupId, userId, passQty, remainingPasses } = req.body;
+    const paramsGroup = [groupId, userId, passQty, remainingPasses];
+    const result = await db.query(sqlGroup, paramsGroup);
+    res.status(201).json(result.rows);
   } catch (error) {
     next(error);
   }

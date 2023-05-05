@@ -11,6 +11,8 @@ import { Box,
         TableSortLabel,
         Typography,
         Toolbar,
+        Button,
+        Popover
        } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
@@ -104,7 +106,7 @@ function EnhancedTableToolbar({tableName, tableCaption}) {
       }}
     >
         <Typography
-          sx={{ fontWeight: 700, marginBottom: 0 }}
+          sx={{ fontWeight: 700, marginBottom: 1 }}
           variant="h6"
           color="secondary.main"
         >
@@ -132,12 +134,13 @@ function EnhancedTableToolbar({tableName, tableCaption}) {
  * @param {String} 'rowKey' is the key/property of the 'rows' object that should be used as a key.
  * @returns
  */
-export default function EnhancedTable({rows, tableName, tableCaption, headers, rowKey}) {
+export default function EnhancedTable({rows, tableName, tableCaption, headers, rowKey, link}) {
   const [order, setOrder] = useState(DEFAULT_ORDER);
   const [orderBy, setOrderBy] = useState(DEFAULT_ORDER_BY);
   const [page, setPage] = useState(0);
   const [visibleRows, setVisibleRows] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     if (rows?.length) {
@@ -195,6 +198,18 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
       setVisibleRows(updatedRows);
     },
     [rows, order, orderBy],
+  );
+
+  const handleClick = useCallback(
+    async (event) => {
+      navigator.clipboard.writeText(process.env.REACT_APP_BASE_URL + '/group-home/' + link)
+      setAnchorEl(event.currentTarget);
+      const copyTimeout = await setTimeout(() => {
+        setAnchorEl(null);
+        clearTimeout(copyTimeout);
+      }, 2000);
+
+    }, [link],
   );
 
   return (
@@ -258,6 +273,33 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
             width: 1,
             paddingLeft: 0}}
         />
+        {link &&
+        <div style={{alignSelf: 'flex-end'}}>
+          <Button
+            sx={{
+              margin: 2,
+              bgcolor: 'tertiary.main',
+              color: 'primary.main',
+              '&:hover': { backgroundColor: 'tertiary.main', opacity: 0.9 }
+            }}
+            color="tertiary.main"
+            variant="filled"
+            onClick={handleClick}
+          >
+            Copy Invite Link
+          </Button>
+          <Popover
+            open={!!anchorEl}
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+              <Typography variant="body2" sx={{ p: 1 }}>Copied!</Typography>
+          </Popover>
+        </div>
+        }
       </Paper>
     </Box>
   );
