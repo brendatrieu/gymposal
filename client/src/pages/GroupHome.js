@@ -104,6 +104,7 @@ export default function GroupHome() {
               tableCaption={`Each member must meet the following requirements by each Sunday:`}
               headers={groupSettingsHeaders}
               rowKey={'groupId'}
+              link={groupSettingsRows[0].inviteLink}
             />
           </Grid>
           <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }}>
