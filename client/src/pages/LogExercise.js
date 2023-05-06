@@ -13,8 +13,10 @@ import { useForm, Controller } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
 import { fetchExerciseTypes, postNewLog } from '../lib/api';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
+import dayjsPluginUTC from 'dayjs-plugin-utc';
 
 dayjs.extend(weekOfYear);
+dayjs.extend(dayjsPluginUTC);
 
 export default function LogExercise() {
   const { control, register, handleSubmit } = useForm();
@@ -45,8 +47,8 @@ export default function LogExercise() {
   async function OnSubmit(newLog) {
     try {
       newLog.userId = user.userId;
-      newLog.week = dayjs(newLog.date).week();
-      newLog.month = dayjs(newLog.date).month() + 1;
+      newLog.week = dayjs(newLog.date).utc().week();
+      newLog.month = dayjs(newLog.date).utc().month() + 1;
       await postNewLog(newLog);
       setAlert('ExerciseSaved');
       navigate('/');

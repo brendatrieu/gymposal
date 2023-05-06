@@ -49,7 +49,7 @@ async function loadGroupChartLogs(userId, setGroupChartLogRows) {
 async function loadGroupLogs(groupId, setGroupLogRows) {
   const response = await fetchGroupLogs(groupId);
   response.forEach((row) => {
-    row.date = dayjs.utc(row.date).local().format('MM/DD/YY')
+    row.date = dayjs(row.date).local().format('MM/DD/YY')
   });
   setGroupLogRows(response);
 }
@@ -80,7 +80,7 @@ export default function GroupHome() {
         loadGroupChartLogs(groupId, setGroupChartLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
-  }, [ user, navigate, groupId ]);
+  }, [ user, navigate, groupId, open ]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;
@@ -91,7 +91,7 @@ export default function GroupHome() {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 500,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -100,15 +100,21 @@ export default function GroupHome() {
   };
   function handleAccept() {
     const passes = groupSettingsRows[0].passQty;
-    const member = {groupId, userId: user.userId, passQty: passes, remainingPasses: passes}
-    postNewGroupMember(member)
+    const member = {
+      groupId,
+      userId: user.userId,
+      passQty: passes,
+      remainingPasses: passes,
+      activeDate: dayjs().local()
+    };
+    postNewGroupMember(member);
     setOpen(false);
     navigate(`/group-home/${groupId}`);
     setAlert('InvitationAccepted');
   }
   function handleDecline() {
     setOpen(false);
-    navigate(`/group-home/${groupId}`);
+    navigate(`/`);
   }
 
   return (
@@ -120,8 +126,8 @@ export default function GroupHome() {
         aria-describedby="invite-modal"
       >
         <Box sx={modalStyle}>
-          <Typography id="invite-modal" variant="h6" sx={{pb: 2}}>
-            Accept the invite to join <strong>{groupSettingsRows[0].groupName}</strong>
+          <Typography id="invite-modal" variant="h6" sx={{pb: 2, textAlign: 'center'}}>
+            You have been invited to join <strong>{groupSettingsRows[0].groupName}</strong>
           </Typography>
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly'}}>
             <Button variant="contained" color="success" onClick={handleAccept}>

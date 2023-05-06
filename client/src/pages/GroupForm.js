@@ -34,6 +34,7 @@ export default function GroupForm() {
         navigate(`/group-home/${groupId}`);
       } else {
         group.userId = user.userId;
+        group.activeDate =
         response = await postNewGroup(group);
         navigate(`/group-home/${response.groupId}`);
       }

@@ -14,7 +14,8 @@ CREATE TABLE "public"."users" (
   "fullName" TEXT GENERATED ALWAYS AS ("firstName" || ' ' || "lastName") STORED,
 	"email" TEXT NOT NULL UNIQUE,
 	"password" TEXT NOT NULL,
-  "dateJoined" timestamp NOT NULL DEFAULT now(),
+  "active" BOOLEAN NOT NULL DEFAULT TRUE,
+  "dateJoined" TIMESTAMP NOT NULL DEFAULT now(),
 	CONSTRAINT "users_pk" PRIMARY KEY ("userId")
 ) WITH (
   OIDS=FALSE
@@ -25,11 +26,12 @@ CREATE TABLE "public"."groups" (
 	"groupName" TEXT NOT NULL,
 	"betAmount" DECIMAL,
 	"frequencyReq" int NOT NULL,
-	"intervalReq" TEXT NOT NULL,
+	"intervalReq" TEXT NOT NULL DEFAULT 'Weekly',
 	"durationReq" int NOT NULL,
 	"passQty" int,
-	"createdAt" timestamp NOT NULL DEFAULT now(),
-  "inviteLink" TEXT  GENERATED ALWAYS AS ("groupId"::text || '/' || REPLACE("groupName", ' ', '-')) STORED,
+	"createdAt" TIMESTAMP NOT NULL DEFAULT now(),
+  "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
+  "inviteLink" TEXT  GENERATED ALWAYS AS ("groupId"::text || '/' || REPLACE(encodeURI("groupName"), '''', '%27')) STORED,
 	CONSTRAINT "groups_pk" PRIMARY KEY ("groupId")
 ) WITH (
   OIDS=FALSE
@@ -40,10 +42,10 @@ CREATE TABLE "public"."exercises" (
 	"userId" int NOT NULL,
 	"typeId" int NOT NULL,
 	"type" TEXT NOT NULL,
-	"date" timestamp NOT NULL,
+  "totalMinutes" int NOT NULL,
+	"date" TIMESTAMP NOT NULL,
   "week" int NOT NULL,
-  "month" int NOT NULL,
-	"totalMinutes" int NOT NULL,
+  "month" int NOT NULL
 	CONSTRAINT "exercises_pk" PRIMARY KEY ("exerciseId")
 ) WITH (
   OIDS=FALSE
@@ -54,6 +56,8 @@ CREATE TABLE "public"."groupUsers" (
 	"userId" int NOT NULL,
 	"passQty" int,
 	"remainingPasses" int,
+  "activeDate" TIMESTAMP NOT NULL,
+  "active" BOOLEAN NOT NULL,
 	CONSTRAINT "groupUsers_pk" PRIMARY KEY ("groupId","userId")
 ) WITH (
   OIDS=FALSE
@@ -62,10 +66,11 @@ CREATE TABLE "public"."groupUsers" (
 CREATE TABLE "public"."penalties" (
 	"groupId" int NOT NULL,
 	"userId" int NOT NULL,
-	"date" timestamp NOT NULL DEFAULT now(),
+	"date" TIMESTAMP NOT NULL DEFAULT now(),
   "status" TEXT NOT NULL DEFAULT 'Open',
   "week" int NOT NULL,
-  "penaltyId" TEXT GENERATED ALWAYS AS ("groupId"::text || "userId"::text || "week"::text) STORED UNIQUE
+  "year" int NOT NULL,
+  "penaltyId" TEXT GENERATED ALWAYS AS ("groupId"::text || "userId"::text || "week"::text || "year"::text) STORED UNIQUE
 ) WITH (
   OIDS=FALSE
 );
