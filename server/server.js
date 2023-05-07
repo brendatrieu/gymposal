@@ -171,8 +171,7 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
         "passQty",
         "groupId",
         "betAmount",
-        "groupName",
-        "inviteLink"
+        "groupName"
       FROM "groups"
       WHERE "groupId" = $1
     `;
