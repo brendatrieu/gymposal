@@ -191,21 +191,31 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
       "groups"."groupName" AS "groupName",
       "groups"."groupId" AS "groupId",
       "groups"."intervalReq" AS "intervalReq",
-      "groups"."frequencyReq" AS "frequencyReq"
+      "groups"."frequencyReq" AS "frequencyReq",
+      "groupUsers"."activeDate" AS "activeDate"
     FROM "groups"
     JOIN "groupUsers" USING ("groupId")
     JOIN "exercises" USING ("userId")
     WHERE "userId" = $1
       AND "groups"."durationReq" <= "exercises"."totalMinutes"
-      AND EXTRACT("year" FROM "exercises"."date") = $2
-      AND EXTRACT("week" FROM "exercises"."date") = $3
-      AND (EXTRACT("week" FROM "groupUsers"."activeDate") != $3 AND EXTRACT("year" FROM "groupUsers"."activeDate") = $2)
     `;
-    const currentWeek = dayjs().utc().week();
+    const currentWeek = dayjs().week();
+    const currentYear = dayjs().year();
     const lastWeek = currentWeek === 1 ? 52 : currentWeek - 1;
-    const params = [req.params.userId, dayjs().utc().year(), lastWeek];
+    const params = [req.params.userId];
     const results = await db.query(sql, params);
     const data = results.rows;
+    data.forEach((entry) => {
+      entry.year = dayjs(entry.date).year();
+      entry.week = dayjs(entry.date).week();
+      entry.activeYear = dayjs(entry.activeDate).year();
+      entry.activeWeek = dayjs(entry.activeDate).week();
+    });
+    data.filter((entry) => (
+      entry.year === currentYear &&
+      entry.week === lastWeek &&
+      (entry.activeYear === currentYear ? entry.activeWeek !== lastWeek : true)
+    ));
     const tracker = {
       groups: [],
       penalties: []
@@ -347,8 +357,8 @@ app.post('/api/new-group', async (req, res, next) => {
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
     `;
-    const { groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty, userId } = req.body;
-    const paramsGroup = [groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty];
+    const { groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty, userId, inviteLink } = req.body;
+    const paramsGroup = [groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty, inviteLink];
     const newGroup = await db.query(sqlGroup, paramsGroup);
     const [log] = newGroup.rows;
     if (log) {

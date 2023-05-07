@@ -5,6 +5,10 @@ import FormBox from '../components/FormBox';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { postNewGroup, patchGroupSettings } from '../lib/api';
+import dayjs from 'dayjs';
+import dayjsPluginUTC from 'dayjs-plugin-utc';
+
+dayjs.extend(dayjsPluginUTC);
 
 export default function GroupForm() {
   const { register, setValue, handleSubmit, reset } = useForm();
@@ -30,11 +34,11 @@ export default function GroupForm() {
     try {
       let response = null;
       if (groupId) {
+        group.updatedAt = dayjs().utc();
         response = await patchGroupSettings(groupId, group);
         navigate(`/group-home/${groupId}`);
       } else {
         group.userId = user.userId;
-        group.activeDate =
         response = await postNewGroup(group);
         navigate(`/group-home/${response.groupId}`);
       }

@@ -47,6 +47,7 @@ export default function LogExercise() {
   async function OnSubmit(newLog) {
     try {
       newLog.userId = user.userId;
+      newLog.date = dayjs(newLog.date).utc();
       newLog.week = dayjs(newLog.date).utc().week();
       newLog.month = dayjs(newLog.date).utc().month() + 1;
       await postNewLog(newLog);

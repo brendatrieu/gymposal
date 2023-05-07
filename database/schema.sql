@@ -31,7 +31,6 @@ CREATE TABLE "public"."groups" (
 	"passQty" int,
 	"createdAt" TIMESTAMP NOT NULL DEFAULT now(),
   "updatedAt" TIMESTAMP NOT NULL DEFAULT now(),
-  "inviteLink" TEXT  GENERATED ALWAYS AS ("groupId"::text || '/' || REPLACE(encodeURI("groupName"), '''', '%27')) STORED,
 	CONSTRAINT "groups_pk" PRIMARY KEY ("groupId")
 ) WITH (
   OIDS=FALSE
@@ -45,7 +44,7 @@ CREATE TABLE "public"."exercises" (
   "totalMinutes" int NOT NULL,
 	"date" TIMESTAMP NOT NULL,
   "week" int NOT NULL,
-  "month" int NOT NULL
+  "month" int NOT NULL,
 	CONSTRAINT "exercises_pk" PRIMARY KEY ("exerciseId")
 ) WITH (
   OIDS=FALSE
@@ -56,8 +55,8 @@ CREATE TABLE "public"."groupUsers" (
 	"userId" int NOT NULL,
 	"passQty" int,
 	"remainingPasses" int,
-  "activeDate" TIMESTAMP NOT NULL,
-  "active" BOOLEAN NOT NULL,
+  "activeDate" TIMESTAMP NOT NULL DEFAULT now(),
+  "active" BOOLEAN NOT NULL DEFAULT true,
 	CONSTRAINT "groupUsers_pk" PRIMARY KEY ("groupId","userId")
 ) WITH (
   OIDS=FALSE

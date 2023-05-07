@@ -105,7 +105,7 @@ export default function GroupHome() {
       userId: user.userId,
       passQty: passes,
       remainingPasses: passes,
-      activeDate: dayjs().local()
+      activeDate: dayjs().utc()
     };
     postNewGroupMember(member);
     setOpen(false);
@@ -115,6 +115,11 @@ export default function GroupHome() {
   function handleDecline() {
     setOpen(false);
     navigate(`/`);
+  }
+  function generateInviteLink() {
+    let param = encodeURIComponent(groupSettingsRows[0].groupName);
+    param = param.replace("'", '%27');
+    return `${groupId}/${param}`;
   }
 
   return (
@@ -181,7 +186,7 @@ export default function GroupHome() {
               tableCaption={`Each member must meet the following requirements by each Sunday:`}
               headers={groupSettingsHeaders}
               rowKey={'groupId'}
-              link={groupSettingsRows[0].inviteLink}
+              link={userIncluded && generateInviteLink()}
             />
           </Grid>
           <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
