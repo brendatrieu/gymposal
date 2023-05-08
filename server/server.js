@@ -64,17 +64,26 @@ app.get('/api/exercises/:userId', async (req, res, next) => {
 app.get('/api/chart-exercises/:userId', async (req, res, next) => {
   try {
     const sql = `
-      SELECT DATE("date") AS "date",
-        SUM("totalMinutes") AS "totalMinutes",
-        "users"."firstName" AS "firstName"
+      SELECT "date",
+        "totalMinutes"
       FROM "exercises"
-      JOIN "users" USING ("userId")
       WHERE "userId" = $1 AND "week" = $2
-      GROUP BY DATE("date"), "firstName"
     `;
     const params = [req.params.userId, currentWeek];
     const result = await db.query(sql, params);
-    res.json(result.rows);
+    const data = result.rows;
+    data.sort((a, b) => a.date - b.date);
+    let byDate = [];
+    data.forEach((entry) => {
+      entry.date = dayjs(entry.date).local().format('MM/DD/YY');
+      if (!Object.prototype.hasOwnProperty.call(byDate, entry.date)) {
+        byDate[entry.date] = entry.totalMinutes;
+      } else {
+        byDate[entry.date] += entry.totalMinutes;
+      }
+    });
+    byDate = Object.entries(byDate).map((entry) => ({ date: entry[0], totalMinutes: entry[1] }));
+    res.json(byDate);
   } catch (error) {
     next(error);
   }

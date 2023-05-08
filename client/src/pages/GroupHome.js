@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useUser, useAlert } from '../context/AppContext';
-import { styled } from '@mui/material/styles';
 import {
   Typography,
   Grid,
@@ -20,20 +19,15 @@ import {
   fetchGroupChartLogs,
   fetchGroupLogs,
   fetchGroupSettings,
+  fetchGroupPenalties,
   postNewGroupMember } from '../lib/api';
-import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
+import { groupLogHeaders, groupSettingsHeaders, groupPenaltiesHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 
 dayjs.extend(weekOfYear);
 dayjs.extend(dayjsPluginUTC);
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#fff',
-  color: '#000',
-  textAlign: 'center'
-}));
 
 async function loadGroupUsers(groupId, setGroupUsers) {
   const response = await fetchGroupUsers(groupId);
@@ -59,6 +53,14 @@ async function loadGroupSettings(groupId, setGroupSettingsRows) {
   setGroupSettingsRows(response);
 }
 
+async function loadGroupPenalties(groupId, setGroupPenaltiesRows) {
+  const response = await fetchGroupPenalties(groupId);
+  response.forEach((row) => {
+    row.date = dayjs(row.date).local().format('MM/DD/YY')
+  });
+  setGroupPenaltiesRows(response);
+}
+
 export default function GroupHome() {
   const { groupId, inviteLink } = useParams();
   const { user } = useUser();
@@ -66,6 +68,7 @@ export default function GroupHome() {
   const [groupChartLogRows, setGroupChartLogRows] = useState();
   const [groupLogRows, setGroupLogRows] = useState();
   const [groupSettingsRows, setGroupSettingsRows] = useState();
+  const [groupPenaltiesRows, setGroupPenaltiesRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
   const { setAlert } = useAlert();
@@ -77,6 +80,7 @@ export default function GroupHome() {
     Promise.all([loadGroupUsers(groupId, setGroupUsers),
         loadGroupLogs(groupId, setGroupLogRows),
         loadGroupSettings(groupId, setGroupSettingsRows),
+        loadGroupPenalties(groupId, setGroupPenaltiesRows),
         loadGroupChartLogs(groupId, setGroupChartLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
@@ -190,7 +194,12 @@ export default function GroupHome() {
             />
           </Grid>
           <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
-            <Item>Penalties</Item>
+            <EnhancedTable
+              rows={groupPenaltiesRows}
+              tableName={'Penalties'}
+              headers={groupPenaltiesHeaders}
+              rowKey={'penaltyId'}
+            />
           </Grid>
         </Grid>
       </GridBox>

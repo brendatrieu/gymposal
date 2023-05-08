@@ -58,6 +58,20 @@ export default function BaseGraph({exercises, legend}) {
     responsive: true,
     maintainAspectRatio: false,
     devicePixelRatio: 2,
+    scales: {
+      y: {
+        title: {
+          display: true,
+          text: 'Total Minutes'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Date'
+        }
+      }
+    },
     plugins: {
       legend: {
         display: legend,
@@ -78,7 +92,7 @@ export default function BaseGraph({exercises, legend}) {
       },
       colors: {
         forceOverride: true
-      }
+      },
     },
   };
 
