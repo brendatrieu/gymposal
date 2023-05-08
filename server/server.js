@@ -104,11 +104,11 @@ app.get('/api/groups/:userId', async (req, res, next) => {
   try {
     const sql = `
       SELECT "groups"."groupName",
-        SUM("exercises"."totalMinutes") AS "totalMinutes",
+        COALESCE(SUM("exercises"."totalMinutes"), 0) as "totalMinutes",
         "groups"."groupId"
       FROM "groups"
       JOIN "groupUsers" USING ("groupId")
-      JOIN "exercises" USING ("userId")
+      LEFT JOIN "exercises" USING ("userId")
       JOIN "users" USING ("userId")
       WHERE "groups"."groupId" IN
         (SELECT "groupId"
@@ -186,7 +186,7 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
 app.get('/api/user-penalties/:userId', async (req, res, next) => {
   try {
     const sql = `
-    SELECT "exercises"."date" AS "date",
+    SELECT "exercises"."date",
       "groups"."groupName" AS "groupName",
       "groups"."groupId" AS "groupId",
       "groups"."intervalReq" AS "intervalReq",
@@ -194,26 +194,31 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
       "groupUsers"."activeDate" AS "activeDate"
     FROM "groups"
     JOIN "groupUsers" USING ("groupId")
-    JOIN "exercises" USING ("userId")
+    FULL OUTER JOIN "exercises" USING ("userId")
+    FULL JOIN (SELECT COUNT("groups"."durationReq" <= "exercises"."totalMinutes"),
+    "groupUsers"."userId"
+      FROM "groups"
+      JOIN "groupUsers" USING ("groupId")
+      FULL OUTER JOIN "exercises" USING ("userId")
+      GROUP BY ("groupUsers"."userId")) AS "Count" USING ("userId")
     WHERE "userId" = $1
-      AND "groups"."durationReq" <= "exercises"."totalMinutes"
     `;
     const currentWeek = dayjs().week();
     const currentYear = dayjs().year();
     const lastWeek = currentWeek === 1 ? 52 : currentWeek - 1;
     const params = [req.params.userId];
     const results = await db.query(sql, params);
-    const data = results.rows;
+    let data = results.rows;
     data.forEach((entry) => {
       entry.year = dayjs(entry.date).year();
       entry.week = dayjs(entry.date).week();
       entry.activeYear = dayjs(entry.activeDate).year();
       entry.activeWeek = dayjs(entry.activeDate).week();
     });
-    data.filter((entry) => (
+    data = data.filter((entry) => (
       entry.year === currentYear &&
       entry.week === lastWeek &&
-      (entry.activeYear === currentYear ? entry.activeWeek !== lastWeek : true)
+      (entry.activeYear === currentYear ? entry.activeWeek !== currentWeek : true)
     ));
     const tracker = {
       groups: [],
@@ -243,7 +248,7 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
       const totalPenalties = tracker.penalties.length;
       if (totalPenalties) {
         for (let p = 0; p < totalPenalties; p++) {
-          tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(req.params.userId, currentWeek)) === -1);
+          tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(req.params.userId, currentWeek, currentYear)) === -1);
         }
       }
     }
@@ -254,13 +259,13 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
     if (tracker.penalties.length) {
       for (let p = 0; p < tracker.penalties.length; p++) {
         if (p !== tracker.penalties.length - 1) {
-          sql3 = sql3.concat(`($${p + 4}, $1, $2), `);
+          sql3 = sql3.concat(`($${p + 4}, $1, $2, $3), `);
         } else {
-          sql3 = sql3.concat(`($${p + 4}, $1, $2) `);
+          sql3 = sql3.concat(`($${p + 4}, $1, $2, $3) `);
         }
       }
       sql3 = sql3.concat('RETURNING *');
-      const params3 = [req.params.userId, currentWeek, dayjs().utc().year(), ...tracker.penalties];
+      const params3 = [req.params.userId, dayjs().utc().week(), dayjs().utc().year(), ...tracker.penalties];
       await db.query(sql3, params3);
     }
     const sql4 = `

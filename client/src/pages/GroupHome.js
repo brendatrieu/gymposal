@@ -124,7 +124,7 @@ export default function GroupHome() {
 
   return (
     <div>
-      {!userIncluded &&
+      {!userIncluded && (inviteLink === generateInviteLink()) &&
         <Modal
         open={open}
         aria-labelledby="invite-modal"
