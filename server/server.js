@@ -34,8 +34,7 @@ const currentWeek = dayjs().week();
 app.use(express.json());
 
 // Set up a job with a recurrence rule to run every Monday at 8AM UTC, which is equivalent to Sunday at 1AM PDT or 12AM PST
-// { hour: 8, minute: 0, dayOfWeek: 1, tz: 'Etc/UTC' }
-schedule.scheduleJob({ dayOfWeek: 2 }, async function () {
+schedule.scheduleJob({ hour: 8, minute: 0, dayOfWeek: 1, tz: 'Etc/UTC' }, async function () {
   try {
     const sqlUsers = `
     SELECT "userId"
