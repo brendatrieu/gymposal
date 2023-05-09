@@ -109,12 +109,12 @@ app.get('/api/chart-group-exercises/:groupId', async (req, res, next) => {
     data.forEach((entry) => {
       entry.date = dayjs(entry.date).local().format('MM/DD/YY');
       if (!Object.prototype.hasOwnProperty.call(byUser, entry.userId)) {
-        byUser[entry.userId] = { dates: [entry.date], entries: [{ date: entry.date, firstName: entry.firstName, totalMinutes: entry.totalMinutes }] };
+        byUser[entry.userId] = { dates: [entry.date], entries: [{ date: entry.date, userId: entry.userId, firstName: entry.firstName, totalMinutes: entry.totalMinutes }] };
       } else {
         const index = byUser[entry.userId].dates.indexOf(entry.date);
         if (index === -1) {
           byUser[entry.userId].dates.push(entry.date);
-          byUser[entry.userId].entries.push({ date: entry.date, firstName: entry.firstName, totalMinutes: entry.totalMinutes });
+          byUser[entry.userId].entries.push({ date: entry.date, userId: entry.userId, firstName: entry.firstName, totalMinutes: entry.totalMinutes });
         } else {
           byUser[entry.userId].entries[index].totalMinutes += entry.totalMinutes;
         }

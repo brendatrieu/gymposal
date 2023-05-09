@@ -33,10 +33,10 @@ export default function BaseGraph({exercises, legend}) {
     if (labels.indexOf(current.date) === -1) {
       labels.push(current.date);
     }
-    if (!allDatasets[current.firstName]) {
-      allDatasets[current.firstName] = [current];
+    if (!allDatasets[current.userId]) {
+      allDatasets[current.userId] = [current];
     } else {
-      allDatasets[current.firstName].push(current);
+      allDatasets[current.userId].push(current);
     }
   }
 
