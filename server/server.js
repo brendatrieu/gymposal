@@ -9,10 +9,14 @@ import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear.js';
 import weekday from 'dayjs/plugin/weekday.js';
 import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+import schedule from 'node-schedule';
 
 dayjs.extend(weekOfYear);
 dayjs.extend(weekday);
 dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('America/Los_Angeles');
 
 pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseFloat);
 
@@ -28,6 +32,121 @@ const app = express();
 const currentWeek = dayjs().week();
 
 app.use(express.json());
+
+// Set up a job with a recurrence rule to run every Monday at 8AM UTC, which is equivalent to Sunday at 1AM PDT or 12AM PST
+const job = schedule.scheduleJob({ hour: 8, minute: 0, dayOfWeek: 1, tz: 'Etc/UTC' }, async function () {
+  try {
+    const sqlUsers = `
+    SELECT "userId"
+    FROM "users"
+    WHERE "active" = true;
+  `;
+    const result = await db.query(sqlUsers);
+    const users = result.rows.map(user => user.userId);
+    if (users.length) {
+      users.forEach(async (user) => {
+        const sql = `
+          SELECT "groupUsers"."userId",
+            "groups"."groupName" AS "groupName",
+            "groups"."groupId" AS "keyGroupId",
+            "groups"."intervalReq" AS "intervalReq",
+            "groups"."frequencyReq" AS "frequencyReq",
+            "groupUsers"."activeDate" AS "activeDate",
+            "Count".*
+          FROM "groups"
+          JOIN "groupUsers" USING ("groupId")
+          FULL OUTER JOIN (SELECT "exercises"."date",
+          "groupUsers"."groupId"
+          FROM "groups"
+          JOIN "groupUsers" USING ("groupId")
+          JOIN "exercises" USING ("userId")
+          WHERE "groupUsers"."userId" = $1 and "groups"."durationReq" <= "exercises"."totalMinutes") AS "Count" USING ("groupId")
+          WHERE "groupUsers"."userId" = $1
+          `;
+        const currentWeek = dayjs.tz().week();
+        const currentYear = dayjs.tz().year();
+        const lastWeek = currentWeek === 1 ? 52 : currentWeek - 1;
+        const params = [user];
+        const results = await db.query(sql, params);
+        let data = results.rows;
+        data.forEach((entry) => {
+          entry.year = dayjs.tz(entry.date).year();
+          entry.week = dayjs.tz(entry.date).week();
+          entry.activeYear = dayjs.tz(entry.activeDate).year();
+          entry.activeWeek = dayjs.tz(entry.activeDate).week();
+        });
+        data = data.filter((entry) => (
+          (entry.activeYear === currentYear ? entry.activeWeek !== currentWeek : true)
+        ));
+        const tracker = {
+          groups: [],
+          penalties: []
+        };
+        for (let d = 0; d < data.length; d++) {
+          const { keyGroupId, groupName, frequencyReq, intervalReq, year, week } = data[d];
+          if (tracker.groups.indexOf(groupName) === -1) {
+            tracker.groups.push(groupName);
+            tracker[groupName] = { id: keyGroupId, frequency: frequencyReq, interval: intervalReq, count: 0 };
+          }
+          if (year === currentYear && week === lastWeek) {
+            tracker[groupName].count++;
+          }
+        }
+        for (let g = 0; g < tracker.groups.length; g++) {
+          const currGroup = tracker[tracker.groups[g]];
+          if (currGroup.count < currGroup.frequency) {
+            tracker.penalties.push(currGroup.id);
+          }
+        }
+        const sql2 = `
+          SELECT "penaltyId"
+          FROM "penalties"
+        `;
+        const result2 = await db.query(sql2);
+        const penaltyIds = result2.rows.map(id => id.penaltyId);
+        if (penaltyIds.length) {
+          const totalPenalties = tracker.penalties.length;
+          if (totalPenalties) {
+            for (let p = 0; p < totalPenalties; p++) {
+              tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(user, currentWeek, currentYear)) === -1);
+            }
+          }
+        }
+        let sql3 = `
+          INSERT INTO "penalties" ("groupId", "userId", "week", "year")
+          VALUES
+          `;
+        if (tracker.penalties.length) {
+          for (let p = 0; p < tracker.penalties.length; p++) {
+            if (p !== tracker.penalties.length - 1) {
+              sql3 = sql3.concat(`($${p + 4}, $1, $2, $3), `);
+            } else {
+              sql3 = sql3.concat(`($${p + 4}, $1, $2, $3) `);
+            }
+          }
+          sql3 = sql3.concat('RETURNING *');
+          const params3 = [user, currentWeek, currentYear, ...tracker.penalties];
+          await db.query(sql3, params3);
+        }
+        const sql4 = `
+          SELECT "groups"."groupName" AS "groupName",
+            "date",
+            "status",
+            "groups"."betAmount" AS "betAmount",
+            "penaltyId"
+          FROM "penalties"
+          JOIN "groups" USING ("groupId")
+          WHERE "userId" = $1;
+        `;
+        const params4 = [user];
+        await db.query(sql4, params4);
+      });
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 app.get('/api/exercise-types', async (req, res, next) => {
   try {
@@ -215,90 +334,6 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
 app.get('/api/user-penalties/:userId', async (req, res, next) => {
   try {
     const sql = `
-    SELECT "exercises"."date",
-      "groups"."groupName" AS "groupName",
-      "groups"."groupId" AS "groupId",
-      "groups"."intervalReq" AS "intervalReq",
-      "groups"."frequencyReq" AS "frequencyReq",
-      "groupUsers"."activeDate" AS "activeDate"
-    FROM "groups"
-    JOIN "groupUsers" USING ("groupId")
-    FULL OUTER JOIN "exercises" USING ("userId")
-    FULL OUTER JOIN (SELECT COUNT("groups"."durationReq" <= "exercises"."totalMinutes"),
-    "groupUsers"."userId"
-      FROM "groups"
-      JOIN "groupUsers" USING ("groupId")
-      FULL OUTER JOIN "exercises" USING ("userId")
-      GROUP BY ("groupUsers"."userId")) AS "Count" USING ("userId")
-    WHERE "userId" = $1
-    `;
-    const currentWeek = dayjs().week();
-    const currentYear = dayjs().year();
-    const lastWeek = currentWeek === 1 ? 52 : currentWeek - 1;
-    const params = [req.params.userId];
-    const results = await db.query(sql, params);
-    let data = results.rows;
-    data.forEach((entry) => {
-      entry.year = dayjs(entry.date).year();
-      entry.week = dayjs(entry.date).week();
-      entry.activeYear = dayjs(entry.activeDate).year();
-      entry.activeWeek = dayjs(entry.activeDate).week();
-    });
-    data = data.filter((entry) => (
-      (entry.date
-        ? (entry.year === currentYear && entry.week === lastWeek)
-        : true) &&
-      (entry.activeYear === currentYear ? entry.activeWeek !== currentWeek : true)
-    ));
-    const tracker = {
-      groups: [],
-      penalties: []
-    };
-    for (let d = 0; d < data.length; d++) {
-      const { groupId, groupName, frequencyReq, intervalReq } = data[d];
-      if (tracker.groups.indexOf(groupName) === -1) {
-        tracker.groups.push(groupName);
-        tracker[groupName] = { id: groupId, frequency: frequencyReq, interval: intervalReq, count: 0 };
-      }
-      tracker[groupName].count++;
-    }
-    for (let g = 0; g < tracker.groups.length; g++) {
-      const currGroup = tracker[tracker.groups[g]];
-      if (currGroup.count < currGroup.frequency) {
-        tracker.penalties.push(currGroup.id);
-      }
-    }
-    const sql2 = `
-      SELECT "penaltyId"
-      FROM "penalties"
-    `;
-    const result2 = await db.query(sql2);
-    const penaltyIds = result2.rows.map(id => id.penaltyId);
-    if (penaltyIds.length) {
-      const totalPenalties = tracker.penalties.length;
-      if (totalPenalties) {
-        for (let p = 0; p < totalPenalties; p++) {
-          tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(req.params.userId, currentWeek, currentYear)) === -1);
-        }
-      }
-    }
-    let sql3 = `
-      INSERT INTO "penalties" ("groupId", "userId", "week", "year")
-      VALUES
-      `;
-    if (tracker.penalties.length) {
-      for (let p = 0; p < tracker.penalties.length; p++) {
-        if (p !== tracker.penalties.length - 1) {
-          sql3 = sql3.concat(`($${p + 4}, $1, $2, $3), `);
-        } else {
-          sql3 = sql3.concat(`($${p + 4}, $1, $2, $3) `);
-        }
-      }
-      sql3 = sql3.concat('RETURNING *');
-      const params3 = [req.params.userId, dayjs().utc().week(), dayjs().utc().year(), ...tracker.penalties];
-      await db.query(sql3, params3);
-    }
-    const sql4 = `
       SELECT "groups"."groupName" AS "groupName",
         "date",
         "status",
@@ -308,9 +343,9 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
       JOIN "groups" USING ("groupId")
       WHERE "userId" = $1;
     `;
-    const params4 = [req.params.userId];
-    const results4 = await db.query(sql4, params4);
-    res.json(results4.rows);
+    const params = [req.params.userId];
+    const results = await db.query(sql, params);
+    res.json(results.rows);
   } catch (error) {
     next(error);
   }
@@ -318,92 +353,6 @@ app.get('/api/user-penalties/:userId', async (req, res, next) => {
 
 app.get('/api/group-penalties/:groupId', async (req, res, next) => {
   try {
-    const sql = `
-    SELECT "exercises"."date",
-      "groupUsers"."userId" AS "userId",
-      "users"."firstName" AS "firstName",
-      "groups"."intervalReq" AS "intervalReq",
-      "groups"."frequencyReq" AS "frequencyReq",
-      "groupUsers"."activeDate" AS "activeDate"
-    FROM "groups"
-    JOIN "groupUsers" USING ("groupId")
-    JOIN "users" USING ("userId")
-    FULL OUTER JOIN "exercises" USING ("userId")
-    FULL OUTER JOIN (SELECT COUNT("groups"."durationReq" <= "exercises"."totalMinutes"),
-      "groupUsers"."userId"
-      FROM "groups"
-      JOIN "groupUsers" USING ("groupId")
-      FULL OUTER JOIN "exercises" USING ("userId")
-      GROUP BY ("groupUsers"."userId")
-      ) AS "Count" USING ("userId")
-     WHERE "groupId" = $1
-    `;
-    const currentWeek = dayjs().week();
-    const currentYear = dayjs().year();
-    const lastWeek = currentWeek === 1 ? 52 : currentWeek - 1;
-    const params = [req.params.groupId];
-    const results = await db.query(sql, params);
-    let data = results.rows;
-    data.forEach((entry) => {
-      entry.year = dayjs(entry.date).year();
-      entry.week = dayjs(entry.date).week();
-      entry.activeYear = dayjs(entry.activeDate).year();
-      entry.activeWeek = dayjs(entry.activeDate).week();
-    });
-    data = data.filter((entry) => (
-      (entry.date
-        ? (entry.year === currentYear && entry.week === lastWeek)
-        : true) &&
-      (entry.activeYear === currentYear ? entry.activeWeek !== currentWeek : true)
-    ));
-    const tracker = {
-      users: [],
-      penalties: []
-    };
-    for (let d = 0; d < data.length; d++) {
-      const { userId, frequencyReq, intervalReq } = data[d];
-      if (tracker.users.indexOf(userId) === -1) {
-        tracker.users.push(userId);
-        tracker[userId] = { id: userId, frequency: frequencyReq, interval: intervalReq, count: 0 };
-      }
-      tracker[userId].count++;
-    }
-    for (let u = 0; u < tracker.users.length; u++) {
-      const currUser = tracker[tracker.users[u]];
-      if (currUser.count < currUser.frequency) {
-        tracker.penalties.push(currUser.id);
-      }
-    }
-    const sql2 = `
-      SELECT "penaltyId"
-      FROM "penalties"
-    `;
-    const result2 = await db.query(sql2);
-    const penaltyIds = result2.rows.map(id => id.penaltyId);
-    if (penaltyIds.length) {
-      const totalPenalties = tracker.penalties.length;
-      if (totalPenalties) {
-        for (let p = 0; p < totalPenalties; p++) {
-          tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(req.params.groupId).concat(penalty, currentWeek, currentYear)) === -1);
-        }
-      }
-    }
-    let sql3 = `
-      INSERT INTO "penalties" ("groupId", "userId", "week", "year")
-      VALUES
-      `;
-    if (tracker.penalties.length) {
-      for (let p = 0; p < tracker.penalties.length; p++) {
-        if (p !== tracker.penalties.length - 1) {
-          sql3 = sql3.concat(`($1, $${p + 4}, $2, $3), `);
-        } else {
-          sql3 = sql3.concat(`($1, $${p + 4}, $2, $3) `);
-        }
-      }
-      sql3 = sql3.concat('RETURNING *');
-      const params3 = [req.params.groupId, dayjs().utc().week(), dayjs().utc().year(), ...tracker.penalties];
-      await db.query(sql3, params3);
-    }
     const sql4 = `
       SELECT "users"."firstName" AS "firstName",
         "date",
@@ -498,8 +447,8 @@ app.post('/api/new-group', async (req, res, next) => {
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
     `;
-    const { groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty, userId, inviteLink } = req.body;
-    const paramsGroup = [groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty, inviteLink];
+    const { groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty, userId } = req.body;
+    const paramsGroup = [groupName, betAmount, frequencyReq, intervalReq, durationReq, passQty];
     const newGroup = await db.query(sqlGroup, paramsGroup);
     const [log] = newGroup.rows;
     if (log) {
