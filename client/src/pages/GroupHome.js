@@ -194,12 +194,17 @@ export default function GroupHome() {
             />
           </Grid>
           <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
-            <EnhancedTable
-              rows={groupPenaltiesRows}
-              tableName={'Penalties'}
-              headers={groupPenaltiesHeaders}
-              rowKey={'penaltyId'}
-            />
+            {groupPenaltiesRows.length ?
+              <EnhancedTable
+                rows={groupPenaltiesRows}
+                tableName={'Penalties'}
+                headers={groupPenaltiesHeaders}
+                rowKey={'penaltyId'}
+              /> :
+              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
+                <Typography variant="h6" sx={{ color: 'secondary.main' }}>No penalties yet. Keep up the good work!</Typography>
+              </Paper>
+            }
           </Grid>
         </Grid>
       </GridBox>
