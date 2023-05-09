@@ -92,18 +92,38 @@ app.get('/api/chart-exercises/:userId', async (req, res, next) => {
 app.get('/api/chart-group-exercises/:groupId', async (req, res, next) => {
   try {
     const sql = `
-      SELECT DATE("date") AS "date",
-        SUM("totalMinutes") AS "totalMinutes",
+      SELECT "date",
+        "totalMinutes",
+        "userId",
         "users"."firstName" AS "firstName"
       FROM "exercises"
       JOIN "users" USING ("userId")
       JOIN "groupUsers" USING ("userId")
       WHERE "groupId" = $1 AND "week" = $2
-      GROUP BY DATE("date"), "firstName"
     `;
     const params = [req.params.groupId, currentWeek];
     const result = await db.query(sql, params);
-    res.json(result.rows);
+    const data = result.rows;
+    data.sort((a, b) => a.date - b.date);
+    const byUser = {};
+    data.forEach((entry) => {
+      entry.date = dayjs(entry.date).local().format('MM/DD/YY');
+      if (!Object.prototype.hasOwnProperty.call(byUser, entry.userId)) {
+        byUser[entry.userId] = { dates: [entry.date], entries: [{ date: entry.date, firstName: entry.firstName, totalMinutes: entry.totalMinutes }] };
+      } else {
+        const index = byUser[entry.userId].dates.indexOf(entry.date);
+        if (index === -1) {
+          byUser[entry.userId].dates.push(entry.date);
+          byUser[entry.userId].entries.push({ date: entry.date, firstName: entry.firstName, totalMinutes: entry.totalMinutes });
+        } else {
+          byUser[entry.userId].entries[index].totalMinutes += entry.totalMinutes;
+        }
+      }
+    });
+    const userEntries = Object.values(byUser).map((user) => user.entries);
+    let consolidated = [];
+    userEntries.forEach((user) => (consolidated = [...consolidated, ...user]));
+    res.json(consolidated);
   } catch (error) {
     next(error);
   }
