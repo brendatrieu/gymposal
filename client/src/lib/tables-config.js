@@ -89,6 +89,32 @@ export const groupsHeaders = [
 ];
 
 /**
+ * @returns {Array} An array of objects containing headers to be used on the penalties table within the group home page.
+ */
+export const groupPenaltiesHeaders = [
+  {
+    id: 'date',
+    numeric: false,
+    label: 'Date',
+  },
+  {
+    id: 'firstName',
+    numeric: false,
+    label: 'Name',
+  },
+  {
+    id: 'betAmount',
+    numeric: true,
+    label: 'Amount Owed',
+  },
+  {
+    id: 'status',
+    numeric: true,
+    label: 'Status',
+  },
+];
+
+/**
  * @returns {Array} An array of objects containing headers to be used on the penalties table within the launchpad.
  */
 export const userPenaltiesHeaders = [

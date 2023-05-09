@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useUser, useAlert } from '../context/AppContext';
-import { styled } from '@mui/material/styles';
 import {
   Typography,
   Grid,
@@ -20,20 +19,15 @@ import {
   fetchGroupChartLogs,
   fetchGroupLogs,
   fetchGroupSettings,
+  fetchGroupPenalties,
   postNewGroupMember } from '../lib/api';
-import { groupLogHeaders, groupSettingsHeaders } from '../lib/tables-config';
+import { groupLogHeaders, groupSettingsHeaders, groupPenaltiesHeaders } from '../lib/tables-config';
 import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 
 dayjs.extend(weekOfYear);
 dayjs.extend(dayjsPluginUTC);
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#fff',
-  color: '#000',
-  textAlign: 'center'
-}));
 
 async function loadGroupUsers(groupId, setGroupUsers) {
   const response = await fetchGroupUsers(groupId);
@@ -49,7 +43,7 @@ async function loadGroupChartLogs(userId, setGroupChartLogRows) {
 async function loadGroupLogs(groupId, setGroupLogRows) {
   const response = await fetchGroupLogs(groupId);
   response.forEach((row) => {
-    row.date = dayjs.utc(row.date).local().format('MM/DD/YY')
+    row.date = dayjs(row.date).local().format('MM/DD/YY')
   });
   setGroupLogRows(response);
 }
@@ -59,6 +53,14 @@ async function loadGroupSettings(groupId, setGroupSettingsRows) {
   setGroupSettingsRows(response);
 }
 
+async function loadGroupPenalties(groupId, setGroupPenaltiesRows) {
+  const response = await fetchGroupPenalties(groupId);
+  response.forEach((row) => {
+    row.date = dayjs(row.date).local().format('MM/DD/YY')
+  });
+  setGroupPenaltiesRows(response);
+}
+
 export default function GroupHome() {
   const { groupId, inviteLink } = useParams();
   const { user } = useUser();
@@ -66,6 +68,7 @@ export default function GroupHome() {
   const [groupChartLogRows, setGroupChartLogRows] = useState();
   const [groupLogRows, setGroupLogRows] = useState();
   const [groupSettingsRows, setGroupSettingsRows] = useState();
+  const [groupPenaltiesRows, setGroupPenaltiesRows] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
   const { setAlert } = useAlert();
@@ -77,10 +80,11 @@ export default function GroupHome() {
     Promise.all([loadGroupUsers(groupId, setGroupUsers),
         loadGroupLogs(groupId, setGroupLogRows),
         loadGroupSettings(groupId, setGroupSettingsRows),
+        loadGroupPenalties(groupId, setGroupPenaltiesRows),
         loadGroupChartLogs(groupId, setGroupChartLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
-  }, [ user, navigate, groupId ]);
+  }, [ user, navigate, groupId, open ]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;
@@ -91,7 +95,7 @@ export default function GroupHome() {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 500,
     bgcolor: 'background.paper',
     boxShadow: 24,
     p: 4,
@@ -100,28 +104,39 @@ export default function GroupHome() {
   };
   function handleAccept() {
     const passes = groupSettingsRows[0].passQty;
-    const member = {groupId, userId: user.userId, passQty: passes, remainingPasses: passes}
-    postNewGroupMember(member)
+    const member = {
+      groupId,
+      userId: user.userId,
+      passQty: passes,
+      remainingPasses: passes,
+      activeDate: dayjs().utc()
+    };
+    postNewGroupMember(member);
     setOpen(false);
     navigate(`/group-home/${groupId}`);
     setAlert('InvitationAccepted');
   }
   function handleDecline() {
     setOpen(false);
-    navigate(`/group-home/${groupId}`);
+    navigate(`/`);
+  }
+  function generateInviteLink() {
+    let param = encodeURIComponent(groupSettingsRows[0].groupName);
+    param = param.replace("'", '%27');
+    return `${groupId}/${param}`;
   }
 
   return (
     <div>
-      {!userIncluded &&
+      {!userIncluded && (inviteLink === generateInviteLink()) &&
         <Modal
         open={open}
         aria-labelledby="invite-modal"
         aria-describedby="invite-modal"
       >
         <Box sx={modalStyle}>
-          <Typography id="invite-modal" variant="h6" sx={{pb: 2}}>
-            Accept the invite to join <strong>{groupSettingsRows[0].groupName}</strong>
+          <Typography id="invite-modal" variant="h6" sx={{pb: 2, textAlign: 'center'}}>
+            You have been invited to join <strong>{groupSettingsRows[0].groupName}</strong>
           </Typography>
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly'}}>
             <Button variant="contained" color="success" onClick={handleAccept}>
@@ -175,11 +190,16 @@ export default function GroupHome() {
               tableCaption={`Each member must meet the following requirements by each Sunday:`}
               headers={groupSettingsHeaders}
               rowKey={'groupId'}
-              link={groupSettingsRows[0].inviteLink}
+              link={userIncluded && generateInviteLink()}
             />
           </Grid>
           <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
-            <Item>Penalties</Item>
+            <EnhancedTable
+              rows={groupPenaltiesRows}
+              tableName={'Penalties'}
+              headers={groupPenaltiesHeaders}
+              rowKey={'penaltyId'}
+            />
           </Grid>
         </Grid>
       </GridBox>

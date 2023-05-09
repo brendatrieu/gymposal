@@ -100,6 +100,19 @@ export async function fetchGroupSettings(id) {
 }
 
 /**
+ * Fetches group data from the API.
+ * @param {Number} 'id' - an integer representing the groupId.
+ * @returns Promise that resolves to an array of group penalties data.
+ */
+export async function fetchGroupPenalties(id) {
+  const response = await fetch(`/api/group-penalties/${id}`);
+  if (!response.ok) {
+    throw new Error(`Status ${response.status}`);
+  }
+  return await response.json();
+}
+
+/**
  * Fetches penalties data from the API.
  * @param {Number} 'id' - an integer representing the userId.
  * @returns Promise that resolves to an array of the user's penalties.
