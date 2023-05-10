@@ -1,9 +1,12 @@
+import './Launchpad.css';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Typography, Grid, Paper, CircularProgress, Button } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { Typography, Grid, Paper, CircularProgress, Box } from '@mui/material';
 import EnhancedTable from '../components/BaseTable';
 import EnhancedGroupsTable from '../components/GroupsTable';
 import BaseGraph from '../components/BaseGraph';
+import GroupTimeline from '../components/GroupTimeline';
 import { GridBox } from '../components/GridBox';
 import { useUser } from '../context/AppContext';
 import { fetchUserChartLogs, fetchUserLogs, fetchGroups, fetchUserPenalties } from '../lib/api';
@@ -12,6 +15,30 @@ import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc'
 
 dayjs.extend(dayjsPluginUTC);
+
+const FlexPaper = styled(Paper)(({ theme }) => ({
+  [theme.breakpoints.up('md')]: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  [theme.breakpoints.down('md')]: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'column',
+  },
+}));
+
+const FlexGroup = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.up('md')]: {
+    width: '45%',
+    alignSelf: 'center'
+  },
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+    alignSelf: 'center'
+  },
+}));
 
 async function loadUserChartLogs(userId, setUserChartLogRows) {
   const response = await fetchUserChartLogs(userId);
@@ -69,24 +96,30 @@ export default function Launchpad() {
             <Typography variant="h4" >Hello, {user.firstName}!</Typography>
           </Grid>
           <Grid item xs={12} md={5} sx={{position: 'relative', minHeight: '40vh' }}>
-            <BaseGraph exercises={userChartLogRows} legend={false} />
-          </Grid>
-          <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
-            {userLogRows.length ?
-              <EnhancedTable
-              rows={userLogRows}
-              tableName={'Exercise Log'}
-              headers={personalLogHeaders}
-              rowKey={'exerciseId'}
-              /> :
-              <Paper align="center" sx={{bgcolor: 'primary.main'}}>
-                <Link to="/log-exercise">
-                  <Button sx={{ color: 'secondary.main'}}>Log Exercise</Button>
-                </Link>
+            {userChartLogRows.length ?
+              <BaseGraph exercises={userChartLogRows} legend={false} /> :
+              <Paper align="center" sx={{bgcolor: 'primary.main', padding: 4}}>
+                <div className="svg-image-div">
+                  <img src="./chart.svg" alt="Line Chart Icon" className="svg-image" />
+                </div>
+                <Typography variant="h6" sx={{ color: 'secondary.main' , marginY: 1}}>
+                  <Link to="/log-exercise" className="link">Log your exercises</Link> to begin seeing data.
+                </Typography>
               </Paper>
             }
           </Grid>
-          <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
+          {userLogRows.length ?
+            <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
+              <EnhancedTable
+                rows={userLogRows}
+                tableName={'Exercise Log'}
+                headers={personalLogHeaders}
+                rowKey={'exerciseId'}
+              />
+            </Grid> :
+            null
+          }
+          <Grid item xs={12} md={(userLogRows.length && !groupsRows.length) ? 10 : 5} sx={{ minHeight: '40vh' }}>
             {groupsRows.length ?
               <EnhancedGroupsTable
                 rows={groupsRows}
@@ -94,26 +127,53 @@ export default function Launchpad() {
                 headers={groupsHeaders}
                 rowKey={'groupId'}
               /> :
-              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
-                <Link to="/group-form">
-                  <Button sx={{ color: 'secondary.main' }}>Create Group</Button>
-                </Link>
-              </Paper>
+              <FlexPaper
+                align="center"
+                sx={{
+                  bgcolor: 'primary.main',
+                  padding: 4
+                  }}
+              >
+                <FlexGroup>
+                  <div className="svg-image-div">
+                    <img src="./groups.svg" alt="Group Icon" className="svg-image" />
+                  </div>
+                  <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
+                    <Link to="/group-form" className="link">Create a group</Link> to work out with friends.
+                  </Typography>
+                </FlexGroup>
+                {userLogRows.length ?
+                  <FlexGroup>
+                    <GroupTimeline />
+                  </FlexGroup> :
+                  null
+                }
+              </FlexPaper>
             }
           </Grid>
-          <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
-            {userPenaltiesRows.length ?
-              <EnhancedTable
-                rows={userPenaltiesRows}
-                tableName={'Penalties'}
-                headers={userPenaltiesHeaders}
-                rowKey={'penaltyId'}
-              /> :
-              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
-                <Typography variant="h6" sx={{color: 'secondary.main'}}>No penalties yet. Keep up the good work!</Typography>
-              </Paper>
+            {groupsRows.length ?
+              <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
+                {(userPenaltiesRows.length ?
+                  <EnhancedTable
+                    rows={userPenaltiesRows}
+                    tableName={'Penalties'}
+                    headers={userPenaltiesHeaders}
+                    rowKey={'penaltyId'}
+                  /> :
+                  <Paper align="center" sx={{ bgcolor: 'primary.main', padding: 4, height: '100%' }}>
+                    <div className="svg-image-div">
+                      <img src="./penalties.svg" alt="Leaderboard Icon" className="svg-image" />
+                    </div>
+                    <div className="svg-caption">
+                      <Typography variant="h6" sx={{ color: 'secondary.main' }}>
+                        No penalties...yet!
+                      </Typography>
+                    </div>
+                  </Paper>)}
+              </Grid>
+              :
+              null
             }
-          </Grid>
         </Grid>
       </GridBox>
     </div>

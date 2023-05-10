@@ -1,0 +1,39 @@
+.svg-image-div {
+  background-color: rgba(177, 173, 175, 0.15);
+  border: 1px solid rgba(177, 173, 175, 0.35);
+  border-radius: 4px;
+}
+
+.svg-image {
+  width: 60%;
+  height: 60%;
+}
+.svg-caption {
+  height: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.link {
+  text-decoration: none;
+  font-weight: 700;
+  color: rgb(86, 130, 226)
+}
+
+.paper {
+  background-color: white;
+  padding: 16px
+}
+
+.flex-swap{
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+@media (max-width: 900px) {
+  .flex-swap {
+    flex-direction: 'column'
+  }
+}
