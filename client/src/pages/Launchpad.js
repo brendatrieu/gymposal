@@ -2,7 +2,7 @@ import './Launchpad.css';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Typography, Grid, Paper, CircularProgress, Box } from '@mui/material';
+import { Typography, Grid, Paper, CircularProgress, Box, Button } from '@mui/material';
 import EnhancedTable from '../components/BaseTable';
 import EnhancedGroupsTable from '../components/GroupsTable';
 import BaseGraph from '../components/BaseGraph';
@@ -139,7 +139,7 @@ export default function Launchpad() {
                     <img src="./groups.svg" alt="Group Icon" className="svg-image" />
                   </div>
                   <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
-                    <Link to="/group-form" className="link">Create a group</Link> to work out with friends.
+                    <Link to="/group-form" className="link">Create</Link> or <Typography variant="h6" sx={{cursor: 'pointer', display: 'inline', fontWeight: 700, color: 'rgb(86, 130, 226)'}}>join</Typography> a group to work out with friends.
                   </Typography>
                 </FlexGroup>
                 {userLogRows.length ?
