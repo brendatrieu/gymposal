@@ -74,7 +74,7 @@ export default function Launchpad() {
   }, [user, navigate]);
 
   const FlexGroup = styled(Box)(({ theme }) => ({
-    height: '100%',
+    // height: '100%',
     [theme.breakpoints.up('md')]: {
       width: userLogRows.length ? '45%' : '100%',
       alignSelf: 'center'
@@ -134,7 +134,7 @@ export default function Launchpad() {
                   padding: 4,
                   }}
               >
-                <FlexGroup>
+                <FlexGroup sx={{ height: '100%' }}>
                   <div className="svg-image-div">
                     <img src="./groups.svg" alt="Group Icon" className="svg-image" />
                   </div>
