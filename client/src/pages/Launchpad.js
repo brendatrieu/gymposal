@@ -19,6 +19,7 @@ dayjs.extend(dayjsPluginUTC);
 const FlexPaper = styled(Paper)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
+  height: '100%',
   [theme.breakpoints.up('md')]: {
     flexDirection: 'row',
   },
@@ -73,6 +74,7 @@ export default function Launchpad() {
   }, [user, navigate]);
 
   const FlexGroup = styled(Box)(({ theme }) => ({
+    height: '100%',
     [theme.breakpoints.up('md')]: {
       width: userLogRows.length ? '45%' : '100%',
       alignSelf: 'center'
@@ -96,7 +98,7 @@ export default function Launchpad() {
           <Grid item xs={12} md={5} sx={{position: 'relative', minHeight: '40vh' }}>
             {userChartLogRows.length ?
               <BaseGraph exercises={userChartLogRows} legend={false} /> :
-              <Paper align="center" sx={{bgcolor: 'primary.main', padding: 4}}>
+              <Paper align="center" sx={{bgcolor: 'primary.main', padding: 4, height: '100%'}}>
                 <div className="svg-image-div">
                   <img src="./chart.svg" alt="Line Chart Icon" className="svg-image" />
                 </div>
@@ -129,7 +131,7 @@ export default function Launchpad() {
                 align="center"
                 sx={{
                   bgcolor: 'primary.main',
-                  padding: 4
+                  padding: 4,
                   }}
               >
                 <FlexGroup>
