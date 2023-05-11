@@ -2,7 +2,7 @@ import './Launchpad.css';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import { Typography, Grid, Paper, CircularProgress, Box, Button } from '@mui/material';
+import { Typography, Grid, Paper, CircularProgress, Box } from '@mui/material';
 import EnhancedTable from '../components/BaseTable';
 import EnhancedGroupsTable from '../components/GroupsTable';
 import BaseGraph from '../components/BaseGraph';
@@ -17,26 +17,13 @@ import dayjsPluginUTC from 'dayjs-plugin-utc'
 dayjs.extend(dayjsPluginUTC);
 
 const FlexPaper = styled(Paper)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
   [theme.breakpoints.up('md')]: {
-    display: 'flex',
-    justifyContent: 'space-between',
     flexDirection: 'row',
   },
   [theme.breakpoints.down('md')]: {
-    display: 'flex',
-    justifyContent: 'space-between',
     flexDirection: 'column',
-  },
-}));
-
-const FlexGroup = styled(Box)(({ theme }) => ({
-  [theme.breakpoints.up('md')]: {
-    width: '45%',
-    alignSelf: 'center'
-  },
-  [theme.breakpoints.down('md')]: {
-    width: '100%',
-    alignSelf: 'center'
   },
 }));
 
@@ -59,7 +46,7 @@ async function loadGroups(userId, setGroupsRows) {
 async function loadPersonalPenalties(userId, setUserPenaltiesRows) {
   const response = await fetchUserPenalties(userId);
   response.forEach((row) => {
-    row.date = dayjs(row.date).format('MM/DD/YY')
+    row.date = dayjs(row.date).local().format('MM/DD/YY')
     row.betAmount = `$${row.betAmount}`;
   });
   setUserPenaltiesRows(response);
@@ -85,6 +72,17 @@ export default function Launchpad() {
       .catch((error) => setError(error));
   }, [user, navigate]);
 
+  const FlexGroup = styled(Box)(({ theme }) => ({
+    [theme.breakpoints.up('md')]: {
+      width: userLogRows.length ? '45%' : '100%',
+      alignSelf: 'center'
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      alignSelf: 'center'
+    },
+  }));
+
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;
 
@@ -102,7 +100,7 @@ export default function Launchpad() {
                 <div className="svg-image-div">
                   <img src="./chart.svg" alt="Line Chart Icon" className="svg-image" />
                 </div>
-                <Typography variant="h6" sx={{ color: 'secondary.main' , marginY: 1}}>
+                <Typography variant="h6" sx={{ color: 'secondary.main' , marginY: 2}}>
                   <Link to="/log-exercise" className="link">Log your exercises</Link> to begin seeing data.
                 </Typography>
               </Paper>
@@ -119,7 +117,7 @@ export default function Launchpad() {
             </Grid> :
             null
           }
-          <Grid item xs={12} md={(userLogRows.length && !groupsRows.length) ? 10 : 5} sx={{ minHeight: '40vh' }}>
+          <Grid item xs={12} md={(userLogRows.length && !groupsRows.length) ? 10 : 5} sx={{ minHeight: '35vh' }}>
             {groupsRows.length ?
               <EnhancedGroupsTable
                 rows={groupsRows}
@@ -139,7 +137,7 @@ export default function Launchpad() {
                     <img src="./groups.svg" alt="Group Icon" className="svg-image" />
                   </div>
                   <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
-                    <Link to="/group-form" className="link">Create</Link> or <Typography variant="h6" sx={{cursor: 'pointer', display: 'inline', fontWeight: 700, color: 'rgb(86, 130, 226)'}}>join</Typography> a group to work out with friends.
+                    <Link to="/group-form" className="link">Create</Link> or join a group to work out with friends.
                   </Typography>
                 </FlexGroup>
                 {userLogRows.length ?
@@ -152,7 +150,7 @@ export default function Launchpad() {
             }
           </Grid>
             {groupsRows.length ?
-              <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
+              <Grid item xs={12} md={5} sx={{ minHeight: '35vh' }}>
                 {(userPenaltiesRows.length ?
                   <EnhancedTable
                     rows={userPenaltiesRows}
@@ -160,12 +158,12 @@ export default function Launchpad() {
                     headers={userPenaltiesHeaders}
                     rowKey={'penaltyId'}
                   /> :
-                  <Paper align="center" sx={{ bgcolor: 'primary.main', padding: 4, height: '100%' }}>
+                  <Paper align="center" sx={{ bgcolor: 'primary.main', padding: 4, height: '100%'}}>
                     <div className="svg-image-div">
                       <img src="./penalties.svg" alt="Leaderboard Icon" className="svg-image" />
                     </div>
-                    <div className="svg-caption">
-                      <Typography variant="h6" sx={{ color: 'secondary.main' }}>
+                    <div>
+                      <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
                         No penalties...yet!
                       </Typography>
                     </div>

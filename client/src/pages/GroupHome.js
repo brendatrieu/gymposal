@@ -14,6 +14,7 @@ import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
 import BaseGraph from '../components/BaseGraph';
+import { styled } from '@mui/material/styles';
 import {
   fetchGroupUsers,
   fetchGroupChartLogs,
@@ -90,18 +91,22 @@ export default function GroupHome() {
   if (error) return <div>Error Loading Form: {error.message}</div>;
 
   const userIncluded = groupUsers.map(member => member.userId).includes(user.userId);
-  const modalStyle = {
+  const ModalBox = styled(Box)(({ theme }) => ({
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 500,
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
+    backgroundColor: theme.palette.secondary.main,
+    padding: theme.spacing(4),
     outline: 'none',
-    borderRadius: 1
-  };
+    borderRadius: 1,
+    [theme.breakpoints.up('md')]: {
+      width: 500,
+    },
+    [theme.breakpoints.down('md')]: {
+      width: 300,
+    },
+  }));
   function handleAccept() {
     const passes = groupSettingsRows[0].passQty;
     const member = {
@@ -128,13 +133,13 @@ export default function GroupHome() {
 
   return (
     <div>
-      {!userIncluded && (inviteLink === generateInviteLink()) &&
+      {!userIncluded && (`${groupId}/${inviteLink}` === generateInviteLink()) &&
         <Modal
         open={open}
         aria-labelledby="invite-modal"
         aria-describedby="invite-modal"
       >
-        <Box sx={modalStyle}>
+        <ModalBox>
           <Typography id="invite-modal" variant="h6" sx={{pb: 2, textAlign: 'center'}}>
             You have been invited to join <strong>{groupSettingsRows[0].groupName}</strong>
           </Typography>
@@ -146,7 +151,7 @@ export default function GroupHome() {
               Decline
             </Button>
           </span>
-        </Box>
+        </ModalBox>
       </Modal>
       }
       <GridBox my={4} sx={{ flexGrow: 1, height: 1 }}>
