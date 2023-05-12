@@ -65,11 +65,13 @@ export default function Launchpad() {
   const FlexGroup = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
       width: userLogRows.length ? '45%' : '100%',
-      alignSelf: 'center'
+      alignSelf: 'center',
+      marginLeft: theme.spacing(4)
     },
     [theme.breakpoints.down('md')]: {
       width: '100%',
-      alignSelf: 'center'
+      alignSelf: 'center',
+      margin: 'auto'
     },
   }));
 
@@ -102,7 +104,7 @@ export default function Launchpad() {
                     </Typography>
                   </FlexGroup>
                   {groupsRows.length ?
-                    <FlexGroup sx={{marginLeft: 4}}>
+                    <FlexGroup>
                       <GroupTimeline page="launchpad" />
                     </FlexGroup> :
                     null

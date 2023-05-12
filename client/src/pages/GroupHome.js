@@ -114,11 +114,12 @@ export default function GroupHome() {
   const FlexGroup = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
       width: '45%',
-      alignSelf: 'center'
+      alignSelf: 'center',
+      marginLeft: theme.spacing(4)
     },
     [theme.breakpoints.down('md')]: {
       width: '100%',
-      alignSelf: 'center'
+      margin: 'auto'
     },
   }));
 
@@ -204,28 +205,24 @@ export default function GroupHome() {
                     <Link to="/log-exercise" className="link">Log your exercises</Link> to begin seeing data.
                   </Typography>
                 </FlexGroup>
-                <Box sx={{ marginLeft: 4, width: 0.45, alignSelf: 'center' }}>
+                <FlexGroup>
                   <GroupTimeline page="group-home" />
-                </Box>
+                </FlexGroup>
               </FlexPaper> :
               <BaseGraph exercises={groupChartLogRows} legend={true}/>
             }
           </Grid>
-          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }} >
-            {groupLogRows.length ?
+          {groupLogRows.length === 0 ?
+            null :
+            <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }} >
               <EnhancedTable
                 rows={groupLogRows}
                 tableName={'Exercise Log'}
                 headers={groupLogHeaders}
                 rowKey={'exerciseId'}
-              /> :
-              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
-                <Link to="/log-exercise">
-                  <Button sx={{ color: 'secondary.main' }}>Log Exercise</Button>
-                </Link>
-              </Paper>
-            }
-          </Grid>
+              />
+            </Grid>
+          }
           <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
             <EnhancedTable
               rows={groupSettingsRows}
@@ -237,16 +234,23 @@ export default function GroupHome() {
             />
           </Grid>
           <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
-            {groupPenaltiesRows.length ?
+            {groupPenaltiesRows.length === 0 ?
+              <Paper align="center" sx={{ bgcolor: 'primary.main', padding: 4, height: '100%'}}>
+                <div className="svg-image-div">
+                  <img src="../penalties.svg" alt="Leaderboard Icon" className="svg-image" />
+                </div>
+                <div>
+                  <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
+                    No penalties...yet!
+                  </Typography>
+                </div>
+              </Paper> :
               <EnhancedTable
                 rows={groupPenaltiesRows}
                 tableName={'Penalties'}
                 headers={groupPenaltiesHeaders}
                 rowKey={'penaltyId'}
-              /> :
-              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
-                <Typography variant="h6" sx={{ color: 'secondary.main' }}>No penalties yet. Keep up the good work!</Typography>
-              </Paper>
+              />
             }
           </Grid>
         </Grid>
