@@ -14,6 +14,8 @@ import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EnhancedTable from '../components/BaseTable';
 import BaseGraph from '../components/BaseGraph';
+import GroupTimeline from '../components/GroupTimeline';
+import { FlexPaper } from '../components/FlexPaper';
 import { styled } from '@mui/material/styles';
 import {
   fetchGroupUsers,
@@ -91,6 +93,7 @@ export default function GroupHome() {
   if (error) return <div>Error Loading Form: {error.message}</div>;
 
   const userIncluded = groupUsers.map(member => member.userId).includes(user.userId);
+
   const ModalBox = styled(Box)(({ theme }) => ({
     position: 'absolute',
     top: '50%',
@@ -107,6 +110,19 @@ export default function GroupHome() {
       width: 300,
     },
   }));
+
+  const FlexGroup = styled(Box)(({ theme }) => ({
+    [theme.breakpoints.up('md')]: {
+      width: '45%',
+      alignSelf: 'center',
+      marginLeft: theme.spacing(4)
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      margin: 'auto'
+    },
+  }));
+
   function handleAccept() {
     const passes = groupSettingsRows[0].passQty;
     const member = {
@@ -121,10 +137,12 @@ export default function GroupHome() {
     navigate(`/group-home/${groupId}`);
     setAlert('InvitationAccepted');
   }
+
   function handleDecline() {
     setOpen(false);
     navigate(`/`);
   }
+
   function generateInviteLink() {
     let param = encodeURIComponent(groupSettingsRows[0].groupName);
     param = param.replace("'", '%27');
@@ -170,24 +188,41 @@ export default function GroupHome() {
               </Link>
             }
           </Grid>
-          <Grid item xs={12} md={5} sx={{ position: 'relative', minHeight: '45vh' }}>
-            <BaseGraph exercises={groupChartLogRows} legend={true}/>
+          <Grid item xs={12} md={groupChartLogRows.length === 0 ? 10 : 5} sx={{ position: 'relative', minHeight: '45vh' }}>
+            {groupChartLogRows.length === 0 ?
+              <FlexPaper
+                align="center"
+                sx={{
+                  bgcolor: 'primary.main',
+                  padding: 4,
+                }}
+              >
+                <FlexGroup sx={{ height: '100%' }}>
+                  <div className="svg-image-div">
+                    <img src="../chart.svg" alt="Line Chart Icon" className="svg-image" />
+                  </div>
+                  <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
+                    <Link to="/log-exercise" className="link">Log your exercises</Link> to begin seeing data.
+                  </Typography>
+                </FlexGroup>
+                <FlexGroup>
+                  <GroupTimeline page="group-home" />
+                </FlexGroup>
+              </FlexPaper> :
+              <BaseGraph exercises={groupChartLogRows} legend={true}/>
+            }
           </Grid>
-          <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }} >
-            {groupLogRows.length ?
+          {groupLogRows.length === 0 ?
+            null :
+            <Grid item xs={12} md={5} sx={{ minHeight: '45vh' }} >
               <EnhancedTable
                 rows={groupLogRows}
                 tableName={'Exercise Log'}
                 headers={groupLogHeaders}
                 rowKey={'exerciseId'}
-              /> :
-              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
-                <Link to="/log-exercise">
-                  <Button sx={{ color: 'secondary.main' }}>Log Exercise</Button>
-                </Link>
-              </Paper>
-            }
-          </Grid>
+              />
+            </Grid>
+          }
           <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
             <EnhancedTable
               rows={groupSettingsRows}
@@ -199,16 +234,23 @@ export default function GroupHome() {
             />
           </Grid>
           <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
-            {groupPenaltiesRows.length ?
+            {groupPenaltiesRows.length === 0 ?
+              <Paper align="center" sx={{ bgcolor: 'primary.main', padding: 4, height: '100%'}}>
+                <div className="svg-image-div">
+                  <img src="../penalties.svg" alt="Leaderboard Icon" className="svg-image" />
+                </div>
+                <div>
+                  <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
+                    No penalties...yet!
+                  </Typography>
+                </div>
+              </Paper> :
               <EnhancedTable
                 rows={groupPenaltiesRows}
                 tableName={'Penalties'}
                 headers={groupPenaltiesHeaders}
                 rowKey={'penaltyId'}
-              /> :
-              <Paper align="center" sx={{ bgcolor: 'primary.main' }}>
-                <Typography variant="h6" sx={{ color: 'secondary.main' }}>No penalties yet. Keep up the good work!</Typography>
-              </Paper>
+              />
             }
           </Grid>
         </Grid>
