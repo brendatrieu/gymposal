@@ -68,13 +68,21 @@ function ColorlibStepIcon(props) {
   );
 }
 
-const steps = [
+const launchpadSteps = [
   "Create or join a group with your friends",
   "Bet against your friends on how much you'll work out each week",
   "Win challenges if your friends don't meet the group requirements"
 ];
 
-export default function CustomizedSteppers() {
+const groupSteps = [
+  "Bet against your friends on how much you'll work out each week",
+  "Pay your friends if you don't meet the group requirements",
+  "Or...get paid if your friends lose the bet!"
+];
+
+export default function CustomizedSteppers({page}) {
+  const steps = page === 'launchpad' ? launchpadSteps : groupSteps;
+
   return (
     <Stack sx={{ width: "100%" }} spacing={4}>
       <Stepper

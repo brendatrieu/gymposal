@@ -8,6 +8,7 @@ import EnhancedGroupsTable from '../components/GroupsTable';
 import BaseGraph from '../components/BaseGraph';
 import GroupTimeline from '../components/GroupTimeline';
 import { GridBox } from '../components/GridBox';
+import { FlexPaper } from '../components/FlexPaper';
 import { useUser } from '../context/AppContext';
 import { fetchUserChartLogs, fetchUserLogs, fetchGroups, fetchUserPenalties } from '../lib/api';
 import { personalLogHeaders, groupsHeaders, userPenaltiesHeaders } from '../lib/tables-config';
@@ -15,18 +16,6 @@ import dayjs from 'dayjs';
 import dayjsPluginUTC from 'dayjs-plugin-utc'
 
 dayjs.extend(dayjsPluginUTC);
-
-const FlexPaper = styled(Paper)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  height: '100%',
-  [theme.breakpoints.up('md')]: {
-    flexDirection: 'row',
-  },
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'column',
-  },
-}));
 
 async function loadUserChartLogs(userId, setUserChartLogRows) {
   const response = await fetchUserChartLogs(userId);
@@ -114,7 +103,7 @@ export default function Launchpad() {
                   </FlexGroup>
                   {groupsRows.length ?
                     <FlexGroup sx={{marginLeft: 4}}>
-                      <GroupTimeline />
+                      <GroupTimeline page="launchpad" />
                     </FlexGroup> :
                     null
                   }
@@ -158,7 +147,7 @@ export default function Launchpad() {
                 </FlexGroup>
                 {userLogRows.length ?
                   <FlexGroup>
-                    <GroupTimeline />
+                    <GroupTimeline page="launchpad" />
                   </FlexGroup> :
                   null
                 }
