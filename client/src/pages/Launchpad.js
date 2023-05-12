@@ -74,7 +74,6 @@ export default function Launchpad() {
   }, [user, navigate]);
 
   const FlexGroup = styled(Box)(({ theme }) => ({
-    // height: '100%',
     [theme.breakpoints.up('md')]: {
       width: userLogRows.length ? '45%' : '100%',
       alignSelf: 'center'
@@ -95,17 +94,32 @@ export default function Launchpad() {
           <Grid item xs={12} md={10}>
             <Typography variant="h4" >Hello, {user.firstName}!</Typography>
           </Grid>
-          <Grid item xs={12} md={5} sx={{position: 'relative', minHeight: '40vh' }}>
+          <Grid item xs={12} md={(!userLogRows.length && groupsRows.length) ? 10 : 5} sx={{position: 'relative', minHeight: '40vh' }}>
             {userChartLogRows.length ?
               <BaseGraph exercises={userChartLogRows} legend={false} /> :
-              <Paper align="center" sx={{bgcolor: 'primary.main', padding: 4, height: '100%'}}>
-                <div className="svg-image-div">
-                  <img src="./chart.svg" alt="Line Chart Icon" className="svg-image" />
-                </div>
-                <Typography variant="h6" sx={{ color: 'secondary.main' , marginY: 2}}>
-                  <Link to="/log-exercise" className="link">Log your exercises</Link> to begin seeing data.
-                </Typography>
-              </Paper>
+              (<FlexPaper
+                  align="center"
+                  sx={{
+                    bgcolor: 'primary.main',
+                    padding: 4,
+                  }}
+                >
+                  <FlexGroup sx={{ height: '100%' }}>
+                    <div className="svg-image-div">
+                      <img src="./chart.svg" alt="Line Chart Icon" className="svg-image" />
+                    </div>
+                    <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
+                      <Link to="/log-exercise" className="link">Log your exercises</Link> to begin seeing data.
+                    </Typography>
+                  </FlexGroup>
+                  {groupsRows.length ?
+                    <FlexGroup sx={{marginLeft: 4}}>
+                      <GroupTimeline />
+                    </FlexGroup> :
+                    null
+                  }
+                </FlexPaper>
+              )
             }
           </Grid>
           {userLogRows.length ?
