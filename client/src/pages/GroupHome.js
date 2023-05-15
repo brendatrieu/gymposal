@@ -111,9 +111,10 @@ export default function GroupHome() {
     },
   }));
 
+  const flexWidth = groupLogRows.length === 0 ? '45%' : '100%';
   const FlexGroup = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
-      width: '45%',
+      width: flexWidth,
       alignSelf: 'center',
       marginLeft: theme.spacing(4)
     },
@@ -188,7 +189,7 @@ export default function GroupHome() {
               </Link>
             }
           </Grid>
-          <Grid item xs={12} md={groupChartLogRows.length === 0 ? 10 : 5} sx={{ position: 'relative', minHeight: '45vh' }}>
+          <Grid item xs={12} md={(groupChartLogRows.length === 0 && groupLogRows.length === 0) ? 10 : 5} sx={{ position: 'relative', minHeight: '45vh' }}>
             {groupChartLogRows.length === 0 ?
               <FlexPaper
                 align="center"
@@ -202,12 +203,15 @@ export default function GroupHome() {
                     <img src="../chart.svg" alt="Line Chart Icon" className="svg-image" />
                   </div>
                   <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
-                    <Link to="/log-exercise" className="link">Log your exercises</Link> to begin seeing data.
+                    <Link to="/log-exercise" className="link">Log your exercises</Link> for the week to begin seeing data.
                   </Typography>
                 </FlexGroup>
-                <FlexGroup>
-                  <GroupTimeline page="group-home" />
-                </FlexGroup>
+                {groupLogRows.length === 0 ?
+                  <FlexGroup>
+                    <GroupTimeline page="group-home" />
+                  </FlexGroup> :
+                  null
+                }
               </FlexPaper> :
               <BaseGraph exercises={groupChartLogRows} legend={true}/>
             }
