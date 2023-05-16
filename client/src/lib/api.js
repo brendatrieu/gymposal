@@ -142,8 +142,8 @@ export async function postAccount(account) {
 }
 
 /**
- * Posts new exercise entry into the exercises table in the API.
- * @param {Object} 'newLog' - an object with data collected from the form.
+ * Posts new account into the users table in the API.
+ * @param {Object} 'account' - an object with data collected from the form.
  */
 export async function postNewAccount(account) {
   const response = await fetch('/api/users', {
