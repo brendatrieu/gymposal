@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { postAccount } from '../lib/api';
 
 export default function SignIn() {
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit } = useForm();
   const { setAlert } = useAlert();
   const { setUser, tokenKey } = useUser();
   const navigate = useNavigate();

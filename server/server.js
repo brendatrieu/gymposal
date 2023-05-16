@@ -20,7 +20,6 @@ dayjs.tz.setDefault('America/Los_Angeles');
 
 pg.types.setTypeParser(pg.types.builtins.NUMERIC, parseFloat);
 
-// eslint-disable-next-line no-unused-vars -- Remove when used
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
