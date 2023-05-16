@@ -85,9 +85,15 @@ export default function GroupHome() {
         loadGroupSettings(groupId, setGroupSettingsRows),
         loadGroupPenalties(groupId, setGroupPenaltiesRows),
         loadGroupChartLogs(groupId, setGroupChartLogRows)])
-      .then(() => setIsLoading(false))
-      .catch((error) => setError(error));
-  }, [ user, navigate, groupId ]);
+      .then(() => {
+        if(!groupSettingsRows) {
+          setAlert('NonexistentGroup')
+          navigate('/')
+        }
+      })
+      .catch((error) => setError(error))
+      .finally(() => setIsLoading(false));
+  }, [ user, navigate, groupId, groupSettingsRows, setAlert ]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;
