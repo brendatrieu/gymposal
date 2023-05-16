@@ -107,7 +107,7 @@ export default function Launchpad() {
                 >
                   <FlexExercise sx={{ height: '100%' }}>
                     <div className="svg-image-div">
-                      <img src="./chart.svg" alt="Line Chart Icon" className="svg-image" />
+                      <img src="/chart.svg" alt="Line Chart Icon" className="svg-image" />
                     </div>
                     <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
                       <Link to="/log-exercise" className="link">Log your exercises</Link> for the week to begin seeing data.
@@ -151,7 +151,7 @@ export default function Launchpad() {
               >
                 <FlexGroup sx={{ height: '100%' }}>
                   <div className="svg-image-div">
-                    <img src="./groups.svg" alt="Group Icon" className="svg-image" />
+                    <img src="/groups.svg" alt="Group Icon" className="svg-image" />
                   </div>
                   <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
                     <Link to="/group-form" className="link">Create</Link> or join a group to work out with friends.
@@ -177,7 +177,7 @@ export default function Launchpad() {
                   /> :
                   <Paper align="center" sx={{ bgcolor: 'primary.main', padding: 4, height: '100%'}}>
                     <div className="svg-image-div">
-                      <img src="./penalties.svg" alt="Leaderboard Icon" className="svg-image" />
+                      <img src="/penalties.svg" alt="Leaderboard Icon" className="svg-image" />
                     </div>
                     <div>
                       <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>

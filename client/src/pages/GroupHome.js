@@ -87,7 +87,7 @@ export default function GroupHome() {
         loadGroupChartLogs(groupId, setGroupChartLogRows)])
       .then(() => setIsLoading(false))
       .catch((error) => setError(error));
-  }, [ user, navigate, groupId, open ]);
+  }, [ user, navigate, groupId ]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;
@@ -199,7 +199,7 @@ export default function GroupHome() {
               >
                 <FlexGroup sx={{ height: '100%' }}>
                   <div className="svg-image-div">
-                    <img src="../chart.svg" alt="Line Chart Icon" className="svg-image" />
+                    <img src="/chart.svg" alt="Line Chart Icon" className="svg-image" />
                   </div>
                   <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
                     <Link to="/log-exercise" className="link">Log your exercises</Link> for the week to begin seeing data.
@@ -240,7 +240,7 @@ export default function GroupHome() {
             {groupPenaltiesRows.length === 0 ?
               <Paper align="center" sx={{ bgcolor: 'primary.main', padding: 4, height: '100%'}}>
                 <div className="svg-image-div">
-                  <img src="../penalties.svg" alt="Leaderboard Icon" className="svg-image" />
+                  <img src="/penalties.svg" alt="Leaderboard Icon" className="svg-image" />
                 </div>
                 <div>
                   <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
