@@ -115,8 +115,7 @@ export default function GroupHome() {
   const FlexGroup = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
       width: flexWidth,
-      alignSelf: 'center',
-      marginLeft: theme.spacing(4)
+      alignSelf: 'center'
     },
     [theme.breakpoints.down('md')]: {
       width: '100%',

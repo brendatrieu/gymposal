@@ -44,10 +44,10 @@ async function loadPersonalPenalties(userId, setUserPenaltiesRows) {
 
 export default function Launchpad() {
   const { user } = useUser();
-  const [ userChartLogRows, setUserChartLogRows ] = useState();
-  const [ userLogRows, setUserLogRows ] = useState();
-  const [ groupsRows, setGroupsRows ] = useState();
-  const [ userPenaltiesRows, setUserPenaltiesRows ] = useState();
+  const [ userChartLogRows, setUserChartLogRows ] = useState([]);
+  const [ userLogRows, setUserLogRows ] = useState([]);
+  const [ groupsRows, setGroupsRows ] = useState([]);
+  const [ userPenaltiesRows, setUserPenaltiesRows ] = useState([]);
   const [ isLoading, setIsLoading ] = useState(true);
   const [ error, setError ] = useState();
   const navigate = useNavigate();
@@ -62,11 +62,21 @@ export default function Launchpad() {
       .catch((error) => setError(error));
   }, [user, navigate]);
 
+  const FlexExercise = styled(Box)(({ theme }) => ({
+    [theme.breakpoints.up('md')]: {
+      width: (userLogRows.length === 0 && groupsRows.length === 0) ? '100%' : (userLogRows.length === 0 ? '45%' : '100%'),
+      alignSelf: 'center'
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      alignSelf: 'center',
+      margin: 'auto'
+    },
+  }));
   const FlexGroup = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
-      width: userLogRows.length ? '45%' : '100%',
-      alignSelf: 'center',
-      marginLeft: theme.spacing(4)
+      width: (userLogRows.length === 0 && groupsRows.length === 0) ? '100%' : (groupsRows.length === 0 ? '45%' : '100%'),
+      alignSelf: 'center'
     },
     [theme.breakpoints.down('md')]: {
       width: '100%',
@@ -85,8 +95,8 @@ export default function Launchpad() {
           <Grid item xs={12} md={10}>
             <Typography variant="h4" >Hello, {user.firstName}!</Typography>
           </Grid>
-          <Grid item xs={12} md={(!userLogRows.length && groupsRows.length) ? 10 : 5} sx={{position: 'relative', minHeight: '40vh' }}>
-            {userChartLogRows.length ?
+          <Grid item xs={12} md={(userLogRows.length === 0 && groupsRows.length !== 0) ? 10 : 5} sx={{position: 'relative', minHeight: '40vh' }}>
+            {userChartLogRows.length !== 0 ?
               <BaseGraph exercises={userChartLogRows} legend={false} /> :
               (<FlexPaper
                   align="center"
@@ -95,25 +105,25 @@ export default function Launchpad() {
                     padding: 4,
                   }}
                 >
-                  <FlexGroup sx={{ height: '100%' }}>
+                  <FlexExercise sx={{ height: '100%' }}>
                     <div className="svg-image-div">
                       <img src="./chart.svg" alt="Line Chart Icon" className="svg-image" />
                     </div>
                     <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
-                      <Link to="/log-exercise" className="link">Log your exercises</Link> to begin seeing data.
+                      <Link to="/log-exercise" className="link">Log your exercises</Link> for the week to begin seeing data.
                     </Typography>
-                  </FlexGroup>
-                  {groupsRows.length ?
-                    <FlexGroup>
+                  </FlexExercise>
+                  {groupsRows.length !== 0  && userLogRows.length === 0 ?
+                    <FlexExercise>
                       <GroupTimeline page="launchpad" />
-                    </FlexGroup> :
+                    </FlexExercise> :
                     null
                   }
                 </FlexPaper>
               )
             }
           </Grid>
-          {userLogRows.length ?
+          {userLogRows.length !== 0 ?
             <Grid item xs={12} md={5} sx={{ minHeight: '40vh' }}>
               <EnhancedTable
                 rows={userLogRows}
@@ -124,8 +134,8 @@ export default function Launchpad() {
             </Grid> :
             null
           }
-          <Grid item xs={12} md={(userLogRows.length && !groupsRows.length) ? 10 : 5} sx={{ minHeight: '35vh' }}>
-            {groupsRows.length ?
+          <Grid item xs={12} md={(userLogRows.length !== 0 && groupsRows.length === 0) ? 10 : 5} sx={{ minHeight: '35vh' }}>
+            {groupsRows.length !== 0 ?
               <EnhancedGroupsTable
                 rows={groupsRows}
                 tableName={'Groups'}
@@ -147,7 +157,7 @@ export default function Launchpad() {
                     <Link to="/group-form" className="link">Create</Link> or join a group to work out with friends.
                   </Typography>
                 </FlexGroup>
-                {userLogRows.length ?
+                {userLogRows.length !== 0 ?
                   <FlexGroup>
                     <GroupTimeline page="launchpad" />
                   </FlexGroup> :
@@ -156,9 +166,9 @@ export default function Launchpad() {
               </FlexPaper>
             }
           </Grid>
-            {groupsRows.length ?
+            {groupsRows.length !== 0 ?
               <Grid item xs={12} md={5} sx={{ minHeight: '35vh' }}>
-                {(userPenaltiesRows.length ?
+                {(userPenaltiesRows.length !== 0 ?
                   <EnhancedTable
                     rows={userPenaltiesRows}
                     tableName={'Penalties'}
