@@ -6,12 +6,22 @@ import { Link, useNavigate } from 'react-router-dom';
 import { postAccount } from '../lib/api';
 
 export default function SignIn() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const { setAlert } = useAlert();
   const { setUser, tokenKey } = useUser();
   const navigate = useNavigate();
 
   async function onSubmit(account) {
+    const response = await postAccount(account);
+    if (!response) return setAlert('InvalidLogin');
+    const { user, token } = response;
+    localStorage.setItem(tokenKey, token);
+    setUser(user);
+    navigate('/');
+  }
+
+  async function demoAccount() {
+    const account = {username: 'ronweasley', password: 'Password1!'}
     const response = await postAccount(account);
     if (!response) return setAlert('InvalidLogin');
     const { user, token } = response;
@@ -29,12 +39,20 @@ export default function SignIn() {
              Sign In
             </Typography>
             <Typography variant="body2" sx={{paddingTop: 1}}>
-              Don't have an account? <Link to='/sign-up'
+              Don't have an account? <br /><Link to='/sign-up'
                 style={{ textDecoration: 'none',
                   fontWeight: 700,
                   color: '#add8e6'}}
               >
                 Sign up for free
+              </Link> or preview the app using a <Link onClick={demoAccount}
+                style={{
+                  textDecoration: 'none',
+                  fontWeight: 700,
+                  color: '#add8e6'
+                }}
+              >
+                guest account.
               </Link>
             </Typography>
             <TextField

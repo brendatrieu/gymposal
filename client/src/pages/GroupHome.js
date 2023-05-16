@@ -85,9 +85,15 @@ export default function GroupHome() {
         loadGroupSettings(groupId, setGroupSettingsRows),
         loadGroupPenalties(groupId, setGroupPenaltiesRows),
         loadGroupChartLogs(groupId, setGroupChartLogRows)])
-      .then(() => setIsLoading(false))
-      .catch((error) => setError(error));
-  }, [ user, navigate, groupId, open ]);
+      .then(() => {
+        if(!groupSettingsRows) {
+          setAlert('NonexistentGroup')
+          navigate('/')
+        }
+      })
+      .catch((error) => setError(error))
+      .finally(() => setIsLoading(false));
+  }, [ user, navigate, groupId, groupSettingsRows, setAlert ]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Form: {error.message}</div>;
@@ -111,11 +117,11 @@ export default function GroupHome() {
     },
   }));
 
+  const flexWidth = groupLogRows.length === 0 ? '45%' : '100%';
   const FlexGroup = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
-      width: '45%',
-      alignSelf: 'center',
-      marginLeft: theme.spacing(4)
+      width: flexWidth,
+      alignSelf: 'center'
     },
     [theme.breakpoints.down('md')]: {
       width: '100%',
@@ -188,7 +194,7 @@ export default function GroupHome() {
               </Link>
             }
           </Grid>
-          <Grid item xs={12} md={groupChartLogRows.length === 0 ? 10 : 5} sx={{ position: 'relative', minHeight: '45vh' }}>
+          <Grid item xs={12} md={(groupChartLogRows.length === 0 && groupLogRows.length === 0) ? 10 : 5} sx={{ position: 'relative', minHeight: '45vh' }}>
             {groupChartLogRows.length === 0 ?
               <FlexPaper
                 align="center"
@@ -199,15 +205,18 @@ export default function GroupHome() {
               >
                 <FlexGroup sx={{ height: '100%' }}>
                   <div className="svg-image-div">
-                    <img src="../chart.svg" alt="Line Chart Icon" className="svg-image" />
+                    <img src="/chart.svg" alt="Line Chart Icon" className="svg-image" />
                   </div>
                   <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>
-                    <Link to="/log-exercise" className="link">Log your exercises</Link> to begin seeing data.
+                    <Link to="/log-exercise" className="link">Log your exercises</Link> for the week to begin seeing data.
                   </Typography>
                 </FlexGroup>
-                <FlexGroup>
-                  <GroupTimeline page="group-home" />
-                </FlexGroup>
+                {groupLogRows.length === 0 ?
+                  <FlexGroup>
+                    <GroupTimeline page="group-home" />
+                  </FlexGroup> :
+                  null
+                }
               </FlexPaper> :
               <BaseGraph exercises={groupChartLogRows} legend={true}/>
             }
@@ -237,7 +246,7 @@ export default function GroupHome() {
             {groupPenaltiesRows.length === 0 ?
               <Paper align="center" sx={{ bgcolor: 'primary.main', padding: 4, height: '100%'}}>
                 <div className="svg-image-div">
-                  <img src="../penalties.svg" alt="Leaderboard Icon" className="svg-image" />
+                  <img src="/penalties.svg" alt="Leaderboard Icon" className="svg-image" />
                 </div>
                 <div>
                   <Typography variant="h6" sx={{ color: 'secondary.main', marginY: 2 }}>

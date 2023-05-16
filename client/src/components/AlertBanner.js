@@ -56,6 +56,10 @@ export default function AlertBanner() {
       alertType.severity = 'error';
       alertType.msg = 'An unexpected error occurred. Please try again.';
       break;
+    case 'NonexistentGroup':
+      alertType.severity = 'error';
+      alertType.msg = 'Invalid group link.';
+      break;
     default:
       // By default, there will not be an alert displayed.
   }
