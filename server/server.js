@@ -29,7 +29,11 @@ const db = new pg.Pool({
 
 const app = express();
 const currentWeek = dayjs().week();
+const reactStaticDir = new URL('../client/build', import.meta.url).pathname;
+const uploadsStaticDir = new URL('public', import.meta.url).pathname;
 
+app.use(express.static(reactStaticDir));
+app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
 // Set up a job with a recurrence rule to run every Monday at 8AM UTC, which is equivalent to Sunday at 1AM PDT or 12AM PST
@@ -510,6 +514,8 @@ app.patch('/api/group-settings/:groupId', async (req, res, next) => {
     next(error);
   }
 });
+
+app.get('*', (req, res) => res.sendFile(`${reactStaticDir}/index.html`));
 
 app.use(errorMiddleware);
 

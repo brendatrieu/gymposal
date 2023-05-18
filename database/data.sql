@@ -1,23 +1,3 @@
-INSERT INTO "users" (
-  "username",
-  "firstName",
-  "lastName",
-  "email",
-  "password"
-) VALUES (
-  'johndoe',
-  'John',
-  'Doe',
-  'johndoe@email.com',
-  'password'
-), (
-  'harrypotter',
-  'Harry',
-  'Potter',
-  'harrypotter@hogwarts.com',
-  'password'
-);
-
 INSERT INTO "exerciseTypes" (
   "type"
 ) VALUES
@@ -45,22 +25,5 @@ INSERT INTO "groups" (
   2,
   'Weekly',
   30,
-  2
-);
-
-INSERT INTO "groupUsers" (
-  "groupId",
-  "userId",
-  "passQty",
-  "remainingPasses"
-) VALUES (
-  1,
-  1,
-  2,
-  2
-), (
-  1,
-  2,
-  2,
   2
 );
