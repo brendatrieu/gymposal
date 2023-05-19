@@ -86,7 +86,7 @@ export default function GroupHome() {
         loadGroupPenalties(groupId, setGroupPenaltiesRows),
         loadGroupChartLogs(groupId, setGroupChartLogRows)])
       .then(() => {
-        if(!groupSettingsRows) {
+        if (groupSettingsRows?.length === 0) {
           setAlert('NonexistentGroup')
           navigate('/')
         }
