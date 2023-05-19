@@ -153,9 +153,9 @@ export async function postNewAccount(account) {
   });
   if (!response.ok) {
     const result = await response.json();
-    if (result.detail.includes('email')) {
+    if (result.detail?.includes('email')) {
       return 'DupEmail';
-    } else if (result.detail.includes('username')) {
+    } else if (result.detail?.includes('username')) {
       return 'DupUsername';
     } else {
       return 'ErrorOccurred';

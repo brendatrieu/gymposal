@@ -393,7 +393,7 @@ app.post('/api/users', async (req, res, next) => {
       res.status(201).json(user);
     }
   } catch (error) {
-    if (error.message.includes('users_email_key') || error.message.includes('users_username_key')) {
+    if (error.message?.includes('users_email_key') || error.message?.includes('users_username_key')) {
       res.status(400).json(error);
     }
     next(error);
