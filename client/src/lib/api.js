@@ -146,11 +146,13 @@ export async function postAccount(account) {
  * @param {Object} 'account' - an object with data collected from the form.
  */
 export async function postNewAccount(account) {
+  console.log('account received', account);
   const response = await fetch('/api/users', {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(account)
   });
+  console.log('response', response);
   if (!response.ok) {
     const result = await response.json();
     if (result.detail?.includes('email')) {

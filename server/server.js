@@ -385,14 +385,17 @@ app.post('/api/users', async (req, res, next) => {
       RETURNING *;
     `;
     const { firstName, lastName, email, username, password } = req.body;
+    console.log('req body in API', req.body);
     const hashedPassword = await argon2.hash(password);
     const params = [firstName, lastName, email, username, hashedPassword];
     const result = await db.query(sql, params);
+    console.log('query result', result);
     const [user] = result.rows;
     if (user) {
       res.status(201).json(user);
     }
   } catch (error) {
+    console.log('api error', error);
     if (error.message?.includes('users_email_key') || error.message?.includes('users_username_key')) {
       res.status(400).json(error);
     }
