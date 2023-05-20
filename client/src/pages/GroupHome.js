@@ -8,7 +8,8 @@ import {
   CircularProgress,
   IconButton,
   Button,
-  Modal,
+  Dialog,
+  DialogActions,
   Box } from '@mui/material';
 import { GridBox } from '../components/GridBox';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -76,7 +77,7 @@ export default function GroupHome() {
   const [error, setError] = useState();
   const { setAlert } = useAlert();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(!!inviteLink);
+  const [open, setOpen] = useState(true);
 
   useEffect(() => {
     if(!user) return navigate('/sign-in');
@@ -101,10 +102,10 @@ export default function GroupHome() {
   const userIncluded = groupUsers.map(member => member.userId).includes(user.userId);
 
   const ModalBox = styled(Box)(({ theme }) => ({
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    // position: 'absolute',
+    // top: '50%',
+    // left: '50%',
+    // transform: 'translate(-50%, -50%)',
     backgroundColor: theme.palette.secondary.main,
     padding: theme.spacing(4),
     outline: 'none',
@@ -158,25 +159,29 @@ export default function GroupHome() {
   return (
     <div>
       {!userIncluded && (`${groupId}/${inviteLink}` === generateInviteLink()) &&
-        <Modal
-        open={open}
-        aria-labelledby="invite-modal"
-        aria-describedby="invite-modal"
-      >
-        <ModalBox>
-          <Typography id="invite-modal" variant="h6" sx={{pb: 2, textAlign: 'center'}}>
+        <Dialog
+          open={open}
+          aria-labelledby="invite-dialog"
+          aria-describedby="invite-dialog"
+          PaperProps={{sx: {
+            background: 'linear-gradient(180deg, rgba(21, 26, 38, 1) 0%, rgba(21, 26, 38, 1) 100%)',
+            opacity: 'none',
+            padding: 4,
+            }
+          }}
+        >
+          <Typography id="invite-dialog" variant="h6" sx={{pb: 2, textAlign: 'center'}}>
             You have been invited to join <strong>{groupSettingsRows[0].groupName}</strong>
           </Typography>
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly'}}>
+          <DialogActions style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly'}}>
             <Button variant="contained" color="success" onClick={handleAccept}>
               Accept
             </Button>
             <Button variant="contained" onClick={handleDecline}>
               Decline
             </Button>
-          </span>
-        </ModalBox>
-      </Modal>
+          </DialogActions>
+        </Dialog>
       }
       <GridBox my={4} sx={{ flexGrow: 1, height: 1 }}>
         <Grid container justifyContent="center" spacing={2}>
