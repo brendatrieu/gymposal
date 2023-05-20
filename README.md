@@ -16,7 +16,7 @@ Similar to many people, I was having a hard time staying motivated to work out. 
 
 ## Live Demo
 
-Try the application live at
+Try the application live at https://gymposal.azurewebsites.net
 
 ## Features
 - Users can create accounts.
@@ -39,3 +39,6 @@ Try the application live at
 3. Determine group requirements and amount to bet against friends.
 4. Keep track of exercises.
 5. Pay or get paid by friends for lost bets.
+
+## Preview
+![Gymposal](client/public/readme-preview.gif)
