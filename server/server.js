@@ -79,7 +79,7 @@ schedule.scheduleJob({ hour: 8, minute: 0, dayOfWeek: 1, tz: 'Etc/UTC' }, async 
           entry.activeWeek = dayjs.tz(entry.activeDate).week();
         });
         data = data.filter((entry) => (
-          (entry.activeYear === currentYear ? entry.activeWeek !== currentWeek : true)
+          (entry.activeYear === currentYear ? entry.activeWeek !== lastWeek : true)
         ));
         const tracker = {
           groups: [],
