@@ -14,50 +14,38 @@ function AllWrappers({children}) {
 }
 
 // ----- Test Renders ----- //
-test("username input should be rendered", () => {
+test("field inputs should be rendered", () => {
   render(<SignIn />, { wrapper: AllWrappers });
-  const usernameEl = screen.getByLabelText(/username/i)
+  const usernameEl = screen.getByLabelText(/username/i);
+  const passwordEl = screen.getByLabelText(/password/i);
   expect(usernameEl).toBeInTheDocument();
-})
-
-test("password input should be rendered", () => {
-  render(<SignIn />, { wrapper: AllWrappers });
-  const passwordEl = screen.getByLabelText(/password/i)
   expect(passwordEl).toBeInTheDocument();
 })
 
-test("submit button input should be rendered", () => {
+test("buttons should be rendered", () => {
   render(<SignIn />, { wrapper: AllWrappers });
-  const buttonEl = screen.getByText("Submit")
-  expect(buttonEl).toBeInTheDocument();
-})
-
-test("cancel button input should be rendered", () => {
-  render(<SignIn />, { wrapper: AllWrappers });
-  const buttonEl = screen.getByText("Cancel")
-  expect(buttonEl).toBeInTheDocument();
-})
-
-test("submit button input should be disabled", () => {
-  render(<SignIn />, { wrapper: AllWrappers });
-  const passwordEl = screen.getByLabelText(/password/i)
-  const buttonEl = screen.getByText("Submit")
-  fireEvent.change(passwordEl, {target: {value: "Abcdef0)"}})
-  expect(buttonEl).toBeDisabled();
+  const submitButtonEl = screen.getByRole("button", { name: "Submit" });
+  const cancelButtonEl = screen.getByRole("button", { name: "Cancel" });
+  expect(submitButtonEl).toBeInTheDocument();
+  expect(cancelButtonEl).toBeInTheDocument();
 })
 
 // ----- Test Changes ----- //
 
-test("username input should change", () => {
+test("field inputs should change", () => {
   render(<SignIn />, { wrapper: AllWrappers });
-  const usernameEl = screen.getByLabelText(/username/i)
-  fireEvent.change(usernameEl, { target: { value: "johndoe" } })
-  expect(usernameEl.value).toEqual("johndoe");
+  const usernameEl = screen.getByLabelText(/username/i);
+  const passwordEl = screen.getByLabelText(/password/i);
+  fireEvent.change(usernameEl, { target: { value: "johndoe" } });
+  fireEvent.change(passwordEl, { target: { value: "Abcdef0$" } });
+  expect(usernameEl).toHaveValue("johndoe");
+  expect(passwordEl).toHaveValue("Abcdef0$");
 })
 
-test("password input should change", () => {
+test("username and password fields should be required", async () => {
   render(<SignIn />, { wrapper: AllWrappers });
-  const passwordEl = screen.getByLabelText(/password/i)
-  fireEvent.change(passwordEl, { target: { value: "Abcdef0$" } })
-  expect(passwordEl.value).toEqual("Abcdef0$");
+  const usernameEl = screen.getByLabelText(/username/i);
+  const passwordEl = screen.getByLabelText(/password/i);
+  expect(usernameEl).toBeRequired();
+  expect(passwordEl).toBeRequired();
 })
