@@ -20,7 +20,6 @@ test("buttons should be rendered", () => {
 })
 
 // ----- Test Changes ----- //
-
 test("field inputs should change", () => {
   render(<SignIn />, { wrapper: AllWrappers });
   const usernameEl = screen.getByLabelText(/username/i);
