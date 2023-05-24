@@ -10,7 +10,6 @@
     "@mui/lab": "^5.0.0-alpha.129",
     "@mui/material": "^5.13.0",
     "@mui/x-date-pickers-pro": "^6.2.0",
-    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "autosuggest-highlight": "^3.3.4",
@@ -49,5 +48,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5"
   }
 }
