@@ -1,18 +1,6 @@
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import SignIn from "./SignIn";
-import App from "../App";
-import Provider from '../context/AppContext';
-import { BrowserRouter } from 'react-router-dom';
-
-function AllWrappers({children}) {
-  return (
-    <BrowserRouter>
-      <Provider>
-        {children}
-      </Provider>
-    </BrowserRouter>
-  )
-}
+import AllWrappers from "../lib/tests-config";
 
 // ----- Test Renders ----- //
 test("field inputs should be rendered", () => {
