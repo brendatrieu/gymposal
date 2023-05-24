@@ -1,5 +1,6 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import SignIn from "./SignIn";
+import App from "../App";
 import Provider from '../context/AppContext';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -42,7 +43,7 @@ test("field inputs should change", () => {
   expect(passwordEl).toHaveValue("Abcdef0$");
 })
 
-test("username and password fields should be required", async () => {
+test("username and password fields should be required", () => {
   render(<SignIn />, { wrapper: AllWrappers });
   const usernameEl = screen.getByLabelText(/username/i);
   const passwordEl = screen.getByLabelText(/password/i);
