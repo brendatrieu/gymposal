@@ -10,10 +10,11 @@ export default function SignIn() {
   const { setAlert } = useAlert();
   const { setUser, tokenKey } = useUser();
   const navigate = useNavigate();
+  const invalidLoginAlert = { severity: 'error', message: 'Invalid username or password.' };
 
   async function onSubmit(account) {
     const response = await postAccount(account);
-    if (!response) return setAlert('InvalidLogin');
+    if (!response) return setAlert(invalidLoginAlert);
     const { user, token } = response;
     localStorage.setItem(tokenKey, token);
     setUser(user);
@@ -23,7 +24,7 @@ export default function SignIn() {
   async function demoAccount() {
     const account = {username: 'ronweasley', password: 'Password1!'}
     const response = await postAccount(account);
-    if (!response) return setAlert('InvalidLogin');
+    if (!response) return setAlert(invalidLoginAlert);
     const { user, token } = response;
     localStorage.setItem(tokenKey, token);
     setUser(user);
