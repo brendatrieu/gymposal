@@ -51,10 +51,10 @@ export default function LogExercise() {
       newLog.week = dayjs(newLog.date).utc().week();
       newLog.month = dayjs(newLog.date).utc().month() + 1;
       await postNewLog(newLog);
-      setAlert('ExerciseSaved');
+      setAlert({ severity: 'success', message: 'Exercise successfully saved.' });
       navigate('/');
     } catch (err) {
-      setAlert('ErrorOccurred', err);
+      setAlert({ severity: 'error', message: 'An unexpected error has occurred.' });
     }
   }
 

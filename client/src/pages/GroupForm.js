@@ -42,10 +42,10 @@ export default function GroupForm() {
         response = await postNewGroup(group);
         navigate(`/group-home/${response.groupId}`);
       }
-      setAlert('GroupSaved');
+      setAlert({ severity: 'success', message: 'Group successfully saved.' });
     } catch (err) {
       console.error(err);
-      setAlert('ErrorOccurred', err);
+      setAlert({ severity: 'error', message: 'An unexpected error occurred. Please try again.' });
     }
   }
 

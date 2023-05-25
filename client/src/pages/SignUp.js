@@ -24,7 +24,7 @@ export default function SignUp() {
     }
     const response = await postNewAccount(account);
     setAlert(response);
-    if (response === 'AccountSaved') {
+    if (response.severity === 'success') {
       navigate('/');
     }
   }

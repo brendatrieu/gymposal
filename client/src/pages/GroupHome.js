@@ -86,38 +86,14 @@ export default function GroupHome() {
         loadGroupSettings(groupId, setGroupSettingsRows),
         loadGroupPenalties(groupId, setGroupPenaltiesRows),
         loadGroupChartLogs(groupId, setGroupChartLogRows)])
-      .then(() => {
-        if (groupSettingsRows?.length === 0) {
-          setAlert('NonexistentGroup')
-          navigate('/')
-        }
-      })
       .catch((error) => setError(error))
       .finally(() => setIsLoading(false));
-  }, [ user, navigate, groupId, groupSettingsRows, setAlert ]);
+  }, [ user, navigate, groupId, groupSettingsRows ]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
-  if (error) return <div>Error Loading Form: {error.message}</div>;
+  if (error) return <div>Error Loading Page: {error.message}</div>;
 
   const userIncluded = groupUsers.map(member => member.userId).includes(user.userId);
-
-  const ModalBox = styled(Box)(({ theme }) => ({
-    // position: 'absolute',
-    // top: '50%',
-    // left: '50%',
-    // transform: 'translate(-50%, -50%)',
-    backgroundColor: theme.palette.secondary.main,
-    padding: theme.spacing(4),
-    outline: 'none',
-    borderRadius: 1,
-    [theme.breakpoints.up('md')]: {
-      width: 500,
-    },
-    [theme.breakpoints.down('md')]: {
-      width: 300,
-    },
-  }));
-
   const flexWidth = groupLogRows.length === 0 ? '45%' : '100%';
   const FlexGroup = styled(Box)(({ theme }) => ({
     [theme.breakpoints.up('md')]: {
@@ -142,7 +118,7 @@ export default function GroupHome() {
     postNewGroupMember(member);
     setOpen(false);
     navigate(`/group-home/${groupId}`);
-    setAlert('InvitationAccepted');
+    setAlert({ severity: 'success', message: 'Invitation successfully accepted.'});
   }
 
   function handleDecline() {

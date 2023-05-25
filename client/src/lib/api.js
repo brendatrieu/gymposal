@@ -146,24 +146,22 @@ export async function postAccount(account) {
  * @param {Object} 'account' - an object with data collected from the form.
  */
 export async function postNewAccount(account) {
-  console.log('account received', account);
   const response = await fetch('/api/users', {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(account)
   });
-  console.log('response', response);
   if (!response.ok) {
     const result = await response.json();
     if (result.detail?.includes('email')) {
-      return 'DupEmail';
+      return { severity: 'error', message: 'An account with this email already exists. Please try again.' };
     } else if (result.detail?.includes('username')) {
-      return 'DupUsername';
+      return { severity: 'error', message: 'An account with this username already exists. Please try again.' };
     } else {
-      return 'ErrorOccurred';
+      return { severity: 'error', message: 'An unexpected error occurred. Please try again.' };
     }
   }
-  return 'AccountSaved'
+  return { severity: 'success', message: 'Account successfully created.' };
 }
 
 /**

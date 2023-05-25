@@ -328,6 +328,9 @@ app.get('/api/group-settings/:groupId', async (req, res, next) => {
     `;
     const params = [req.params.groupId];
     const result = await db.query(sql, params);
+    if (result.rows.length === 0) {
+      throw new ClientError(404, 'Invalid group ID.');
+    }
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -385,17 +388,14 @@ app.post('/api/users', async (req, res, next) => {
       RETURNING *;
     `;
     const { firstName, lastName, email, username, password } = req.body;
-    console.log('req body in API', req.body);
     const hashedPassword = await argon2.hash(password);
     const params = [firstName, lastName, email, username, hashedPassword];
     const result = await db.query(sql, params);
-    console.log('query result', result);
     const [user] = result.rows;
     if (user) {
       res.status(201).json(user);
     }
   } catch (error) {
-    console.log('api error', error);
     if (error.message?.includes('users_email_key') || error.message?.includes('users_username_key')) {
       res.status(400).json(error);
     }
@@ -462,7 +462,8 @@ app.post('/api/new-group', async (req, res, next) => {
       INSERT INTO "groupUsers" ("userId", "passQty", "remainingPasses", "groupId")
       VALUES ($1, $2, $2, (SELECT "groupId" FROM "groups" WHERE "groupId" = $3))
       RETURNING *;
-    `; const paramsGroupUser = [userId, passQty, log.groupId];
+    `;
+      const paramsGroupUser = [userId, passQty, log.groupId];
       const newGroupUser = await db.query(sqlGroupUsers, paramsGroupUser);
       const [logUser] = newGroupUser.rows;
       res.status(201).json(logUser);
