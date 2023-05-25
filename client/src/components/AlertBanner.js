@@ -28,28 +28,30 @@ export default function AlertBanner() {
 
   return (
       <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={!!alert}
-          autoHideDuration={3000}
-          direction="down"
-          TransitionComponent={SlideTransition}
-          onClose={handleClose}
-        >
-        <PaddedAlert
-          severity={alert.severity}
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={handleClose}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          }
-        >
-          {alert.message}
-        </PaddedAlert>
+        project-testing
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={!!alert}
+        autoHideDuration={3000}
+        direction="down"
+        TransitionComponent={SlideTransition}
+        onClose={handleClose}
+        data-testid="snackbar"
+      >
+      <PaddedAlert
+        severity={alertType.severity}
+        action={
+          <IconButton
+            aria-label="close"
+            color="inherit"
+            size="small"
+            onClick={handleClose}
+          >
+            <CloseIcon fontSize="inherit" />
+          </IconButton>
+        }
+      >
+        {alertType.msg}
+      </PaddedAlert>
     </Snackbar>
   )
 }

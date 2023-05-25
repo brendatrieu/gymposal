@@ -93,7 +93,7 @@ export default function Launchpad() {
       <GridBox my={4} sx={{ flexGrow: 1, height: 1 }}>
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12} md={10}>
-            <Typography variant="h4" >Hello, {user.firstName}!</Typography>
+            <Typography variant="h4" data-testid="greeting">Hello, {user.firstName}!</Typography>
           </Grid>
           <Grid item xs={12} md={(userLogRows.length === 0 && groupsRows.length !== 0) ? 10 : 5} sx={{position: 'relative', minHeight: '40vh' }}>
             {userChartLogRows.length !== 0 ?
