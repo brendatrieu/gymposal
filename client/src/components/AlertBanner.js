@@ -19,50 +19,8 @@ const SlideTransition = (props: SlideProps) => {
 
 export default function AlertBanner() {
   const { alert, setAlert } = useAlert();
-  const alertType = {};
 
   if (!alert) return null;
-
-  switch (alert) {
-    case 'DupEmail':
-      alertType.severity = 'error';
-      alertType.msg = 'An account with this email already exists. Please try again.';
-      break;
-    case 'DupUsername':
-      alertType.severity = 'error';
-      alertType.msg = 'An account with this username already exists. Please try again.';
-      break;
-    case 'AccountSaved':
-      alertType.severity = 'success';
-      alertType.msg = 'Account successfully created.';
-      break;
-    case 'InvalidLogin':
-      alertType.severity = 'error';
-      alertType.msg = 'Invalid username or password.';
-      break;
-    case 'ExerciseSaved':
-      alertType.severity = 'success';
-      alertType.msg = 'Exercise successfully saved.';
-      break;
-    case 'GroupSaved':
-      alertType.severity = 'success';
-      alertType.msg = 'Group successfully saved.';
-      break;
-    case 'InvitationAccepted':
-      alertType.severity = 'success';
-      alertType.msg = 'Invitation successfully accepted.';
-      break;
-    case 'ErrorOccurred':
-      alertType.severity = 'error';
-      alertType.msg = 'An unexpected error occurred. Please try again.';
-      break;
-    case 'NonexistentGroup':
-      alertType.severity = 'error';
-      alertType.msg = 'Invalid group link.';
-      break;
-    default:
-      // By default, there will not be an alert displayed.
-  }
 
   function handleClose(Transition){
     setAlert(false);
@@ -70,6 +28,7 @@ export default function AlertBanner() {
 
   return (
       <Snackbar
+        project-testing
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={!!alert}
         autoHideDuration={3000}
