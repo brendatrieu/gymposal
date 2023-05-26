@@ -38,7 +38,7 @@ export default function AlertBanner() {
         data-testid="snackbar"
       >
       <PaddedAlert
-        severity={alertType.severity}
+        severity={alert.severity}
         action={
           <IconButton
             aria-label="close"
@@ -50,7 +50,7 @@ export default function AlertBanner() {
           </IconButton>
         }
       >
-        {alertType.msg}
+        {alert.msg}
       </PaddedAlert>
     </Snackbar>
   )
