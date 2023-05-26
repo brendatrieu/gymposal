@@ -18,7 +18,7 @@ export function useUser() {
   return { user, setUser, tokenKey };
 }
 
-export default function Provider({children}){
+export default function AppProvider({children}){
   const [ alert, setAlert ] = useState(false);
   const [ user, setUser ] = useState();
   const [isAuthorizing, setIsAuthorizing] = useState(true);

@@ -9,13 +9,13 @@ import Launchpad from './pages/Launchpad';
 import LogExercise from './pages/LogExercise';
 import GroupForm from './pages/GroupForm';
 import GroupHome from './pages/GroupHome';
-import Provider from './context/AppContext';
+import AppProvider from './context/AppContext';
 import { Routes, Route } from 'react-router-dom';
 
 export default function App() {
 
   return (
-    <Provider>
+    <AppProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Routes>
@@ -30,6 +30,6 @@ export default function App() {
           </Route>
         </Routes>
       </ThemeProvider>
-    </Provider>
+    </AppProvider>
   );
 }
