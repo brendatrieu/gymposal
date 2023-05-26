@@ -6,7 +6,6 @@ import {
 import jwtDecode from 'jwt-decode';
 
 const AppContext = createContext();
-export { AppContext };
 
 export function useAlert() {
   const { alert, setAlert } = useContext(AppContext);
