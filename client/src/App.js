@@ -24,8 +24,9 @@ export default function App() {
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="log-exercise" element={<LogExercise />} />
-            <Route path="group-form" element={<GroupForm />} />
-            <Route path="group-form/:groupId" element={<GroupForm />} />
+            <Route path="group-form" element={<GroupForm />} >
+              <Route path=":groupId" element={<GroupForm />} />
+            </Route>
             <Route path="group-home/:groupId/:inviteLink?" element={<GroupHome />} />
           </Route>
         </Routes>
