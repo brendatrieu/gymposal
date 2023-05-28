@@ -13,6 +13,7 @@ export default function SignIn() {
   const invalidLoginAlert = { severity: 'error', message: 'Invalid username or password.' };
 
   async function onSubmit(account) {
+    console.log('submit is hit?');
     const response = await postAccount(account);
     if (!response) return setAlert(invalidLoginAlert);
     const { user, token } = response;

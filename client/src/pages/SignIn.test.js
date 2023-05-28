@@ -1,12 +1,17 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import SignIn from "./SignIn";
-import Launchpad from "./Launchpad";
 import App from "../App";
 import AllWrappers from "../lib/tests-config";
 import nock from 'nock';
+import {debug} from 'jest-preview';
 
-afterAll(() => {
-  nock.cleanAll();
+beforeEach(() => {
+  if (!nock.isActive()) {
+    nock.activate();
+  }
+});
+
+afterEach(() => {
   nock.restore();
 });
 
@@ -46,25 +51,22 @@ test("username and password fields should be required", () => {
   expect(passwordEl).toBeRequired();
 })
 
-// test("submit function should be called", async () => {
-//   nock('https://gymposal.azurewebsites.net/')
-//     .defaultReplyHeaders({
-//       'access-control-allow-origin': '*',
-//     })
-//     .intercept('/api/sign-in', 'GET')
-//     .reply(200, {
-//       userId: 2,
-//       firstName: 'Harry'
-//     })
-//   render(<App />, { wrapper: AllWrappers });
-//   const usernameEl = screen.getByLabelText(/username/i);
-//   const passwordEl = screen.getByLabelText(/password/i);
-//   const submitButtonEl = screen.getByRole("button", { name: "Submit" });
-//   await fireEvent.change(usernameEl, { target: { value: "ronweasley" } });
-//   await fireEvent.change(passwordEl, { target: { value: "Test1234567890!" } });
-//   await fireEvent.submit(submitButtonEl);
-//   // expect(screen.getByText
-//   await waitFor(() => {
-//     expect(screen.getByTestId('snackbar')).toBeInTheDocument()
-//   });
-// })
+test.only("submit function should be called", async () => {
+  // nock('http://localhost')
+  // .defaultReplyHeaders({
+  //   'access-control-allow-origin': '*',
+  // })
+  // .intercept('/api/sign-in', 'GET')
+  // .reply(200, {
+  //   userId: 2,
+  //   firstName: 'Harry'
+  // });
+  render(<App />, { wrapper: AllWrappers });
+  const usernameEl = screen.getByLabelText(/username/i);
+  const passwordEl = screen.getByLabelText(/password/i);
+  const submitButtonEl = screen.getByRole("button", { name: "Submit" });
+  await fireEvent.change(usernameEl, { target: { value: "ronweasley" } });
+  await fireEvent.change(passwordEl, { target: { value: "Password1!" } });
+  await fireEvent.click(submitButtonEl);
+  expect(!window.location.pathname.includes('/sign-in')).toBeTruthy();
+})

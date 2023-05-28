@@ -38,6 +38,7 @@ export default function AlertBanner() {
         data-testid="snackbar"
       >
       <PaddedAlert
+        data-testid="alert-message"
         severity={alert.severity}
         action={
           <IconButton
