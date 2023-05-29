@@ -122,6 +122,7 @@ function EnhancedTableToolbar({ tableName, tableCaption }) {
           }}
           color="tertiary.main"
           variant="filled"
+          data-testid="new-button"
         >
           New
         </Button>
@@ -232,11 +233,14 @@ export default function EnhancedGroupsTable({ rows, tableName, tableCaption, hea
                 {visibleRows
                   ? visibleRows.map((row, index) => {
                     return (
-                      <TableRow key={row[rowKey]}
+                      <TableRow
+                        data-testid="table-row"
+                        key={row[rowKey]}
                         sx={{ height: (visibleRows.length >= 5) ? 0.2 : (1 / visibleRows.length) }}
                       >
                         {headers.map((header) => (
                           <TableCell
+                            data-testid="table-cell"
                             align={header.numeric ? 'right' : 'left'}
                             sx={{ color: 'secondary.main', width: (1 / headers.length) }}
                             key={`${row[rowKey]}${header.label}${row[header.id]}`}
