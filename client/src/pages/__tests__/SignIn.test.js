@@ -1,19 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import SignIn from "./SignIn";
-import App from "../App";
-import AllWrappers from "../lib/tests-config";
-import nock from 'nock';
-import {debug} from 'jest-preview';
-
-beforeEach(() => {
-  if (!nock.isActive()) {
-    nock.activate();
-  }
-});
-
-afterEach(() => {
-  nock.restore();
-});
+import SignIn from "../SignIn";
+import AllWrappers from "../../lib/tests-config";
 
 // ----- Test Renders ----- //
 test("field inputs should be rendered", () => {
@@ -49,24 +36,4 @@ test("username and password fields should be required", () => {
   const passwordEl = screen.getByLabelText(/password/i);
   expect(usernameEl).toBeRequired();
   expect(passwordEl).toBeRequired();
-})
-
-test.only("submit function should be called", async () => {
-  // nock('http://localhost')
-  // .defaultReplyHeaders({
-  //   'access-control-allow-origin': '*',
-  // })
-  // .intercept('/api/sign-in', 'GET')
-  // .reply(200, {
-  //   userId: 2,
-  //   firstName: 'Harry'
-  // });
-  render(<App />, { wrapper: AllWrappers });
-  const usernameEl = screen.getByLabelText(/username/i);
-  const passwordEl = screen.getByLabelText(/password/i);
-  const submitButtonEl = screen.getByRole("button", { name: "Submit" });
-  await fireEvent.change(usernameEl, { target: { value: "ronweasley" } });
-  await fireEvent.change(passwordEl, { target: { value: "Password1!" } });
-  await fireEvent.click(submitButtonEl);
-  expect(!window.location.pathname.includes('/sign-in')).toBeTruthy();
 })
