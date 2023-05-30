@@ -30,18 +30,15 @@ test("field inputs should change", () => {
   const passQtyEl = screen.getByLabelText(/Number of Free Passes per Year/i);
 
   fireEvent.change(groupNameEl, { target: { value: "Group 1" } });
-  expect(groupNameEl).toHaveValue("Group 1");
-
   fireEvent.change(frequencyEl, { target: { value: 2 } });
-  expect(frequencyEl).toHaveValue(2);
-
   fireEvent.change(durationEl, { target: { value: 30 } });
-  expect(durationEl).toHaveValue(30);
-
   fireEvent.change(betAmountEl, { target: { value: 0.5 } });
-  expect(betAmountEl).toHaveValue(0.5);
-
   fireEvent.change(passQtyEl, { target: { value: 1 } });
+
+  expect(groupNameEl).toHaveValue("Group 1");
+  expect(frequencyEl).toHaveValue(2);
+  expect(durationEl).toHaveValue(30);
+  expect(betAmountEl).toHaveValue(0.5);
   expect(passQtyEl).toHaveValue(1);
 })
 
@@ -53,15 +50,13 @@ test("field inputs should not change if input data types do not align with input
   const passQtyEl = screen.getByLabelText(/Number of Free Passes per Year/i);
 
   fireEvent.change(frequencyEl, { target: { value: 'test' } });
-  expect(frequencyEl).not.toHaveValue('test');
-
   fireEvent.change(durationEl, { target: { value: 'test' } });
-  expect(durationEl).not.toHaveValue('test');
-
   fireEvent.change(betAmountEl, { target: { value: 'test' } });
-  expect(betAmountEl).not.toHaveValue('test');
-
   fireEvent.change(passQtyEl, { target: { value: 'test' } });
+
+  expect(frequencyEl).not.toHaveValue('test');
+  expect(durationEl).not.toHaveValue('test');
+  expect(betAmountEl).not.toHaveValue('test');
   expect(passQtyEl).not.toHaveValue('test');
 })
 

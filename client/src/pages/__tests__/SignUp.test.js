@@ -33,21 +33,17 @@ test("field inputs should change", () => {
   const confirmPasswordEl = screen.getByLabelText(/Confirm Password/i);
 
   fireEvent.change(firstNameEl, { target: { value: "John" } });
-  expect(firstNameEl).toHaveValue("John");
-
   fireEvent.change(lastNameEl, { target: { value: "Doe" } });
-  expect(lastNameEl).toHaveValue("Doe");
-
   fireEvent.change(emailEl, { target: { value: "test@email.com" } });
-  expect(emailEl).toHaveValue("test@email.com");
-
   fireEvent.change(usernameEl, { target: { value: "johndoe" } });
-  expect(usernameEl).toHaveValue("johndoe");
-
   fireEvent.change(passwordEl, { target: { value: "test" } });
-  expect(passwordEl).toHaveValue("test");
-
   fireEvent.change(confirmPasswordEl, { target: { value: "test" } });
+
+  expect(firstNameEl).toHaveValue("John");
+  expect(lastNameEl).toHaveValue("Doe");
+  expect(emailEl).toHaveValue("test@email.com");
+  expect(usernameEl).toHaveValue("johndoe");
+  expect(passwordEl).toHaveValue("test");
   expect(confirmPasswordEl).toHaveValue("test");
 })
 
