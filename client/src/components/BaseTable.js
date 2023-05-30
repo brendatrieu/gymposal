@@ -114,6 +114,7 @@ function EnhancedTableToolbar({tableName, tableCaption}) {
         </Typography>
         {tableCaption && (
           <Typography
+            data-testid='table-caption'
             sx={{ fontWeight: 500 }}
             variant="body2"
             color="secondary.main"
@@ -242,9 +243,11 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
                     return (
                       <TableRow key={row[rowKey]}
                         sx={{flexGrow: 1, width: 1}}
+                        data-testid="table-row"
                       >
                         {headers.map((header) => (
                           <TableCell
+                            data-testid='table-cell'
                             align={header.numeric ? 'right' : 'left'}
                             sx={{ color: 'secondary.main', width: (1/headers.length) }}
                             key={`${row[rowKey]}${header.label}${row[header.id]}`}
@@ -285,6 +288,7 @@ export default function EnhancedTable({rows, tableName, tableCaption, headers, r
             color="tertiary.main"
             variant="filled"
             onClick={handleClick}
+            data-testid="invite-link"
           >
             Copy Invite Link
           </Button>

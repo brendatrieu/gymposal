@@ -65,6 +65,11 @@ export const groupSettingsHeaders = [
     label: 'Duration',
   },
   {
+    id: 'betAmount',
+    numeric: true,
+    label: 'Bet Amount ($)',
+  },
+  {
     id: 'passQty',
     numeric: true,
     label: 'Passes per Year',

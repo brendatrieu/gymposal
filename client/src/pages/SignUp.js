@@ -80,6 +80,7 @@ export default function SignUp() {
             </span>
             <TextField
               required
+              inputProps={{'data-testid': "password"}}
               label="Password"
               type="password"
               {...register("passwordDraft", { pattern: { value: /(?=.*[!@#$%^&*()])(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).*/ }, onChange: (e) => setFirstPw(e.target.value) })}

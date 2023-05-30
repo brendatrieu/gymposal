@@ -28,7 +28,6 @@ export default function AlertBanner() {
 
   return (
       <Snackbar
-        project-testing
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={!!alert}
         autoHideDuration={3000}
@@ -38,6 +37,7 @@ export default function AlertBanner() {
         data-testid="snackbar"
       >
       <PaddedAlert
+        data-testid="alert-message"
         severity={alert.severity}
         action={
           <IconButton
@@ -50,7 +50,7 @@ export default function AlertBanner() {
           </IconButton>
         }
       >
-        {alert.msg}
+        {alert.message}
       </PaddedAlert>
     </Snackbar>
   )
