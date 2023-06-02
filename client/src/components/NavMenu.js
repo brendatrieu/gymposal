@@ -18,7 +18,7 @@ import {
   LogoutIcon
 } from '@mui/icons-material';
 
-const NavItems = [
+const navItems = [
   { label: 'About', icon: 'InfoIcon' },
   { label: 'Log Exercise', icon: 'FitnessCenterIcon' },
   { label: 'Create Group', icon: 'GroupsIcon' }
@@ -36,12 +36,14 @@ export default function NavMenu() {
 
   return (
     <div>
-        <Fragment >
-          <Button onClick={toggleDrawer}>Menu</Button>
+        <h1>Inbox</h1>
+        {/* <Fragment > */}
+        <Button onClick={toggleDrawer}>Menu</Button>
           <Drawer
             anchor="right"
             open={open}
             onClose={toggleDrawer}
+          inputProps={{ dataTestid: "test" }}
           >
             <Box
               sx={{ width: 250 }}
@@ -50,27 +52,16 @@ export default function NavMenu() {
               onKeyDown={toggleDrawer}
             >
               <List>
-                {/* {NavItems.map((item) => (
+                {navItems.map((item) => (
                   <ListItem key={item.label} disablePadding>
                     <ListItemButton>
-
                       <ListItemIcon>
-                        <Icon>{item.icon}</Icon>
+                        {/* <Icon>{item.icon}</Icon> */}
                       </ListItemIcon>
                       <ListItemText primary={item.label} />
                     </ListItemButton>
                   </ListItem>
-                ))} */}
-              {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-                <ListItem key={text} disablePadding>
-                  <ListItemButton>
-                    <ListItemIcon>
-                      {index % 2 === 0 ? <InfoIcon /> : <GroupsIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
+                ))}
               </List>
               <Divider />
               <List>
@@ -85,7 +76,7 @@ export default function NavMenu() {
               </List>
             </Box>
           </Drawer>
-        </Fragment>
+        {/* </Fragment> */}
     </div>
   );
 }
