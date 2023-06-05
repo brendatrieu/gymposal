@@ -28,7 +28,6 @@ const db = new pg.Pool({
 });
 
 const app = express();
-const currentWeek = dayjs().week();
 const reactStaticDir = new URL('../client/build', import.meta.url).pathname;
 const uploadsStaticDir = new URL('public', import.meta.url).pathname;
 
@@ -191,6 +190,7 @@ app.get('/api/chart-exercises/:userId', async (req, res, next) => {
       FROM "exercises"
       WHERE "userId" = $1 AND "week" = $2
     `;
+    const currentWeek = dayjs().week();
     const params = [req.params.userId, currentWeek];
     const result = await db.query(sql, params);
     const data = result.rows;
@@ -223,6 +223,7 @@ app.get('/api/chart-group-exercises/:groupId', async (req, res, next) => {
       JOIN "groupUsers" USING ("userId")
       WHERE "groupId" = $1 AND "week" = $2
     `;
+    const currentWeek = dayjs().week();
     const params = [req.params.groupId, currentWeek];
     const result = await db.query(sql, params);
     const data = result.rows;

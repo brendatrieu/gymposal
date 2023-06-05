@@ -1,10 +1,9 @@
 import React from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useUser } from '../context/AppContext';
-import { AppBar, Toolbar, Typography, Box, IconButton, Button } from '@mui/material';
-import LogoutIcon from '@mui/icons-material/Logout';
+import { Link, Outlet } from 'react-router-dom';
+import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AlertBanner from './AlertBanner';
+import NavMenu from './NavMenu';
 
 const NavBar = styled(AppBar)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
@@ -25,14 +24,6 @@ const NavBar = styled(AppBar)(({ theme }) => ({
 
 
 export default function Header() {
-  const { user, setUser, tokenKey } = useUser();
-  const navigate = useNavigate();
-
-  function handleSignOut() {
-    localStorage.removeItem(tokenKey);
-    setUser(undefined);
-    navigate('/sign-in');
-  }
 
   return (
     <div>
@@ -45,16 +36,7 @@ export default function Header() {
               </Typography>
             </Link>
           </IconButton>
-          {user &&
-            (<Box sx={{ display: 'flex' }}>
-              <Link to="/log-exercise">
-                <Button>Log Exercise</Button>
-              </Link>
-              <Link to="/group-form">
-                <Button>Create Group</Button>
-              </Link>
-              <IconButton sx={{ pr: 0 }} onClick={handleSignOut} ><LogoutIcon /></IconButton>
-            </Box>)}
+          <NavMenu />
         </Toolbar>
       </NavBar>
       <AlertBanner />
