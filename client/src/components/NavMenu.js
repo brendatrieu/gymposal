@@ -49,16 +49,16 @@ export default function NavMenu() {
           >
             <List>
               {navItems.map((item) => (
-                <ListItem key={item.label} disablePadding>
-                  <Link to={item.link}>
+                <Link to={item.link}>
+                  <ListItem key={item.label} disablePadding>
                     <ListItemButton>
                     <ListItemIcon>
                       { item.icon }
                     </ListItemIcon>
                     <ListItemText primary={item.label} />
                   </ListItemButton>
-                  </Link>
-                </ListItem>
+                  </ListItem>
+                </Link>
               ))}
             </List>
             <Divider />
