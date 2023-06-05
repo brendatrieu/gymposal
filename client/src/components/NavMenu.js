@@ -1,31 +1,29 @@
 import { useState, Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Box,
   Drawer,
   Button,
   List,
-  Icon,
   Divider,
   ListItem,
   ListItemButton,
   ListItemText,
   ListItemIcon
    } from '@mui/material';
-import {
-  InfoIcon,
-  FitnessCenterIcon,
-  GroupsIcon,
-  LogoutIcon
-} from '@mui/icons-material';
+import LogoutIcon from '@mui/icons-material/Logout';
+import InfoIcon from '@mui/icons-material/Info';
+import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 const navItems = [
-  { label: 'About', icon: 'InfoIcon' },
-  { label: 'Log Exercise', icon: 'FitnessCenterIcon' },
-  { label: 'Create Group', icon: 'GroupsIcon' }
+  { label: 'About', icon: <InfoIcon data-testid="InfoIcon" />, link: '/about' },
+  { label: 'Log Exercise', icon: <FitnessCenterIcon />, link: '/log-exercise' },
+  { label: 'Create Group', icon: <GroupsIcon />, link: '/group-form' }
 ];
 
 export default function NavMenu() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const toggleDrawer = (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -36,47 +34,47 @@ export default function NavMenu() {
 
   return (
     <div>
-        <h1>Inbox</h1>
-        {/* <Fragment > */}
-        <Button onClick={toggleDrawer}>Menu</Button>
-          <Drawer
-            anchor="right"
-            open={open}
-            onClose={toggleDrawer}
-          inputProps={{ dataTestid: "test" }}
+      <Fragment>
+      <Button onClick={toggleDrawer}>Menu</Button>
+        <Drawer
+          anchor="right"
+          open={open}
+          onClose={toggleDrawer}
+        >
+          <Box
+            sx={{ width: 250 }}
+            role="menu"
+            onClick={toggleDrawer}
+            onKeyDown={toggleDrawer}
           >
-            <Box
-              sx={{ width: 250 }}
-              role="menu"
-              onClick={toggleDrawer}
-              onKeyDown={toggleDrawer}
-            >
-              <List>
-                {navItems.map((item) => (
-                  <ListItem key={item.label} disablePadding>
+            <List>
+              {navItems.map((item) => (
+                <ListItem key={item.label} disablePadding>
+                  <Link to={item.link}>
                     <ListItemButton>
-                      <ListItemIcon>
-                        {/* <Icon>{item.icon}</Icon> */}
-                      </ListItemIcon>
-                      <ListItemText primary={item.label} />
-                    </ListItemButton>
-                  </ListItem>
-                ))}
-              </List>
-              <Divider />
-              <List>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemIcon>
-                        <LogoutIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={'Log Out'} />
-                    </ListItemButton>
-                  </ListItem>
-              </List>
-            </Box>
-          </Drawer>
-        {/* </Fragment> */}
+                    <ListItemIcon>
+                      { item.icon }
+                    </ListItemIcon>
+                    <ListItemText primary={item.label} />
+                  </ListItemButton>
+                  </Link>
+                </ListItem>
+              ))}
+            </List>
+            <Divider />
+            <List>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <LogoutIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Log Out'} />
+                  </ListItemButton>
+                </ListItem>
+            </List>
+          </Box>
+        </Drawer>
+      </Fragment>
     </div>
   );
 }

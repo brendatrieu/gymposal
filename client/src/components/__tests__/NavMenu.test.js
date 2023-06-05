@@ -1,10 +1,14 @@
-import { render, screen } from "@testing-library/react";
-import NavMenu from "../NavMenu";
-import AllWrappers from "../../lib/tests-config";
+import { render, screen, fireEvent } from '@testing-library/react';
+import NavMenu from '../NavMenu';
+import AllWrappers from '../../lib/tests-config';
 
-// ----- User Exercises Table ----- //
-test("User table should render correct number of rows and cells", async () => {
-  await render(<NavMenu />, { wrapper: AllWrappers });
+test('Menu is able to be toggled and show links within it', () => {
+  render(<NavMenu />, { wrapper: AllWrappers });
+  fireEvent.click(screen.getByRole("button", { name: "Menu" }));
 
-  expect(await screen.findByText('Inbox')).toBeInTheDocument();
+  expect(screen.getByText('About')).toBeInTheDocument();
+  expect(screen.getByText('Log Exercise')).toBeInTheDocument();
+  expect(screen.getByText('Create Group')).toBeInTheDocument();
+  expect(screen.getByText('Log Exercise')).toBeInTheDocument();
+  expect(screen.getByTestId('InfoIcon')).toBeInTheDocument();
 })
