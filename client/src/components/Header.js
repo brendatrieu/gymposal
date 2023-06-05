@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useUser } from '../context/AppContext';
+import { Link, Outlet } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AlertBanner from './AlertBanner';
@@ -25,14 +24,6 @@ const NavBar = styled(AppBar)(({ theme }) => ({
 
 
 export default function Header() {
-  const { user, setUser, tokenKey } = useUser();
-  const navigate = useNavigate();
-
-  function handleSignOut() {
-    localStorage.removeItem(tokenKey);
-    setUser(undefined);
-    navigate('/sign-in');
-  }
 
   return (
     <div>
