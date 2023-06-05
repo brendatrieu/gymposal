@@ -12,3 +12,13 @@ test('Menu is able to be toggled and show links within it', () => {
   expect(screen.getByText('Log Exercise')).toBeInTheDocument();
   expect(screen.getByTestId('InfoIcon')).toBeInTheDocument();
 })
+
+test('Menu is initially closed and links should be hidden', () => {
+  render(<NavMenu />, { wrapper: AllWrappers });
+
+  expect(screen.queryByText('About')).not.toBeInTheDocument();
+  expect(screen.queryByText('Log Exercise')).not.toBeInTheDocument();
+  expect(screen.queryByText('Create Group')).not.toBeInTheDocument();
+  expect(screen.queryByText('Log Exercise')).not.toBeInTheDocument();
+  expect(screen.queryByTestId('InfoIcon')).not.toBeInTheDocument();
+})
