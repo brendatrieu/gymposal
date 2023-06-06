@@ -11,6 +11,9 @@ const theme = createTheme({
     tertiary: {
       main: "#214C67"
     },
+    quaternary: {
+      main: '#D995EE'
+    },
     mode: 'dark'
   },
   typography: {

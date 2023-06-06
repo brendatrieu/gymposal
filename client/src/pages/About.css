@@ -1,0 +1,27 @@
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+
+.view-height {
+  max-height: 50vh;
+}
+
+.justify-center {
+  display: flex;
+  justify-content: center;
+}
+
+.overview-icons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0.25rem;
+  padding: 2rem;
+  flex-direction: column;
+  border: 1px solid white;
+  width: 100%;
+}

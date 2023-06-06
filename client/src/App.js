@@ -5,6 +5,7 @@ import './App.css';
 import Header from './components/Header';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
+import About from './pages/About';
 import Launchpad from './pages/Launchpad';
 import LogExercise from './pages/LogExercise';
 import GroupForm from './pages/GroupForm';
@@ -23,6 +24,7 @@ export default function App() {
             <Route index element={<Launchpad />} />
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
+            <Route path="about" element={<About />} />
             <Route path="log-exercise" element={<LogExercise />} />
             <Route path="group-form" element={<GroupForm />} >
               <Route path=":groupId" element={<GroupForm />} />
