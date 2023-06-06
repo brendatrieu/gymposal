@@ -1,6 +1,4 @@
-import EnhancedTable from './BaseTable';
 import BaseGraph from './BaseGraph';
-import {personalLogHeaders} from '../lib/tables-config';
 
 export default function ExerciseInfo() {
   const data = [
@@ -12,19 +10,10 @@ export default function ExerciseInfo() {
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row' }}>
+    <div >
+
       <div style={{ width: '40%', margin: '1rem' }}>
-        <EnhancedTable
-          rows={data}
-          rowKey={data.date}
-          tableName="Exercise Log"
-          headers={personalLogHeaders}
-        />
-      </div>
-      <div style={{ width: '40%', margin: '1rem' }}>
-        <BaseGraph
-          exercises={data}
-        />
+        <img src='./graph_example.png' alt="A graph showing total minutes of exercise per day." />
       </div>
     </div>
   )

@@ -19,8 +19,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   margin: 0.25rem;
-  padding: 2rem;
+  padding: 1rem;
   flex-direction: column;
   border: 1px solid white;
   width: 100%;
