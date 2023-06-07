@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, styled } from '@mui/material';
 import BaseGraph from './BaseGraph';
 
 export default function ExerciseInfo() {
@@ -10,33 +10,42 @@ export default function ExerciseInfo() {
     { date: '01/05/2023', type: 'H.I.I.T.', totalMinutes: 45 },
   ];
 
+  const FlexTypography = styled(Typography)(({ theme }) => ({
+    [theme.breakpoints.up('md')]: {
+      fontSize: '1.75rem',
+    },
+    [theme.breakpoints.down('md')]: {
+      fontSize: '1rem',
+    },
+  }));
+
   return (
     <Grid container my={2} justifyContent="space-between" >
-      <Grid item xs={12} sm={8} md={6} sx={{paddingX: 4, minHeight: '35vh' }} >
+      <Grid item xs={12} sm={8} md={6} sx={{padding: 3, minHeight: '40vh' }} >
         <BaseGraph exercises={data} />
       </Grid>
       <Grid
         item
         container
         xs={12} sm={4} md={6}
-        sx={{ padding: 4,
+        sx={{ padding: 3,
           justifyContent: 'space-evenly',
           flexDirection: 'column',
           display: 'flex' }}
       >
         <Grid mr={16}>
-          <Typography variant="h6" align="left">
+          <FlexTypography variant="h6" align="left">
             <strong>
               Log your exercises to begin generating data.
             </strong>
-          </Typography>
+          </FlexTypography>
         </Grid>
         <Grid mt={3} ml={16}>
-          <Typography variant="h6" align="right">
+          <FlexTypography align="right">
             <strong>
-              View your weekly progress & see your improvements.
+              View your weekly progress and see your improvements.
             </strong>
-          </Typography>
+          </FlexTypography>
         </Grid>
       </Grid>
     </Grid>
