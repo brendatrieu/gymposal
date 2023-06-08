@@ -18,7 +18,7 @@ export default function SignIn() {
     const { user, token } = response;
     localStorage.setItem(tokenKey, token);
     setUser(user);
-    navigate('/home');
+    navigate('/dashboard');
   }
 
   async function demoAccount() {
@@ -28,7 +28,7 @@ export default function SignIn() {
     const { user, token } = response;
     localStorage.setItem(tokenKey, token);
     setUser(user);
-    navigate('/home');
+    navigate('/dashboard');
   }
 
   return (
@@ -76,7 +76,7 @@ export default function SignIn() {
               >
                 Submit
               </Button>
-              <Link to={"/"}>
+              <Link to={'/'}>
                 <Button
                   sx={{ ml: 2, mt: 2 }}
                   variant="outlined"

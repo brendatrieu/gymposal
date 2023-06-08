@@ -1,16 +1,26 @@
 import { Link } from 'react-router-dom';
 import './OverviewInfo.css';
-import { Button, styled } from '@mui/material';
+import { Button, styled, Box } from '@mui/material';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ScoreboardIcon from '@mui/icons-material/Scoreboard';
+import { FlexTypographyMedium } from './FlexTypography';
 
 const FlexButton = styled(Button)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     transform: 'scale(1.5)'
   },
 }));
+
+export const FlexBox = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    padding: theme.spacing(1)
+  },
+  [theme.breakpoints.up('md')]: {
+    padding: theme.spacing(2),
+  },
+}))
 
 export default function OverviewInfo() {
   return (
@@ -35,22 +45,30 @@ export default function OverviewInfo() {
         </Link>
       </div>
       <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }} >
-        <div className="overview-icons">
+        <FlexBox className="overview-icons">
           <TimelineIcon />
-          Log Exercises
-        </div>
-        <div className="overview-icons">
+          <FlexTypographyMedium>
+            Log Exercises
+          </FlexTypographyMedium>
+        </FlexBox>
+        <FlexBox className="overview-icons">
           <GroupAddIcon />
-          Create Groups
-        </div>
-        <div className="overview-icons">
+          <FlexTypographyMedium>
+            Create Groups
+          </FlexTypographyMedium>
+        </FlexBox>
+        <FlexBox className="overview-icons">
           <AssignmentIcon />
-          Set Group Rules
-        </div>
-        <div className="overview-icons">
+          <FlexTypographyMedium>
+            Set Group Rules
+          </FlexTypographyMedium>
+        </FlexBox>
+        <FlexBox className="overview-icons">
           <ScoreboardIcon />
-          Track Bets
-        </div>
+          <FlexTypographyMedium>
+            Track Bets
+          </FlexTypographyMedium>
+        </FlexBox>
       </div>
     </>
   )

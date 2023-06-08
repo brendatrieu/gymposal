@@ -123,7 +123,7 @@ export default function GroupHome() {
 
   function handleDecline() {
     setOpen(false);
-    navigate(`/`);
+    navigate(`/dashboard`);
   }
 
   function generateInviteLink() {

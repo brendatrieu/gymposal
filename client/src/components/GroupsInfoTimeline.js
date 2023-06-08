@@ -3,25 +3,13 @@ import Stack from "@mui/material/Stack";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
-import Typography from "@mui/material/Typography";
 import TimerIcon from '@mui/icons-material/Timer';
 import PaidIcon from '@mui/icons-material/Paid';
 import TimesOneMobiledataIcon from '@mui/icons-material/TimesOneMobiledata';
 import StepConnector, {
   stepConnectorClasses
 } from "@mui/material/StepConnector";
-
-const FlexTypography = styled(Typography)(({ theme }) => ({
-  [theme.breakpoints.up('md')]: {
-    fontSize: '1.2rem',
-  },
-  [theme.breakpoints.down('md')]: {
-    fontSize: '0.85rem',
-  },
-  [theme.breakpoints.down('sm')]: {
-    fontSize: '0.75rem',
-  },
-}));
+import { FlexTypographyMedium } from './FlexTypography';
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -84,7 +72,7 @@ export default function GroupsInfoTimeline({page}) {
       >
         {steps.map((label) => (
           <Step active key={label}>
-            <StepLabel StepIconComponent={ColorlibStepIcon}><FlexTypography mx={2}>{label}</FlexTypography></StepLabel>
+            <StepLabel StepIconComponent={ColorlibStepIcon}><FlexTypographyMedium mx={2}>{label}</FlexTypographyMedium></StepLabel>
           </Step>
         ))}
       </Stepper>

@@ -52,7 +52,7 @@ export default function LogExercise() {
       newLog.month = dayjs(newLog.date).utc().month() + 1;
       await postNewLog(newLog);
       setAlert({ severity: 'success', message: 'Exercise successfully saved.' });
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setAlert({ severity: 'error', message: 'An unexpected error has occurred.' });
     }

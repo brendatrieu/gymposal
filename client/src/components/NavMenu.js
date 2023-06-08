@@ -16,13 +16,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
-import InfoIcon from '@mui/icons-material/Info';
+import GridViewIcon from '@mui/icons-material/GridView';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import GroupsIcon from '@mui/icons-material/Groups';
 
 const navItems = [
   { label: 'Home', icon: <HomeIcon />, link: '/' },
-  { label: 'About', icon: <InfoIcon data-testid="InfoIcon" />, link: '/about' },
+  { label: 'Dashboard', icon: <GridViewIcon />, link: '/dashboard' },
   { label: 'Log Exercise', icon: <FitnessCenterIcon />, link: '/log-exercise' },
   { label: 'Create Group', icon: <GroupsIcon />, link: '/group-form' }
 ];
@@ -64,10 +64,10 @@ export default function NavMenu() {
             <List>
               {navItems.map((item) => (
                 (!user &&
-                  ['Home', 'Log Exercise', 'Create Group'].includes(item.label) ?
+                  ['Dashboard', 'Log Exercise', 'Create Group'].includes(item.label) ?
                   null :
-                  <Link to={item.link} style={{textDecoration: 'none', color: 'white'}}>
-                    <ListItem key={item.label} disablePadding>
+                  <Link key={item.label} to={item.link} style={{textDecoration: 'none', color: 'white'}}>
+                    <ListItem disablePadding>
                       <ListItemButton>
                       <ListItemIcon>
                         { item.icon }

@@ -1,10 +1,10 @@
 import OverviewInfo from '../components/OverviewInfo';
 import ExerciseInfo from '../components/ExerciseInfo';
 import GroupsInfo from '../components/GroupsInfo';
-import { FlexTypography } from '../components/FlexTypography';
 import { useAlert, useUser } from '../context/AppContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { postAccount } from '../lib/api';
+import { FlexTypographyMedium } from '../components/FlexTypography';
 
 export default function About() {
   const { setAlert } = useAlert();
@@ -18,7 +18,7 @@ export default function About() {
     const { user, token } = response;
     localStorage.setItem(tokenKey, token);
     setUser(user);
-    navigate('/');
+    navigate('/dashboard');
   }
 
  return (
@@ -32,11 +32,19 @@ export default function About() {
     <section>
       <GroupsInfo />
     </section>
-    <section>
-      <FlexTypography align="center" mb={3}>
+     <section style={{ backgroundColor: 'rgba(251, 251, 251, 0.1)', padding: '24px' }}>
+      <FlexTypographyMedium align="center" >
         <strong>
           Ready to give it a try? <br />
-           Preview the app using a <Link onClick={demoAccount}
+           <Link to='/sign-up'
+             style={{
+               textDecoration: 'none',
+               fontWeight: 700,
+               color: '#60D3EA'
+             }}
+           >
+             Sign up </Link> for free or <br />
+             preview the app using a <Link onClick={demoAccount}
              style={{
                textDecoration: 'none',
                fontWeight: 700,
@@ -46,7 +54,7 @@ export default function About() {
             guest account.
           </Link>
         </strong>
-      </FlexTypography>
+      </FlexTypographyMedium>
     </section>
   </div>
  )

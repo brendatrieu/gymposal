@@ -6,7 +6,7 @@ import Header from './components/Header';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import About from './pages/About';
-import Launchpad from './pages/Launchpad';
+import Dashboard from './pages/Dashboard';
 import LogExercise from './pages/LogExercise';
 import GroupForm from './pages/GroupForm';
 import GroupHome from './pages/GroupHome';
@@ -22,10 +22,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Header />} >
             <Route index element={<About />} />
-            <Route path="home" element={<Launchpad />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
-            <Route path="about" element={<About />} />
             <Route path="log-exercise" element={<LogExercise />} />
             <Route path="group-form" element={<GroupForm />} >
               <Route path=":groupId" element={<GroupForm />} />
