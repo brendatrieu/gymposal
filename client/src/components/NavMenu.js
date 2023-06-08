@@ -14,6 +14,7 @@ import {
    } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
+import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import InfoIcon from '@mui/icons-material/Info';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
@@ -77,21 +78,17 @@ export default function NavMenu() {
                   </Link>)
               ))}
             </List>
-            {user &&
-              <>
-                <Divider />
-                <List>
-                    <ListItem disablePadding onClick={handleSignOut}>
-                      <ListItemButton>
-                        <ListItemIcon>
-                          <LogoutIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={'Log Out'} />
-                      </ListItemButton>
-                    </ListItem>
-                </List>
-              </>
-            }
+            <Divider />
+            <List>
+              <ListItem disablePadding onClick={handleSignOut}>
+                <ListItemButton>
+                  <ListItemIcon>
+                    {user ? <LogoutIcon /> : <LoginIcon /> }
+                  </ListItemIcon>
+                  <ListItemText primary={user ? 'Log Out' : 'Sign In'} />
+                </ListItemButton>
+              </ListItem>
+            </List>
           </Box>
         </Drawer>
       </Fragment>

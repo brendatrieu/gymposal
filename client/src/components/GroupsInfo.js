@@ -9,7 +9,6 @@ export default function ExerciseInfo() {
         item
         xs={12}
         sx={{
-          paddingY: 3,
           justifyContent: 'space-evenly',
           flexDirection: 'column',
           display: 'flex'

@@ -25,4 +25,5 @@
   flex-direction: column;
   border: 1px solid white;
   width: 100%;
+  background-color: rgba(251, 251, 251, 0.2);
 }
