@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useUser, useAlert } from '../context/AppContext';
-import { FormControl, TextField, MenuItem, Typography, Button, Box } from '@mui/material';
+import { FormControl, TextField, Typography, Button, Box } from '@mui/material';
 import FormBox from '../components/FormBox';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
@@ -39,6 +39,7 @@ export default function GroupForm() {
         navigate(`/group-home/${groupId}`);
       } else {
         group.userId = user.userId;
+        group.intervalReq = 'Weekly';
         response = await postNewGroup(group);
         navigate(`/group-home/${response.groupId}`);
       }
@@ -67,32 +68,17 @@ export default function GroupForm() {
             <TextField
               required
               type="number"
-              label="Exercise Frequency per Interval"
+              label="Exercise Frequency per Week"
               inputProps={{ min: 1 }}
               InputLabelProps={{ shrink: true }}
               {...register("frequencyReq")}
             />
             <TextField
               required
-              select
-              label="Exercise Interval"
-              defaultValue={state ? state[0].intervalReq : 'Weekly'}
-              sx={{ marginY: 3 }}
-              InputLabelProps={{ shrink: true }}
-              {...register("intervalReq")}
-            >
-              <MenuItem key="weekly" value="Weekly">
-                Weekly
-              </MenuItem>
-              <MenuItem key="monthly" value="Monthly">
-                Monthly
-              </MenuItem>
-            </TextField>
-            <TextField
-              required
               type="number"
               label="Exercise Duration in Minutes"
               inputProps={{ min: 1 }}
+              sx={{ marginY: 3 }}
               InputLabelProps={{ shrink: true }}
               {...register("durationReq")}
             />
@@ -100,7 +86,6 @@ export default function GroupForm() {
               type="number"
               label="Bet Amount"
               inputProps={{ min: 0.00, step: 'any' }}
-              sx={{ marginTop: 3 }}
               InputLabelProps={{ shrink: true }}
               {...register("betAmount")}
             />

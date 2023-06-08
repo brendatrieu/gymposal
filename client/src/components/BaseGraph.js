@@ -23,6 +23,12 @@ ChartJS.register(
   Colors
 );
 
+/**
+ *
+ * @param {Object} exercises An object of exercise data.
+ * @param {Boolean} legend Boolean to indicate whether a legend should be displayed.
+ * @returns
+ */
 export default function BaseGraph({exercises, legend}) {
 
   const labels = [];

@@ -25,7 +25,7 @@ export default function SignUp() {
     const response = await postNewAccount(account);
     setAlert(response);
     if (response.severity === 'success') {
-      navigate('/');
+      navigate('/dashboard');
     }
   }
 
