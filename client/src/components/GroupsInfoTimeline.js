@@ -13,7 +13,7 @@ import StepConnector, {
 
 const FlexTypography = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
-    fontSize: '1rem',
+    fontSize: '1.2rem',
   },
   [theme.breakpoints.down('md')]: {
     fontSize: '0.85rem',

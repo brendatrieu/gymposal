@@ -18,17 +18,17 @@ export default function SignIn() {
     const { user, token } = response;
     localStorage.setItem(tokenKey, token);
     setUser(user);
-    navigate('/');
+    navigate('/home');
   }
 
   async function demoAccount() {
     const account = {username: 'ronweasley', password: 'Password1!'}
     const response = await postAccount(account);
-    if (!response) return setAlert(invalidLoginAlert);
+    if (!response) return setAlert({ severity: 'error', message: 'An unexpected error has occurred.' });
     const { user, token } = response;
     localStorage.setItem(tokenKey, token);
     setUser(user);
-    navigate('/');
+    navigate('/home');
   }
 
   return (

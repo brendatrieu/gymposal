@@ -21,7 +21,8 @@ export default function App() {
         <CssBaseline />
         <Routes>
           <Route path="/" element={<Header />} >
-            <Route index element={<Launchpad />} />
+            <Route index element={<About />} />
+            <Route path="home" element={<Launchpad />} />
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />
             <Route path="about" element={<About />} />

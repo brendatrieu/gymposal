@@ -1,5 +1,6 @@
-import { Grid, Typography, styled } from '@mui/material';
+import { Grid } from '@mui/material';
 import BaseGraph from './BaseGraph';
+import { FlexTypography } from './FlexTypography';
 
 export default function ExerciseInfo() {
   const data = [
@@ -10,18 +11,9 @@ export default function ExerciseInfo() {
     { date: '01/05/2023', type: 'H.I.I.T.', totalMinutes: 45 },
   ];
 
-  const FlexTypography = styled(Typography)(({ theme }) => ({
-    [theme.breakpoints.up('md')]: {
-      fontSize: '1.75rem',
-    },
-    [theme.breakpoints.down('md')]: {
-      fontSize: '1rem',
-    },
-  }));
-
   return (
-    <Grid container my={2} justifyContent="space-between" >
-      <Grid item xs={12} sm={8} md={6} sx={{padding: 3, minHeight: '40vh' }} >
+    <Grid container my={3} justifyContent="space-between" >
+      <Grid item xs={12} sm={8} md={6} sx={{padding: 3, minHeight: '45vh' }} >
         <BaseGraph exercises={data} />
       </Grid>
       <Grid
