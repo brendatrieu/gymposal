@@ -9,10 +9,14 @@ Similar to many people, I was having a hard time staying motivated to work out. 
 ## Technologies Used
 - React.js
 - Node.js
+- PostgreSQL
+- JavaScript
 - HTML5
 - CSS3
 - Material UI
-- AWS
+- Chart.js
+- Day.js
+- Microsoft Azure
 
 ## Live Demo
 
