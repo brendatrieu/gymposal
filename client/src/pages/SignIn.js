@@ -24,7 +24,7 @@ export default function SignIn() {
   async function demoAccount() {
     const account = {username: 'ronweasley', password: 'Password1!'}
     const response = await postAccount(account);
-    if (!response) return setAlert({ severity: 'error', message: 'An unexpected error has occurred.' });
+    if (!response) return setAlert({ severity: 'error', message: 'An unexpected error has occurred. Please try again.' });
     const { user, token } = response;
     localStorage.setItem(tokenKey, token);
     setUser(user);

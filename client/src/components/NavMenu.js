@@ -1,6 +1,6 @@
 import { useState, Fragment } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUser } from '../context/AppContext';
+import { useUser, useAlert } from '../context/AppContext';
 import {
   Box,
   Drawer,
@@ -30,10 +30,12 @@ const navItems = [
 export default function NavMenu() {
   const [open, setOpen] = useState(false);
   const { user, setUser, tokenKey } = useUser();
+  const { setAlert } = useAlert();
   const navigate = useNavigate();
 
   function handleSignOut() {
     localStorage.removeItem(tokenKey);
+    if(user) setAlert({severity: 'success', message: 'Successfully logged out.'});
     setUser(undefined);
     navigate('/sign-in');
   }
