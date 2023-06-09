@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useAlert } from '../context/AppContext';
-import { FormControl, TextField, Typography, Button, Box } from '@mui/material';
+import { FormControl, TextField, Typography, Button, IconButton, Box, InputAdornment } from '@mui/material';
 import FormBox from '../components/FormBox';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from 'react-router-dom';
 import { postNewAccount } from '../lib/api';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export default function SignUp() {
   const { register, formState: { errors }, handleSubmit } = useForm();
@@ -96,6 +98,15 @@ export default function SignUp() {
               sx={{ marginY: 3 }}
               error={!isValid}
               helperText={!isValid && 'Your passwords do not match.'}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="right">
+                    <IconButton>
+                      <VisibilityOffIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Box display="flex" flexWrap="wrap" justifyContent="flex-end">
               <Button type="submit"
