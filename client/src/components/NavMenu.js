@@ -35,8 +35,8 @@ export default function NavMenu() {
 
   function handleSignOut() {
     localStorage.removeItem(tokenKey);
+    if(user) setAlert({severity: 'success', message: 'Successfully logged out.'});
     setUser(undefined);
-    setAlert({severity: 'success', message: 'Successfully logged out.'})
     navigate('/sign-in');
   }
 
