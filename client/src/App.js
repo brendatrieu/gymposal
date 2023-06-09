@@ -5,7 +5,7 @@ import './App.css';
 import Header from './components/Header';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
-import About from './pages/About';
+import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import LogExercise from './pages/LogExercise';
 import GroupForm from './pages/GroupForm';
@@ -21,7 +21,7 @@ export default function App() {
         <CssBaseline />
         <Routes>
           <Route path="/" element={<Header />} >
-            <Route index element={<About />} />
+            <Route index element={<Home />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="sign-in" element={<SignIn />} />
             <Route path="sign-up" element={<SignUp />} />

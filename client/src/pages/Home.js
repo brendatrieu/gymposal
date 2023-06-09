@@ -6,9 +6,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { postAccount } from '../lib/api';
 import { FlexTypographyMedium } from '../components/FlexTypography';
 
-export default function About() {
+export default function Home() {
   const { setAlert } = useAlert();
-  const { setUser, tokenKey } = useUser();
+  const { user, setUser, tokenKey } = useUser();
   const navigate = useNavigate();
 
   async function demoAccount() {
@@ -36,23 +36,37 @@ export default function About() {
       <FlexTypographyMedium align="center" >
         <strong>
           Ready to give it a try? <br />
-           <Link to='/sign-up'
-             style={{
-               textDecoration: 'none',
-               fontWeight: 700,
-               color: '#60D3EA'
-             }}
-           >
-             Sign up </Link> for free or <br />
-             preview the app using a <Link onClick={demoAccount}
-             style={{
-               textDecoration: 'none',
-               fontWeight: 700,
-               color: '#60D3EA'
-             }}
-           >
-            guest account.
-          </Link>
+          {user ?
+             (<>
+              <Link to='/sign-in'
+                style={{
+                  textDecoration: 'none',
+                  fontWeight: 700,
+                  color: '#60D3EA'
+                }}
+              >
+                Sign in </Link> to begin.
+             </>) :
+            (<>
+            <Link to='/sign-up'
+              style={{
+                textDecoration: 'none',
+                fontWeight: 700,
+                color: '#60D3EA'
+              }}
+            >
+              Sign up </Link> for free or <br />
+              preview the app using a <Link onClick={demoAccount}
+              style={{
+                textDecoration: 'none',
+                fontWeight: 700,
+                color: '#60D3EA'
+              }}
+            >
+              guest account.
+            </Link>
+               </>)
+          }
         </strong>
       </FlexTypographyMedium>
     </section>

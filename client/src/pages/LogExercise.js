@@ -131,7 +131,7 @@ export default function LogExercise() {
               >
                 Submit
               </Button>
-              <Link to="/">
+              <Link to='/dashboard'>
                 <Button
                   sx={{ ml: 2, mt: 2 }}
                   variant="outlined"
