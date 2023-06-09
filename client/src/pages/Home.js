@@ -38,14 +38,14 @@ export default function Home() {
           Ready to give it a try? <br />
           {user ?
              (<>
-              <Link to='/sign-in'
+             Head to the <Link to='/dashboard'
                 style={{
                   textDecoration: 'none',
                   fontWeight: 700,
                   color: '#60D3EA'
                 }}
               >
-                Sign in </Link> to begin.
+                dashboard </Link> to get started.
              </>) :
             (<>
             <Link to='/sign-up'
