@@ -47,7 +47,7 @@ export async function initialExercises(db) {
 /**
  * Assesses exercises to see which qualify towards weekly count for challenges.
  * @param {Object} db used for SQL queries
- * @returns an object containing groups and corresponding penalties.
+ * @returns an object containing groups and corresponding penalties. {groups, penalties}
  */
 export async function qualifyExercises(db, data) {
   const currentWeek = dayjs.tz().week();
@@ -85,20 +85,31 @@ export async function qualifyExercises(db, data) {
   return tracker;
 }
 
-//     const sql2 = `
-//           SELECT "penaltyId"
-//           FROM "penalties"
-//         `;
-//     const result2 = await db.query(sql2);
-//     const penaltyIds = result2.rows.map(id => id.penaltyId);
-//     if (penaltyIds.length) {
-//       const totalPenalties = tracker.penalties.length;
-//       if (totalPenalties) {
-//         for (let p = 0; p < totalPenalties; p++) {
-//           tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(user, currentWeek, currentYear)) === -1);
-//         }
-//       }
-//     }
+/**
+ * Assesses penalties to see which have been inputted already.
+ * @param {Object} db used for SQL queries
+ * @param {Object} tracker includes keys for groups and penalties to compare against
+ * @returns an object containing groups and corresponding penalties. {groups, penalties}
+ */
+export async function queryPenalties(db, tracker) {
+  const currentWeek = dayjs.tz().week();
+  const currentYear = dayjs.tz().year();
+  const sql2 = `
+      SELECT "penaltyId"
+      FROM "penalties"
+    `;
+  const result2 = await db.query(sql2);
+  const penaltyIds = result2.rows.map(id => id.penaltyId);
+  if (penaltyIds.length) {
+    const totalPenalties = tracker.penalties.length;
+    if (totalPenalties) {
+      // for (let p = 0; p < totalPenalties; p++) {
+      //   tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(user, currentWeek, currentYear)) === -1);
+      // }
+    }
+  }
+}
+
 //     let sql3 = `
 //           INSERT INTO "penalties" ("groupId", "userId", "week", "year")
 //           VALUES
