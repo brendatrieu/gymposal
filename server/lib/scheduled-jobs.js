@@ -4,6 +4,11 @@ import weekday from 'dayjs/plugin/weekday.js';
 import utc from 'dayjs/plugin/utc.js';
 import timezone from 'dayjs/plugin/timezone.js';
 
+/**
+ * Queries for exercise data of active users.
+ * @param {Object} db used for SQL queries
+ * @returns exercise data for all active users where the exercise total minutes are equal to or greater than the group duration requirements. If user does not have any, an empty row will be returned for that respective group and user combination.
+ */
 export async function initialExercises(db) {
   const sqlUsers = `
       SELECT "userId"
@@ -32,9 +37,6 @@ export async function initialExercises(db) {
             WHERE "groupUsers"."userId" = $1 and "groups"."durationReq" <= "exercises"."totalMinutes") AS "Count" USING ("groupId")
             WHERE "groupUsers"."userId" = $1
             `;
-      const currentWeek = dayjs.tz().week();
-      const currentYear = dayjs.tz().year();
-      const lastWeek = currentWeek === 1 ? 52 : currentWeek - 1;
       const params = [user];
       const results = await db.query(sql, params);
       return results.rows;
@@ -42,35 +44,47 @@ export async function initialExercises(db) {
   }
 }
 
-//     data.forEach((entry) => {
-//       entry.year = dayjs.tz(entry.date).year();
-//       entry.week = dayjs.tz(entry.date).week();
-//       entry.activeYear = dayjs.tz(entry.activeDate).year();
-//       entry.activeWeek = dayjs.tz(entry.activeDate).week();
-//     });
-//     data = data.filter((entry) => (
-//       (entry.activeYear === currentYear ? entry.activeWeek !== lastWeek : true)
-//     ));
-//     const tracker = {
-//       groups: [],
-//       penalties: []
-//     };
-//     for (let d = 0; d < data.length; d++) {
-//       const { keyGroupId, groupName, frequencyReq, intervalReq, year, week } = data[d];
-//       if (tracker.groups.indexOf(groupName) === -1) {
-//         tracker.groups.push(groupName);
-//         tracker[groupName] = { id: keyGroupId, frequency: frequencyReq, interval: intervalReq, count: 0 };
-//       }
-//       if (year === currentYear && week === lastWeek) {
-//         tracker[groupName].count++;
-//       }
-//     }
-//     for (let g = 0; g < tracker.groups.length; g++) {
-//       const currGroup = tracker[tracker.groups[g]];
-//       if (currGroup.count < currGroup.frequency) {
-//         tracker.penalties.push(currGroup.id);
-//       }
-//     }
+/**
+ * Assesses exercises to see which qualify towards weekly count for challenges.
+ * @param {Object} db used for SQL queries
+ * @returns an object containing groups and corresponding penalties.
+ */
+export async function qualifyExercises(db, data) {
+  const currentWeek = dayjs.tz().week();
+  const currentYear = dayjs.tz().year();
+  const lastWeek = currentWeek === 1 ? 52 : currentWeek - 1;
+  data.forEach((entry) => {
+    entry.year = dayjs.tz(entry.date).year();
+    entry.week = dayjs.tz(entry.date).week();
+    entry.activeYear = dayjs.tz(entry.activeDate).year();
+    entry.activeWeek = dayjs.tz(entry.activeDate).week();
+  });
+  data = data.filter((entry) => (
+    (entry.activeYear === currentYear ? entry.activeWeek !== lastWeek : true)
+  ));
+  const tracker = {
+    groups: [],
+    penalties: []
+  };
+  for (let d = 0; d < data.length; d++) {
+    const { keyGroupId, groupName, frequencyReq, intervalReq, year, week } = data[d];
+    if (tracker.groups.indexOf(groupName) === -1) {
+      tracker.groups.push(groupName);
+      tracker[groupName] = { id: keyGroupId, frequency: frequencyReq, interval: intervalReq, count: 0 };
+    }
+    if (year === currentYear && week === lastWeek) {
+      tracker[groupName].count++;
+    }
+  }
+  for (let g = 0; g < tracker.groups.length; g++) {
+    const currGroup = tracker[tracker.groups[g]];
+    if (currGroup.count < currGroup.frequency) {
+      tracker.penalties.push(currGroup.id);
+    }
+  }
+  return tracker;
+}
+
 //     const sql2 = `
 //           SELECT "penaltyId"
 //           FROM "penalties"
