@@ -144,7 +144,6 @@ schedule.scheduleJob({ hour: 8, minute: 0, dayOfWeek: 1, tz: 'Etc/UTC' }, async 
         await db.query(sql4, params4);
       });
     }
-
   } catch (error) {
     console.error(error);
   }
