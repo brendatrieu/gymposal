@@ -4,10 +4,16 @@ import weekday from 'dayjs/plugin/weekday.js';
 import utc from 'dayjs/plugin/utc.js';
 import timezone from 'dayjs/plugin/timezone.js';
 
+dayjs.extend(weekOfYear);
+dayjs.extend(weekday);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('America/Los_Angeles');
+
 /**
  * Queries for exercise data of active users.
  * @param {Object} db used for SQL queries
- * @returns exercise data for all active users where the exercise total minutes are equal to or greater than the group duration requirements. If user does not have any, an empty row will be returned for that respective group and user combination.
+ * @returns {Array} Includes the userId at the current exercise data for all active users where the exercise total minutes are equal to or greater than the group duration requirements. If user does not have any, an empty row will be returned for that respective group and user combination.
  */
 export async function initialExercises(db) {
   const sqlUsers = `
@@ -39,7 +45,9 @@ export async function initialExercises(db) {
             `;
       const params = [user];
       const results = await db.query(sql, params);
-      return results.rows;
+      const data = results.rows;
+      const tracker = qualifyExercises(db, data);
+      queryPenalties(db, user, tracker);
     });
   }
 }
@@ -88,10 +96,11 @@ export async function qualifyExercises(db, data) {
 /**
  * Assesses penalties to see which have been inputted already.
  * @param {Object} db used for SQL queries
+ * @param {Number} userId unique identifier for user
  * @param {Object} tracker includes keys for groups and penalties to compare against
  * @returns an object containing groups and corresponding penalties. {groups, penalties}
  */
-export async function queryPenalties(db, tracker) {
+export async function queryPenalties(db, userId, tracker) {
   const currentWeek = dayjs.tz().week();
   const currentYear = dayjs.tz().year();
   const sql2 = `
@@ -103,9 +112,9 @@ export async function queryPenalties(db, tracker) {
   if (penaltyIds.length) {
     const totalPenalties = tracker.penalties.length;
     if (totalPenalties) {
-      // for (let p = 0; p < totalPenalties; p++) {
-      //   tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(user, currentWeek, currentYear)) === -1);
-      // }
+      for (let p = 0; p < totalPenalties; p++) {
+        tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(userId, currentWeek, currentYear)) === -1);
+      }
     }
   }
 }
