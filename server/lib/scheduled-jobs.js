@@ -15,7 +15,7 @@ dayjs.tz.setDefault('America/Los_Angeles');
  * @param {Object} db used for SQL queries
  * @returns {Array} Includes the userId at the current exercise data for all active users where the exercise total minutes are equal to or greater than the group duration requirements. If user does not have any, an empty row will be returned for that respective group and user combination.
  */
-export async function initialExercises(db) {
+export async function assessUsers(db) {
   const sqlUsers = `
       SELECT "userId"
       FROM "users"
@@ -25,31 +25,41 @@ export async function initialExercises(db) {
   const users = result.rows.map(user => user.userId);
   if (users.length) {
     users.forEach(async (user) => {
-      const sql = `
-            SELECT "groupUsers"."userId",
-              "groups"."groupName" AS "groupName",
-              "groups"."groupId" AS "keyGroupId",
-              "groups"."intervalReq" AS "intervalReq",
-              "groups"."frequencyReq" AS "frequencyReq",
-              "groupUsers"."activeDate" AS "activeDate",
-              "Count".*
-            FROM "groups"
-            JOIN "groupUsers" USING ("groupId")
-            FULL OUTER JOIN (SELECT "exercises"."date",
-            "groupUsers"."groupId"
-            FROM "groups"
-            JOIN "groupUsers" USING ("groupId")
-            JOIN "exercises" USING ("userId")
-            WHERE "groupUsers"."userId" = $1 and "groups"."durationReq" <= "exercises"."totalMinutes") AS "Count" USING ("groupId")
-            WHERE "groupUsers"."userId" = $1
-            `;
-      const params = [user];
-      const results = await db.query(sql, params);
-      const data = results.rows;
-      const tracker = qualifyExercises(db, data);
-      queryPenalties(db, user, tracker);
+      const existingExercises = await initialExercises();
+      const tracker = await qualifyExercises(db, existingExercises);
+      await queryPenalties(db, user, tracker);
     });
   }
+}
+
+/**
+ * Assesses exercises to see which qualify towards weekly count for challenges.
+ * @param {Object} db used for SQL queries
+ * @param {Number} userId used for SQL queries
+ * @returns {Array} Current exercise data for the user where the exercise total minutes are equal to or greater than the group duration requirements. If user does not have any, an empty row will be returned for that respective group and user combination.
+ */
+export async function initialExercises(db, userId) {
+  const sql = `
+    SELECT "groupUsers"."userId",
+      "groups"."groupName" AS "groupName",
+      "groups"."groupId" AS "keyGroupId",
+      "groups"."intervalReq" AS "intervalReq",
+      "groups"."frequencyReq" AS "frequencyReq",
+      "groupUsers"."activeDate" AS "activeDate",
+      "Count".*
+    FROM "groups"
+    JOIN "groupUsers" USING ("groupId")
+    FULL OUTER JOIN (SELECT "exercises"."date",
+    "groupUsers"."groupId"
+    FROM "groups"
+    JOIN "groupUsers" USING ("groupId")
+    JOIN "exercises" USING ("userId")
+    WHERE "groupUsers"."userId" = $1 and "groups"."durationReq" <= "exercises"."totalMinutes") AS "Count" USING ("groupId")
+    WHERE "groupUsers"."userId" = $1
+    `;
+  const params = [userId];
+  const results = await db.query(sql, params);
+  return results.rows;
 }
 
 /**
@@ -119,33 +129,30 @@ export async function queryPenalties(db, userId, tracker) {
   }
 }
 
-//     let sql3 = `
-//           INSERT INTO "penalties" ("groupId", "userId", "week", "year")
-//           VALUES
-//           `;
-//     if (tracker.penalties.length) {
-//       for (let p = 0; p < tracker.penalties.length; p++) {
-//         if (p !== tracker.penalties.length - 1) {
-//           sql3 = sql3.concat(`($${p + 4}, $1, $2, $3), `);
-//         } else {
-//           sql3 = sql3.concat(`($${p + 4}, $1, $2, $3) `);
-//         }
-//       }
-//       sql3 = sql3.concat('RETURNING *');
-//       const params3 = [user, currentWeek, currentYear, ...tracker.penalties];
-//       await db.query(sql3, params3);
-//     }
-//     const sql4 = `
-//           SELECT "groups"."groupName" AS "groupName",
-//             "date",
-//             "status",
-//             "groups"."betAmount" AS "betAmount",
-//             "penaltyId"
-//           FROM "penalties"
-//           JOIN "groups" USING ("groupId")
-//           WHERE "userId" = $1;
-//         `;
-//     const params4 = [user];
-//     await db.query(sql4, params4);
-//   });
-// }
+/**
+ * Creates penalty records and adds them to the database.
+ * @param {Object} db used for SQL queries
+ * @param {Number} userId unique identifier for user
+ * @param {Object} tracker includes keys for groups and penalties to compare against
+ * @returns an object containing groups and corresponding penalties. {groups, penalties}
+ */
+export async function createPenalties(db, userId, tracker) {
+  const currentWeek = dayjs.tz().week();
+  const currentYear = dayjs.tz().year();
+  let sql3 = `
+          INSERT INTO "penalties" ("groupId", "userId", "week", "year")
+          VALUES
+          `;
+  if (tracker.penalties.length) {
+    for (let p = 0; p < tracker.penalties.length; p++) {
+      if (p !== tracker.penalties.length - 1) {
+        sql3 = sql3.concat(`($${p + 4}, $1, $2, $3), `);
+      } else {
+        sql3 = sql3.concat(`($${p + 4}, $1, $2, $3) `);
+      }
+    }
+    sql3 = sql3.concat('RETURNING *');
+    const params3 = [userId, currentWeek, currentYear, ...tracker.penalties];
+    await db.query(sql3, params3);
+  }
+}
