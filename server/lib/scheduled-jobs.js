@@ -22,18 +22,18 @@ export async function assessUsers(db) {
       WHERE "active" = true;
     `;
   const result = await db.query(sqlUsers);
-  const users = result.rows.map(user => user.userId);
-  if (users.length) {
-    users.forEach(async (user) => {
-      const existingExercises = await initialExercises();
+  const userIds = result.rows.map(user => user.userId);
+  if (userIds.length) {
+    userIds.forEach(async (userId) => {
+      const existingExercises = await initialExercises(db, userId);
       const tracker = await qualifyExercises(db, existingExercises);
-      await queryPenalties(db, user, tracker);
+      await queryPenalties(db, userId, tracker);
     });
   }
 }
 
 /**
- * Assesses exercises to see which qualify towards weekly count for challenges.
+ * Queries for exercises in the database.
  * @param {Object} db used for SQL queries
  * @param {Number} userId used for SQL queries
  * @returns {Array} Current exercise data for the user where the exercise total minutes are equal to or greater than the group duration requirements. If user does not have any, an empty row will be returned for that respective group and user combination.
@@ -111,6 +111,7 @@ export async function qualifyExercises(db, data) {
  * @returns an object containing groups and corresponding penalties. {groups, penalties}
  */
 export async function queryPenalties(db, userId, tracker) {
+  const modifiedTracker = tracker;
   const currentWeek = dayjs.tz().week();
   const currentYear = dayjs.tz().year();
   const sql2 = `
@@ -120,13 +121,14 @@ export async function queryPenalties(db, userId, tracker) {
   const result2 = await db.query(sql2);
   const penaltyIds = result2.rows.map(id => id.penaltyId);
   if (penaltyIds.length) {
-    const totalPenalties = tracker.penalties.length;
+    const totalPenalties = modifiedTracker.penalties.length;
     if (totalPenalties) {
       for (let p = 0; p < totalPenalties; p++) {
-        tracker.penalties = tracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(userId, currentWeek, currentYear)) === -1);
+        modifiedTracker.penalties = modifiedTracker.penalties.filter((penalty) => penaltyIds.indexOf(String(penalty).concat(userId, currentWeek, currentYear)) === -1);
       }
     }
   }
+  return modifiedTracker;
 }
 
 /**
