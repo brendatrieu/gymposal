@@ -27,7 +27,13 @@ export async function assessUsers(db) {
     userIds.forEach(async (userId) => {
       const existingExercises = await initialExercises(db, userId);
       const tracker = await qualifyExercises(db, existingExercises);
-      await queryPenalties(db, userId, tracker);
+      let updatedTracker = null;
+      if (tracker.penalties.length) {
+        updatedTracker = await queryPenalties(db, userId, tracker);
+        if (updatedTracker.penalties.length) {
+          await createPenalties(db, userId, updatedTracker);
+        }
+      }
     });
   }
 }
