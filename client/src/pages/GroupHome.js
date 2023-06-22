@@ -217,7 +217,7 @@ export default function GroupHome() {
             <EnhancedTable
               rows={groupSettingsRows}
               tableName={'Overview'}
-              tableCaption={`Each member must meet the following requirements by each Monday:`}
+              tableCaption={`Each member must meet the following requirements by each Sunday:`}
               headers={groupSettingsHeaders}
               rowKey={'groupId'}
               link={userIncluded && generateInviteLink()}

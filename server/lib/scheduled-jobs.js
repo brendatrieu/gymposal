@@ -71,7 +71,7 @@ export async function initialExercises(db, userId) {
 /**
  * Assesses exercises to see which qualify towards weekly count for challenges.
  * @param {Object} db used for SQL queries
- * @returns an object containing groups and corresponding penalties. {groups, penalties}
+ * @returns {Object} Contains groups and corresponding penalties. {groups, penalties}
  */
 export async function qualifyExercises(db, data) {
   const currentWeek = dayjs.tz().week();
@@ -114,7 +114,7 @@ export async function qualifyExercises(db, data) {
  * @param {Object} db used for SQL queries
  * @param {Number} userId unique identifier for user
  * @param {Object} tracker includes keys for groups and penalties to compare against
- * @returns an object containing groups and corresponding penalties. {groups, penalties}
+ * @returns {Object} Contains groups and corresponding penalties. {groups, penalties}
  */
 export async function queryPenalties(db, userId, tracker) {
   const modifiedTracker = tracker;
@@ -142,7 +142,7 @@ export async function queryPenalties(db, userId, tracker) {
  * @param {Object} db used for SQL queries
  * @param {Number} userId unique identifier for user
  * @param {Object} tracker includes keys for groups and penalties to compare against
- * @returns an object containing groups and corresponding penalties. {groups, penalties}
+ * @returns {Object} Contains groups and corresponding penalties. {groups, penalties}
  */
 export async function createPenalties(db, userId, tracker) {
   const currentWeek = dayjs.tz().week();

@@ -36,8 +36,8 @@ app.use(express.static(reactStaticDir));
 app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
-// Set up a job with a recurrence rule to run every Monday at 8AM UTC, which is equivalent to Sunday at 1AM PDT or 12AM PST
-schedule.scheduleJob({ hour: 8, minute: 0, dayOfWeek: 1, tz: 'Etc/UTC' }, async function () {
+// Set up a job with a recurrence rule to run every Sunday at 8AM UTC, which is equivalent to Saturday at 1AM PDT or 12AM PST
+schedule.scheduleJob({ hour: 8, minute: 0, dayOfWeek: 0, tz: 'Etc/UTC' }, async function () {
   try {
     await assessUsers(db);
   } catch (error) {
@@ -81,14 +81,15 @@ app.get('/api/chart-exercises/:userId', async (req, res, next) => {
   try {
     const sql = `
       SELECT "date",
-        "totalMinutes"
+        "totalMinutes",
+        "week"
       FROM "exercises"
-      WHERE "userId" = $1 AND "week" = $2
+      WHERE "userId" = $1
     `;
-    const currentWeek = dayjs().week();
-    const params = [req.params.userId, currentWeek];
+    const currentWeek = dayjs.tz().week();
+    const params = [req.params.userId];
     const result = await db.query(sql, params);
-    const data = result.rows;
+    const data = result.rows.filter(entry => dayjs.tz(entry.date).week() === currentWeek);
     data.sort((a, b) => a.date - b.date);
     let byDate = [];
     data.forEach((entry) => {
