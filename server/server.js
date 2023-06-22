@@ -37,6 +37,7 @@ app.use(express.static(uploadsStaticDir));
 app.use(express.json());
 
 // Set up a job with a recurrence rule to run every Monday at 8AM UTC, which is equivalent to Sunday at 1AM PDT or 12AM PST
+//
 schedule.scheduleJob({ hour: 8, minute: 0, dayOfWeek: 1, tz: 'Etc/UTC' }, async function () {
   try {
     await assessUsers(db);
