@@ -2,10 +2,13 @@ import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear.js';
 import weekday from 'dayjs/plugin/weekday.js';
 import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
 
 dayjs.extend(weekOfYear);
 dayjs.extend(weekday);
 dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('America/Los_Angeles');
 
 /**
  * Queries for exercise data of active users.
