@@ -88,7 +88,7 @@ export default function GroupHome() {
         loadGroupChartLogs(groupId, setGroupChartLogRows)])
       .catch((error) => setError(error))
       .finally(() => setIsLoading(false));
-  }, [ user, navigate, groupId, groupSettingsRows ]);
+  }, [ user, navigate, groupId ]);
 
   if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', margin: '10rem auto' }} ><CircularProgress /></div>;
   if (error) return <div>Error Loading Page: {error.message}</div>;
