@@ -45,7 +45,7 @@ export async function assessUsers(db) {
  * @returns {Array} Current exercise data for the user where the exercise total minutes are equal to or greater than the group duration requirements. If user does not have any, an empty row will be returned for that respective group and user combination.
  */
 export async function initialExercises(db, userId) {
-  const sql = `
+  const sqlExercises = `
     SELECT "groupUsers"."userId",
       "groups"."groupName" AS "groupName",
       "groups"."groupId" AS "keyGroupId",
@@ -64,7 +64,7 @@ export async function initialExercises(db, userId) {
     WHERE "groupUsers"."userId" = $1
     `;
   const params = [userId];
-  const results = await db.query(sql, params);
+  const results = await db.query(sqlExercises, params);
   return results.rows;
 }
 
@@ -120,11 +120,11 @@ export async function queryPenalties(db, userId, tracker) {
   const modifiedTracker = tracker;
   const currentWeek = dayjs.tz().week();
   const currentYear = dayjs.tz().year();
-  const sql2 = `
+  const sqlPenalties = `
       SELECT "penaltyId"
       FROM "penalties"
     `;
-  const result2 = await db.query(sql2);
+  const result2 = await db.query(sqlPenalties);
   const penaltyIds = result2.rows.map(id => id.penaltyId);
   if (penaltyIds.length) {
     const totalPenalties = modifiedTracker.penalties.length;
@@ -147,20 +147,20 @@ export async function queryPenalties(db, userId, tracker) {
 export async function createPenalties(db, userId, tracker) {
   const currentWeek = dayjs.tz().week();
   const currentYear = dayjs.tz().year();
-  let sql3 = `
+  let sqlPenalties = `
           INSERT INTO "penalties" ("groupId", "userId", "week", "year")
           VALUES
           `;
   if (tracker.penalties.length) {
     for (let p = 0; p < tracker.penalties.length; p++) {
       if (p !== tracker.penalties.length - 1) {
-        sql3 = sql3.concat(`($${p + 4}, $1, $2, $3), `);
+        sqlPenalties = sqlPenalties.concat(`($${p + 4}, $1, $2, $3), `);
       } else {
-        sql3 = sql3.concat(`($${p + 4}, $1, $2, $3) `);
+        sqlPenalties = sqlPenalties.concat(`($${p + 4}, $1, $2, $3) `);
       }
     }
-    sql3 = sql3.concat('RETURNING *');
+    sqlPenalties = sqlPenalties.concat('RETURNING *');
     const params3 = [userId, currentWeek, currentYear, ...tracker.penalties];
-    await db.query(sql3, params3);
+    await db.query(sqlPenalties, params3);
   }
 }
