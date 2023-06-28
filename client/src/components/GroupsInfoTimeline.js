@@ -60,7 +60,7 @@ function ColorlibStepIcon(props) {
 export default function GroupsInfoTimeline({page}) {
   const steps = [
     'Set the number of times each member has to work out every week.',
-    'Determine the how long each work out needs to be to qualify.',
+    'Determine the how long each exercise needs to be to qualify.',
     'Up for a little healthy competition? Place some bets!',
   ]
 
