@@ -37,7 +37,6 @@ async function loadPersonalPenalties(userId, setUserPenaltiesRows) {
   const response = await fetchUserPenalties(userId);
   response.forEach((row) => {
     row.date = dayjs(row.date).local().format('MM/DD/YY')
-    row.betAmount = `$${row.betAmount}`;
   });
   setUserPenaltiesRows(response);
 }
