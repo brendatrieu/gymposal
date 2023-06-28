@@ -110,7 +110,7 @@ export const groupPenaltiesHeaders = [
   {
     id: 'betAmount',
     numeric: true,
-    label: 'Amount Owed',
+    label: 'Amount Owed ($)',
   },
   {
     id: 'status',
