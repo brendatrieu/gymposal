@@ -93,7 +93,7 @@ app.get('/api/chart-exercises/:userId', async (req, res, next) => {
     data.sort((a, b) => a.date - b.date);
     let byDate = [];
     data.forEach((entry) => {
-      entry.date = dayjs(entry.date).local().format('MM/DD/YY');
+      entry.date = dayjs(entry.date).tz('America/Los_Angeles').format('MM/DD/YY');
       if (!Object.prototype.hasOwnProperty.call(byDate, entry.date)) {
         byDate[entry.date] = entry.totalMinutes;
       } else {
@@ -126,7 +126,7 @@ app.get('/api/chart-group-exercises/:groupId', async (req, res, next) => {
     data.sort((a, b) => a.date - b.date);
     const byUser = {};
     data.forEach((entry) => {
-      entry.date = dayjs(entry.date).local().format('MM/DD/YY');
+      entry.date = dayjs(entry.date).tz('America/Los_Angeles').format('MM/DD/YY');
       if (!Object.prototype.hasOwnProperty.call(byUser, entry.userId)) {
         byUser[entry.userId] = { dates: [entry.date], entries: [{ date: entry.date, userId: entry.userId, firstName: entry.firstName, totalMinutes: entry.totalMinutes }] };
       } else {
